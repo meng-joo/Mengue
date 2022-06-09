@@ -6,10 +6,20 @@ using Cinemachine;
 public class BattleCamera : MonoBehaviour
 {
     private Camera subCam = null;
+    public GameObject target = null;
 
-    private void Start()
+    private void Awake()
     {
         subCam = GetComponent<Camera>();
+        subCam.depth = 0;
+    }
+
+    private void OnEnable()
+    {
+        Vector3 targetPos = target.transform.position;
+        transform.position = new Vector3(targetPos.x, targetPos.y + 3 ,targetPos.z + 5f);
+        transform.rotation *= Quaternion.Euler(new Vector3(14, 180, 0));
+        transform.LookAt(targetPos); ;
     }
 
     public void SettingBattleCam()
@@ -20,6 +30,7 @@ public class BattleCamera : MonoBehaviour
         }
         else
         {
+            Debug.Log("¹¹¿©¤Á");
             subCam.depth = -10;
         }
     }

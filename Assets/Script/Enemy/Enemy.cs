@@ -56,8 +56,6 @@ public class Enemy : Moving
             //transform.position -= Vector3.Lerp();
             //transform.DOKill();
             //transform.DOMove(transform.position - randomTransform, 0.3f);
-            isOverlap = false;
-            isOverlapToPlayer = false;
             return;
         }
         else

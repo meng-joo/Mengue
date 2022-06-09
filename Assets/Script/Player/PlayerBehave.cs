@@ -12,7 +12,7 @@ public class PlayerBehave : Moving
     [Range(1, 60f)]
     public float moveSpeed = 20;
     private TextMeshPro exclamationMark;
-    public Animator ani;
+    private Animator ani;
     public SkillUI _skillUI;
 
     private void Start()
@@ -78,16 +78,15 @@ public class PlayerBehave : Moving
         yield return new WaitForSeconds(1.7f);
 
         characterController.enabled = false;
-
-        StartBattle();
         exclamationMark.gameObject.SetActive(false);
+        _battleCamera.gameObject.SetActive(true);
+        StartBattle();
         ani.SetTrigger("Battle");
         _skillUI.SendMessage("ViewSkillUI");    
     }
 
     private void StartBattle()
     {
-        exclamationMark.gameObject.SetActive(false);
         _battleCamera.SettingBattleCam();
         Debug.Log(transform.position);
         transform.position += new Vector3(0, 0.5f, 0);
@@ -98,7 +97,5 @@ public class PlayerBehave : Moving
         transform.rotation *= quaternion;
         Debug.Log(transform.position);
         //ani.SetTrigger("Battle");
-
-
     }
 }

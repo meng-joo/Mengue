@@ -53,8 +53,8 @@ public class BackGround : MonoBehaviour
 
     private void CreatePlayer()
     {
-        int x = Random.Range(-3, 3);
-        int z = Random.Range(-3, 3);
+        int x = Random.Range(-2, 3);  //  2
+        int z = Random.Range(-2, 3);  // -2
         Player.transform.position = new Vector3(x, 0, z);
         Player.SetActive(true);
 
@@ -68,14 +68,29 @@ public class BackGround : MonoBehaviour
         {
             int z = Random.Range(MinZ + 1, MaxZ);
             int x = Random.Range(MinX + 1, MaxX);
-            if(Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
+
+            for (int j = 0; j < _enemyList.Count; j++)
             {
-                x += Random.Range(-4, 4);
-                z += Random.Range(-4, 4);
+                if (x == Mathf.RoundToInt(_enemyList[j].transform.position.x) && z == Mathf.RoundToInt(_enemyList[j].transform.position.z))
+                {
+                    x += Random.Range(-3, 3);
+                    z += Random.Range(-3, 3);
+                }
+            }
+
+            if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
+            {
+                x += Random.Range(4, 8);
+                z += Random.Range(-8, -4);
+                if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
+                {
+                    x += Random.Range(4, 8);
+                    z += Random.Range(-8, -4);
+                }
             }
             _enemyList.Add(enemy);
             Instantiate(enemy, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.12f);
         }
     }
 }
