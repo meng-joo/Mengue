@@ -18,20 +18,20 @@ public class BattleCamera : MonoBehaviour
     {
         Vector3 targetPos = target.transform.position;
         transform.position = new Vector3(targetPos.x, targetPos.y + 4 ,targetPos.z + 5f);
-        transform.rotation *= Quaternion.Euler(new Vector3(21, 180, 0));
+        //transform.rotation *= Quaternion.Euler(new Vector3(21, 180, 0));
         transform.LookAt(targetPos); ;
     }
 
     public void SettingBattleCam()
     {
-        if (subCam.depth <= 6)
+        if (Moving._isBattle)
         {
             subCam.depth = 20;
         }
         else
         {
             Debug.Log("¹¹¿©¤Á");
-            //subCam.depth = -10;
+            subCam.depth = -10;
         }
     }
 }

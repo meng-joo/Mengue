@@ -8,10 +8,15 @@ public class Enemy : Moving
     public GameObject enemyView;
 
     public PlayerBehave pPos;
-    public ParticleSystem _particleSystem;
+    public ParticleSystem[] _particleSystem;
+
+    private Animator _animator;
+
+    private int enemyHP = 30;
 
     private void Start()
     {
+        _animator = GetComponent<Animator>();
         pPos = GameObject.Find("Player").GetComponent<PlayerBehave>();
     }
 
@@ -63,7 +68,7 @@ public class Enemy : Moving
         {
             Debug.Log("¿Ã∞‘ ø÷....");
             transform.DOKill();
-            transform.DOMove(transform.position + randomTransform, 0.3f);
+            transform.DOMove(transform.position + randomTransform, 0.1f);
         }
     }
 
@@ -81,6 +86,12 @@ public class Enemy : Moving
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
         transform.LookAt(player.transform);
         transform.rotation *= quaternion;
+
+        for (int i = 0; i < _backGround.enemycount; i++)
+        {
+            _backGround._enemyList[i].gameObject.SetActive(false);
+            gameObject.SetActive(true);
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -94,6 +105,19 @@ public class Enemy : Moving
 
     public void GetAttack()
     {
-        Instantiate(_particleSystem, transform.position, Quaternion.identity);
+        if(enemyHP <= 0)
+        {
+            _backGround._enemyList.Remove(this);
+            Destroy(gameObject);
+            Moving._isBattle = false;
+            pPos.EndBattle();
+            Instantiate(_particleSystem[1], transform.position, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(_particleSystem[0], transform.position, Quaternion.identity);
+            enemyHP -= 10;
+        }
+        //_animator.SetTrigger("GetHit");
     }
 }

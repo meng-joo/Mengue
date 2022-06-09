@@ -1011,11 +1011,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1533018517, guid: ec413a0fd2a940f4d9475a8299d85f9c, type: 3}
       propertyPath: m_Size.y
-      value: 2.06
+      value: 1.7792825
       objectReference: {fileID: 0}
     - target: {fileID: 1533018517, guid: ec413a0fd2a940f4d9475a8299d85f9c, type: 3}
       propertyPath: m_Center.y
-      value: 0.36
+      value: 0.6802433
+      objectReference: {fileID: 0}
+    - target: {fileID: 1533018517, guid: ec413a0fd2a940f4d9475a8299d85f9c, type: 3}
+      propertyPath: m_Center.z
+      value: 0.000000014901161
       objectReference: {fileID: 0}
     - target: {fileID: 1533018517, guid: ec413a0fd2a940f4d9475a8299d85f9c, type: 3}
       propertyPath: m_IsTrigger
@@ -1040,6 +1044,10 @@ PrefabInstance:
     - target: {fileID: 1189674227078662, guid: ec413a0fd2a940f4d9475a8299d85f9c, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1189674227078662, guid: ec413a0fd2a940f4d9475a8299d85f9c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1189674227078662, guid: ec413a0fd2a940f4d9475a8299d85f9c, type: 3}
       propertyPath: m_TagString

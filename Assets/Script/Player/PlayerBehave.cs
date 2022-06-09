@@ -14,12 +14,14 @@ public class PlayerBehave : Moving
     private TextMeshPro exclamationMark;
     private Animator ani;
     public SkillUI _skillUI;
+    private BoxCollider _boxCollider;
 
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
         exclamationMark = transform.Find("ExclamationMark").GetComponent<TextMeshPro>();
         ani = GetComponent<Animator>();
+        _boxCollider = GetComponent<BoxCollider>();
     }
 
     protected override void Move()
@@ -53,6 +55,11 @@ public class PlayerBehave : Moving
 
         //Vector3 finalpos = inputTransform * Time.deltaTime;
 
+        if(transform.position.x + inputTransform.x >= BackGround.MaxX || transform.position.x + inputTransform.x <= BackGround.MinX || transform.position.z + inputTransform.z >= BackGround.MaxZ || transform.position.z + inputTransform.z <= BackGround.MinZ)
+        {
+            return;
+        }
+
         characterController.Move(inputTransform);
 
 
@@ -63,6 +70,7 @@ public class PlayerBehave : Moving
         if (collison.tag == "Enemy")
         {
             _isBattle = true;
+            _boxCollider.enabled = false;
             _enemy = collison.gameObject;
             StartCoroutine(PlayerFindEnemyToBattle());
             //Camera.main.depth = -1;
@@ -84,14 +92,14 @@ public class PlayerBehave : Moving
         _battleCamera.gameObject.SetActive(true);
         StartBattle();
         ani.SetTrigger("Battle");
-        _skillUI.ViewSkillUI(_enemy);
+        _skillUI.ViewSkillUI();
     }
 
     private void StartBattle()
     {
         _battleCamera.SettingBattleCam();
         Debug.Log(transform.position);
-        transform.position += new Vector3(0, 0.5f, 0);
+        transform.position = _enemy.transform.position + new Vector3(1, 0.5f, 1);
         Quaternion quaternion = Quaternion.Euler(new Vector3(75f , 0f , 0f));
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
         //transform.localEulerAngles = new Vector3(75, 0, 0);
@@ -99,5 +107,31 @@ public class PlayerBehave : Moving
         transform.rotation *= quaternion;
         Debug.Log(transform.position);
         //ani.SetTrigger("Battle");
+    }
+
+    public void EndBattle()
+    {
+        StartCoroutine(EndBattleSettting());
+    }
+
+    IEnumerator EndBattleSettting()
+    {
+        _skillUI.HideSkillUI();
+        _battleCamera.SettingBattleCam();
+        _battleCamera.gameObject.SetActive(false);
+        transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+        ani.ResetTrigger("Battle");
+        ani.SetTrigger("NoBattle");
+        _boxCollider.enabled = true;
+
+        yield return new WaitForSeconds(0.6f);
+        for (int i = 0; i < _backGround._enemyList.Count; i++)
+        {
+            _backGround._enemyList[i].gameObject.SetActive(true);
+        }
+
+        yield return new WaitForSeconds(1f);
+        transform.localPosition = Vector3.zero;
+        characterController.enabled = true;
     }
 }

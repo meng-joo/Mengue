@@ -51,7 +51,7 @@ public class BackGround : MonoBehaviour
         CreatePlayer();
     }
 
-    private void CreatePlayer()
+    public void CreatePlayer()
     {
         int x = Random.Range(-2, 3);  //  2
         int z = Random.Range(-2, 3);  // -2
@@ -90,6 +90,7 @@ public class BackGround : MonoBehaviour
             }
             _enemyList.Add(enemy);
             Instantiate(enemy, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
+            enemy.gameObject.SetActive(true);
             yield return new WaitForSeconds(0.12f);
         }
     }
