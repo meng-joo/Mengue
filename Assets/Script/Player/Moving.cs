@@ -27,11 +27,11 @@ public abstract class Moving : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
             {
+                SendMessage("InputPlayerMovingKey");
                 for (int i = 0; i < _backGround._enemyList.Count; i++)
                 {
                     SendMessage("InputEnemyMovingKey");
                 }
-                SendMessage("InputPlayerMovingKey");
             }
         }
     }

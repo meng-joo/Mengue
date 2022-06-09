@@ -17,8 +17,8 @@ public class BattleCamera : MonoBehaviour
     private void OnEnable()
     {
         Vector3 targetPos = target.transform.position;
-        transform.position = new Vector3(targetPos.x, targetPos.y + 3 ,targetPos.z + 5f);
-        transform.rotation *= Quaternion.Euler(new Vector3(14, 180, 0));
+        transform.position = new Vector3(targetPos.x, targetPos.y + 4 ,targetPos.z + 5f);
+        transform.rotation *= Quaternion.Euler(new Vector3(21, 180, 0));
         transform.LookAt(targetPos); ;
     }
 
@@ -31,7 +31,7 @@ public class BattleCamera : MonoBehaviour
         else
         {
             Debug.Log("¹¹¿©¤Á");
-            subCam.depth = -10;
+            //subCam.depth = -10;
         }
     }
 }

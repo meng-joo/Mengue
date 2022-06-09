@@ -8,10 +8,11 @@ public class Enemy : Moving
     public GameObject enemyView;
 
     public PlayerBehave pPos;
+    public ParticleSystem _particleSystem;
 
     private void Start()
     {
-        pPos = FindObjectOfType<PlayerBehave>();
+        pPos = GameObject.Find("Player").GetComponent<PlayerBehave>();
     }
 
     protected override void InputEnemyMovingKey()
@@ -80,5 +81,19 @@ public class Enemy : Moving
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
         transform.LookAt(player.transform);
         transform.rotation *= quaternion;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Sword")
+        {
+            Debug.Log("적이 맞음!!!!!!적이 맞음!!!!!");
+            GetAttack();
+        }
+    }
+
+    public void GetAttack()
+    {
+        Instantiate(_particleSystem, transform.position, Quaternion.identity);
     }
 }

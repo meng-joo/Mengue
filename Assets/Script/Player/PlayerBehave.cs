@@ -54,6 +54,8 @@ public class PlayerBehave : Moving
         //Vector3 finalpos = inputTransform * Time.deltaTime;
 
         characterController.Move(inputTransform);
+
+
     }
 
     private void OnTriggerEnter(Collider collison)
@@ -82,7 +84,7 @@ public class PlayerBehave : Moving
         _battleCamera.gameObject.SetActive(true);
         StartBattle();
         ani.SetTrigger("Battle");
-        _skillUI.SendMessage("ViewSkillUI");    
+        _skillUI.ViewSkillUI(_enemy);
     }
 
     private void StartBattle()
@@ -90,7 +92,7 @@ public class PlayerBehave : Moving
         _battleCamera.SettingBattleCam();
         Debug.Log(transform.position);
         transform.position += new Vector3(0, 0.5f, 0);
-        Quaternion quaternion = Quaternion.Euler(new Vector3(90f , 0f , 0f));
+        Quaternion quaternion = Quaternion.Euler(new Vector3(75f , 0f , 0f));
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
         //transform.localEulerAngles = new Vector3(75, 0, 0);
         transform.LookAt(_enemy.transform);
