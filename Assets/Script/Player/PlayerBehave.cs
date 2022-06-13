@@ -15,6 +15,7 @@ public class PlayerBehave : Moving
     private Animator ani;
     public SkillUI _skillUI;
     private BoxCollider _boxCollider;
+    public StoreUI _storeUI;
 
     private void Start()
     {
@@ -60,9 +61,9 @@ public class PlayerBehave : Moving
             return;
         }
 
+        //Vector3 pos = Vector3.Lerp(transform.position, inputTransform, 0.6f * Time.deltaTime);
+
         characterController.Move(inputTransform);
-
-
     }
 
     private void OnTriggerEnter(Collider collison)
@@ -79,13 +80,19 @@ public class PlayerBehave : Moving
             //collison.transform.LookAt(transform);
             //collison.transform.position = new Vector3(collison.transform.position.x, 1, collison.transform.position.z);
         }
+        else if(collison.tag == "Store")
+        {
+            _isInStore = true;
+            StartCoroutine(PlayerInStore());
+
+        }
     }
 
     IEnumerator PlayerFindEnemyToBattle()
     {
         exclamationMark.gameObject.SetActive(true);
 
-        yield return new WaitForSeconds(1.7f);
+        yield return new WaitForSeconds(1.3f);
 
         characterController.enabled = false;
         exclamationMark.gameObject.SetActive(false);
@@ -93,6 +100,13 @@ public class PlayerBehave : Moving
         StartBattle();
         ani.SetTrigger("Battle");
         _skillUI.ViewSkillUI();
+    }
+
+    IEnumerator PlayerInStore()
+    {
+        _storeUI.SetStoreUI();
+
+        yield return null;
     }
 
     private void StartBattle()
@@ -119,7 +133,8 @@ public class PlayerBehave : Moving
         _skillUI.HideSkillUI();
         _battleCamera.SettingBattleCam();
         _battleCamera.gameObject.SetActive(false);
-        transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+        //transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
+        Vector3 currentPos = new Vector3(Mathf.RoundToInt(transform.position.x), 0, Mathf.RoundToInt(transform.position.z));
         ani.ResetTrigger("Battle");
         ani.SetTrigger("NoBattle");
         _boxCollider.enabled = true;
@@ -131,7 +146,8 @@ public class PlayerBehave : Moving
         }
 
         yield return new WaitForSeconds(1f);
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = currentPos;
+        transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
         characterController.enabled = true;
     }
 }

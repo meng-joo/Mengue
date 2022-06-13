@@ -7,6 +7,7 @@ using Cinemachine;
 public abstract class Moving : MonoBehaviour
 {
     public static bool _isBattle = false;
+    public static bool _isInStore = false;
     public static bool _isMoving = false;
 
     protected BackGround _backGround = null;
@@ -23,7 +24,7 @@ public abstract class Moving : MonoBehaviour
 
     protected virtual void Move()
     {
-        if (!_isBattle && ! _isMoving)
+        if (!_isBattle && ! _isMoving && !_isInStore)
         {
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
             {

@@ -14,6 +14,7 @@ public class BackGround : MonoBehaviour
     public GameObject backGroundPrefab = null;
     public GameObject Wall = null;
     public GameObject Player = null;
+    public GameObject storeBlock = null;
     public Enemy Enemy = null;
     [Range(1, 25)]
     public int enemycount;
@@ -30,6 +31,7 @@ public class BackGround : MonoBehaviour
     {
         GameObject _groundprefab = backGroundPrefab;
         GameObject _wall = Wall;
+        GameObject _storeBlock = storeBlock;
 
         for (int i = MaxZ; i >= MinZ; i--)
         {
@@ -38,6 +40,10 @@ public class BackGround : MonoBehaviour
                 if (j == MaxX || j == MinX || i == MinZ || i == MaxZ)
                 {
                     Instantiate(_wall, new Vector3(j, 0, i), Quaternion.identity);
+                }
+                else if (i >= MaxZ - 2 && (j >= -1 && j <= 1))
+                {
+                    Instantiate(_storeBlock, new Vector3(j, 0, i), Quaternion.identity);
                 }
                 else
                 {
@@ -56,7 +62,7 @@ public class BackGround : MonoBehaviour
         int x = Random.Range(-2, 3);  //  2
         int z = Random.Range(-2, 3);  // -2
         Player.transform.position = new Vector3(x, 0, z);
-        Player.SetActive(true);
+        Player.SetActive(true); 
 
         StartCoroutine(CreateEnemy(x, z));
     }
