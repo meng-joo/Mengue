@@ -1,17 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;
 
 public class StoreUI : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public Button[] upgradePanel;
+    
     void Start()
     {
         
     }
 
-    // Update is called once per frame
+    
     void Update()
     {
         
@@ -19,6 +21,8 @@ public class StoreUI : MonoBehaviour
 
     public void SetStoreUI()
     {
+        Sequence seq = DOTween.Sequence();
 
+        seq.Append(transform.DOMoveY(7, 1f));
     }
 }
