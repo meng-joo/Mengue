@@ -6,11 +6,23 @@ using Cinemachine;
 
 public abstract class Moving : MonoBehaviour
 {
-    public static bool _isBattle = false;
-    public static bool _isInStore = false;
-    public static bool _isMoving = false;
+    public static int currentMoney = 0;
+    public static int moneyValue = 1;
+
+    #region 플레이어의 공격력, 피, 방어력
+    public int playerAttack = 5;
+    #endregion
 
     protected BackGround _backGround = null;
+    public enum PlayerState
+    {
+        IDLE,
+        MOVING,
+        BATTLE,
+        INSTORE
+    }
+
+    public static PlayerState _playerState = PlayerState.IDLE;
 
     private void Awake()
     {
@@ -24,15 +36,13 @@ public abstract class Moving : MonoBehaviour
 
     protected virtual void Move()
     {
-        if (!_isBattle && ! _isMoving && !_isInStore)
+        if (_playerState == PlayerState.IDLE)
         {
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
             {
-                SendMessage("InputPlayerMovingKey");
-                for (int i = 0; i < _backGround._enemyList.Count; i++)
-                {
-                    SendMessage("InputEnemyMovingKey");
-                }
+                InputEnemyMovingKey();
+                InputPlayerMovingKey();
+                //Invoke("ChangeStateToMove", 0.3f);
             }
         }
     }

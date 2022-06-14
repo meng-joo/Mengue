@@ -98,11 +98,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1ba880f9baa0d49a7d21f713cc1b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerAttack: 5
   enemyView: {fileID: 9153703403016132945}
   pPos: {fileID: 0}
   _particleSystem:
   - {fileID: 5024009746357069192, guid: ec3f674830402cc45bce805cf6493db7, type: 3}
   - {fileID: 8460667080445658518, guid: a3e2c3406e02f2c4ba86cfb1604277bd, type: 3}
+  tempVec: {x: 0, y: 0, z: 0}
 --- !u!143 &4591348055852566750
 CharacterController:
   m_ObjectHideFlags: 0
@@ -130,7 +132,7 @@ BoxCollider:
   m_GameObject: {fileID: 7515258036539727978}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 9.24, z: 1.78}
   m_Center: {x: 0, y: 0, z: 0}
@@ -142,9 +144,9 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7515258036539727978}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 815f5527c8fcf364e900988f421556f7, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1

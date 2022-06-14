@@ -17,6 +17,15 @@ public class PlayerBehave : Moving
     private BoxCollider _boxCollider;
     public StoreUI _storeUI;
 
+    public GameObject _healEffect;
+
+    public static PlayerBehave instance;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+
     private void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -33,10 +42,20 @@ public class PlayerBehave : Moving
         {
             Debug.Log("aa");
         }
+
+        if(_playerState == PlayerState.INSTORE)
+        {
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                _storeUI.GetBackStoreUI();
+                _playerState = PlayerState.IDLE;
+            }
+        }
     }
 
     protected override void InputPlayerMovingKey()
     {
+        //ChangeStateToMove();
         int vertical = Mathf.RoundToInt(Input.GetAxisRaw("Vertical"));
         int horizontal = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
 
@@ -65,12 +84,29 @@ public class PlayerBehave : Moving
 
         characterController.Move(inputTransform);
     }
+    
+    private void OnGUI()
+    {
+        var labelStyle = new GUIStyle();
+        labelStyle.fontSize = 50;
+        labelStyle.normal.textColor = Color.yellow;
+        GUILayout.Label("\n\n현재 플레이어의 공격력 : " + playerAttack, labelStyle);
+        //캐릭터 현재 돈
+        GUILayout.Label("현재 가진 돈 : " + currentMoney, labelStyle);
+        //현재 돈의 가치
+        GUILayout.Label("현재 돈의 가치 : " + moneyValue, labelStyle);
+    }
 
     private void OnTriggerEnter(Collider collison)
     {
+        if(collison.tag == "Coin")
+        {
+            currentMoney += moneyValue;
+            Destroy(collison.gameObject);
+        }
         if (collison.tag == "Enemy")
         {
-            _isBattle = true;
+            _playerState = PlayerState.BATTLE;
             _boxCollider.enabled = false;
             _enemy = collison.gameObject;
             StartCoroutine(PlayerFindEnemyToBattle());
@@ -80,11 +116,10 @@ public class PlayerBehave : Moving
             //collison.transform.LookAt(transform);
             //collison.transform.position = new Vector3(collison.transform.position.x, 1, collison.transform.position.z);
         }
-        else if(collison.tag == "Store")
+        if(collison.tag == "Store")
         {
-            _isInStore = true;
+            _playerState = PlayerState.INSTORE;
             StartCoroutine(PlayerInStore());
-
         }
     }
 
@@ -111,9 +146,9 @@ public class PlayerBehave : Moving
 
     private void StartBattle()
     {
-        _battleCamera.SettingBattleCam();
+        //_battleCamera.SettingBattleCam();
         Debug.Log(transform.position);
-        transform.position = _enemy.transform.position + new Vector3(1, 0.5f, 1);
+        transform.position += new Vector3(0, 0.5f, 0);
         Quaternion quaternion = Quaternion.Euler(new Vector3(75f , 0f , 0f));
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
         //transform.localEulerAngles = new Vector3(75, 0, 0);
@@ -121,6 +156,16 @@ public class PlayerBehave : Moving
         transform.rotation *= quaternion;
         Debug.Log(transform.position);
         //ani.SetTrigger("Battle");
+    }
+
+    public void ChangeStateToMove()
+    {
+        if(_playerState == PlayerState.IDLE)
+        {
+            _playerState = PlayerState.MOVING;
+            return;
+        }
+        _playerState = PlayerState.IDLE;
     }
 
     public void EndBattle()
@@ -131,7 +176,7 @@ public class PlayerBehave : Moving
     IEnumerator EndBattleSettting()
     {
         _skillUI.HideSkillUI();
-        _battleCamera.SettingBattleCam();
+        //_battleCamera.SettingBattleCam();
         _battleCamera.gameObject.SetActive(false);
         //transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
         Vector3 currentPos = new Vector3(Mathf.RoundToInt(transform.position.x), 0, Mathf.RoundToInt(transform.position.z));
@@ -139,13 +184,11 @@ public class PlayerBehave : Moving
         ani.SetTrigger("NoBattle");
         _boxCollider.enabled = true;
 
-        yield return new WaitForSeconds(0.6f);
-        for (int i = 0; i < _backGround._enemyList.Count; i++)
-        {
-            _backGround._enemyList[i].gameObject.SetActive(true);
-        }
-
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.1f);
+        //for (int i = 0; i < _backGround._enemyList.Count; i++)
+        //{
+        //    _backGround._enemyList[i].gameObject.SetActive(true);
+        //}
         transform.localPosition = currentPos;
         transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
         characterController.enabled = true;

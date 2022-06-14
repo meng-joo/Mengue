@@ -15,17 +15,19 @@ public class BackGround : MonoBehaviour
     public GameObject Wall = null;
     public GameObject Player = null;
     public GameObject storeBlock = null;
-    public Enemy Enemy = null;
+    public GameObject coin = null;
+    public Enemy _enemy = null;
     [Range(1, 25)]
     public int enemycount;
 
     void Start()
     {
-        if(backGroundPrefab != null)
+        if (backGroundPrefab != null)
         {
             StartCoroutine(CreateBackGroundBlock());
+            StartCoroutine(SpawnCoin());
         }
-    } 
+    }
 
     IEnumerator CreateBackGroundBlock()
     {
@@ -62,42 +64,62 @@ public class BackGround : MonoBehaviour
         int x = Random.Range(-2, 3);  //  2
         int z = Random.Range(-2, 3);  // -2
         Player.transform.position = new Vector3(x, 0, z);
-        Player.SetActive(true); 
+        Player.SetActive(true);
 
-        StartCoroutine(CreateEnemy(x, z));
+        StartCoroutine(CreateEnemyForCount(x, z));
     }
 
-    IEnumerator CreateEnemy(int Px, int Pz)
+    IEnumerator CreateEnemyForCount(int Px, int Pz)
     {
-        Enemy enemy = Enemy;
         for (int i = 0; i < enemycount; i++)
         {
-            int z = Random.Range(MinZ + 1, MaxZ);
-            int x = Random.Range(MinX + 1, MaxX);
+            CreateEnemy(Px, Pz);
+            yield return new WaitForSeconds(0.002f);
+        }
+    }
 
-            for (int j = 0; j < _enemyList.Count; j++)
+    public void CreateEnemy(int Px = 0, int Pz = 0)
+    {
+        Debug.Log("利捞 积己   利捞 积己   利捞 积己   利捞 积己   利捞 积己");
+        Enemy enemy = _enemy;
+        int z = Random.Range(MinZ + 1, MaxZ);
+        int x = Random.Range(MinX + 1, MaxX);
+
+        for (int j = 0; j < _enemyList.Count; j++)
+        {
+            if (x == Mathf.RoundToInt(_enemyList[j].transform.position.x) && z == Mathf.RoundToInt(_enemyList[j].transform.position.z))
             {
-                if (x == Mathf.RoundToInt(_enemyList[j].transform.position.x) && z == Mathf.RoundToInt(_enemyList[j].transform.position.z))
-                {
-                    x += Random.Range(-3, 3);
-                    z += Random.Range(-3, 3);
-                }
+                x += Random.Range(-3, 3);
+                z += Random.Range(-3, 3);
             }
+        }
 
+        if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
+        {
+            x += Random.Range(4, 8);
+            z += Random.Range(-8, -4);
             if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
             {
                 x += Random.Range(4, 8);
                 z += Random.Range(-8, -4);
-                if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
-                {
-                    x += Random.Range(4, 8);
-                    z += Random.Range(-8, -4);
-                }
             }
-            _enemyList.Add(enemy);
-            Instantiate(enemy, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
-            enemy.gameObject.SetActive(true);
-            yield return new WaitForSeconds(0.12f);
+        }
+        _enemyList.Add(enemy);
+        Instantiate(enemy, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
+        enemy.gameObject.SetActive(true);
+    }
+
+    IEnumerator SpawnCoin()
+    {
+        yield return new WaitForSeconds(4f);
+
+        while (true)
+        {
+            yield return new WaitForSeconds(4f);
+            int x = Random.Range(MinX + 1, MaxX);
+            int z = Random.Range(MinZ + 1, MaxZ);
+            
+            Instantiate(coin, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
         }
     }
 }

@@ -12,63 +12,69 @@ public class Enemy : Moving
 
     private Animator _animator;
 
-    private int enemyHP = 30;
-
+    private int enemyHP = 15;
+    public Vector3 tempVec;
     private void Start()
     {
         _animator = GetComponent<Animator>();
         pPos = GameObject.Find("Player").GetComponent<PlayerBehave>();
+        tempVec = transform.position;
     }
 
     protected override void InputEnemyMovingKey()
     {
-        int x = Random.Range(-1, 2);
-        int z = Random.Range(-1, 2);
-        bool isOverlap = false;
-        bool isOverlapToPlayer = false;
-
-        if (x == 1 || x == -1)
+        Debug.Log("serhejwkyetkexulrle5lele5l5ek7l5");
+        for (int c = 0; c < _backGround.enemycount; c++)
         {
-            z = 0;
-        }
+            Sequence seq = DOTween.Sequence();
 
-        Vector3 randomTransform = new Vector3(x, 0, z);
+            int x = Random.Range(-1, 2);
+            int z = Random.Range(-1, 2);
+            bool isOverlap = false;
+            bool isOverlapToPlayer = false;
 
-        float enemyX = transform.position.x + randomTransform.x;
-        float enemyZ = transform.position.z + randomTransform.z;
-
-        int Px = Mathf.CeilToInt(pPos.transform.position.x);
-        int Pz = Mathf.CeilToInt(pPos.transform.position.z);
-
-        if (enemyX == Px && enemyZ == Pz)
-        {
-            isOverlapToPlayer = true;
-        }
-
-        for (int i = 0; i < _backGround._enemyList.Count; i++)
-        {
-            int Ex = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.x);
-            int Ez = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.z);
-
-            if(enemyX == Ex && enemyZ == Ez)
+            if (x == 1 || x == -1)
             {
-                isOverlap = true;
+                z = 0;
             }
-        }
 
-        if ((enemyX >= BackGround.MaxX) || (enemyX <= BackGround.MinX) || (enemyZ <= BackGround.MinZ) || (enemyZ >= BackGround.MaxZ) || isOverlap || isOverlapToPlayer)
-        {
-            Debug.Log("안돼 돌아가");
-            //transform.position -= Vector3.Lerp();
-            //transform.DOKill();
-            //transform.DOMove(transform.position - randomTransform, 0.3f);
-            return;
-        }
-        else
-        {
-            Debug.Log("이게 왜....");
-            transform.DOKill();
-            transform.DOMove(transform.position + randomTransform, 0.1f);
+            Vector3 randomTransform = new Vector3(x, 0, z);
+
+            float enemyX = transform.position.x + randomTransform.x;
+            float enemyZ = transform.position.z + randomTransform.z;
+
+            int Px = Mathf.CeilToInt(pPos.transform.position.x);
+            int Pz = Mathf.CeilToInt(pPos.transform.position.z);
+
+            if (enemyX == Px && enemyZ == Pz)
+            {
+                isOverlapToPlayer = true;
+            }
+
+            for (int i = 0; i < _backGround._enemyList.Count; i++)
+            {
+                int Ex = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.x);
+                int Ez = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.z);
+
+                if (enemyX == Ex && enemyZ == Ez)
+                {
+                    isOverlap = true;
+                }
+            }
+
+            if ((enemyX >= BackGround.MaxX) || (enemyX <= BackGround.MinX) || (enemyZ <= BackGround.MinZ) || (enemyZ >= BackGround.MaxZ) || isOverlap || isOverlapToPlayer)
+            {
+                Debug.Log("안돼 돌아가");
+                //transform.position -= Vector3.Lerp();
+                //transform.DOKill();
+                //transform.DOMove(transform.position - randomTransform, 0.3f);
+                return;
+            }
+            else
+            {
+                Debug.Log("이게 왜....");
+                transform.DOMove(transform.position + randomTransform, 0.13f);
+            }
         }
     }
 
@@ -80,18 +86,18 @@ public class Enemy : Moving
     IEnumerator BattleEnemy(GameObject player)
     {
         enemyView.SetActive(false);
-        yield return new WaitForSeconds(2);
-        Quaternion quaternion = Quaternion.Euler(90, 0, 0);
-        transform.position += new Vector3(0, 0.5f, 0);
+        yield return new WaitForSeconds(0.2f);
+        Quaternion quaternion = Quaternion.Euler(75, 0, 0);
+        transform.position = player.transform.position + new Vector3(1, 0.5f, 1);
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
         transform.LookAt(player.transform);
         transform.rotation *= quaternion;
 
-        for (int i = 0; i < _backGround.enemycount; i++)
-        {
-            _backGround._enemyList[i].gameObject.SetActive(false);
-            gameObject.SetActive(true);
-        }
+        //for (int i = 0; i < _backGround.enemycount; i++)
+        //{
+        //    _backGround._enemyList[i].gameObject.SetActive(false);
+        //    gameObject.SetActive(true);
+        //}
     }
 
     private void OnTriggerEnter(Collider other)
@@ -105,19 +111,22 @@ public class Enemy : Moving
 
     public void GetAttack()
     {
-        if(enemyHP <= 0)
+        enemyHP -= playerAttack;
+
+        if (enemyHP <= 0)
         {
+            Instantiate(_particleSystem[1], transform.position, Quaternion.identity);
             _backGround._enemyList.Remove(this);
             Destroy(gameObject);
-            Moving._isBattle = false;
+            Moving._playerState = PlayerState.IDLE;
             pPos.EndBattle();
-            Instantiate(_particleSystem[1], transform.position, Quaternion.identity);
+
+            _backGround.CreateEnemy();
         }
         else
         {
             Instantiate(_particleSystem[0], transform.position, Quaternion.identity);
-            enemyHP -= 10;
+            //_animator.SetTrigger("GetHit");
         }
-        //_animator.SetTrigger("GetHit");
     }
 }
