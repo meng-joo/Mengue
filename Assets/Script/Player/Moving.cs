@@ -10,7 +10,9 @@ public abstract class Moving : MonoBehaviour
     public static int moneyValue = 1;
 
     #region 플레이어의 공격력, 피, 방어력
-    public int playerAttack = 5;
+    public static int playerAttack = 5;
+    public static int playerHealth = 100;
+    public static int playerDefence = 12;
     #endregion
 
     protected BackGround _backGround = null;

@@ -98,7 +98,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1ba880f9baa0d49a7d21f713cc1b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerAttack: 5
   enemyView: {fileID: 9153703403016132945}
   pPos: {fileID: 0}
   _particleSystem:

@@ -9,12 +9,14 @@ public class SkillUI : MonoBehaviour
 {
     private Image skillUI;
     public Animator playerBehave;
+    private TextMeshPro _stateText;
 
     private bool _isAttaking = false;
 
     private void Start()
     {
         skillUI = GetComponent<Image>();
+        _stateText = transform.Find("StateText/Text").GetComponent<TextMeshPro>();
     }
 
     public void ViewSkillUI()
@@ -38,7 +40,24 @@ public class SkillUI : MonoBehaviour
         if (!_isAttaking)
         {
             playerBehave.SetTrigger("Attack");
+            StartCoroutine(WriteText($"당신이 {Moving.playerAttack}의 공격력으로 상대방을 공격했습니다."));
             StartCoroutine(SetATKDelay());
+
+        }
+        //Dotext가 텍스트 메쉬 프로에 없어...
+        else
+        {
+            StartCoroutine(WriteText("아직 상대 턴입니다."));
+        }
+    }
+
+    IEnumerator WriteText(string text)
+    {
+        for (int i = 0; i < text.Length; i++)
+        {
+            //Debug.Log("기ㅣㅁ필규");
+            _stateText.text = string.Format("{0}", text.Substring(0, i));
+            yield return new WaitForSeconds(0.07f);
         }
     }
 
@@ -55,4 +74,5 @@ public class SkillUI : MonoBehaviour
         GameObject effect = Instantiate(PlayerBehave.instance._healEffect);
         effect.transform.position = PlayerBehave.instance.transform.position;
     }
+
 }

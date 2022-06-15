@@ -52,7 +52,7 @@ public class BackGround : MonoBehaviour
                     Instantiate(_groundprefab, new Vector3(j, 0, i), Quaternion.identity);
                 }
 
-                yield return new WaitForSeconds(0.0001f);
+                yield return new WaitForSeconds(0.00003f);
             }
         }
 
