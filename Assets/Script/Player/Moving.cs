@@ -12,7 +12,15 @@ public abstract class Moving : MonoBehaviour
     #region 플레이어의 공격력, 피, 방어력
     public static int playerAttack = 5;
     public static int playerHealth = 100;
+    public static int playerCurrentHealth = playerHealth;
     public static int playerDefence = 12;
+    #endregion
+
+    #region 적의 공격력, 피, 방어력
+    public static int enemyAttack = 3;
+    public static int enemyHealth = 30;
+    public static int enemycurrnetHealth = enemyHealth;
+    public static int enemyDefence = 8;
     #endregion
 
     protected BackGround _backGround = null;

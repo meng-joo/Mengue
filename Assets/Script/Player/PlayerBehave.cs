@@ -87,14 +87,19 @@ public class PlayerBehave : Moving
     
     private void OnGUI()
     {
-        var labelStyle = new GUIStyle();
-        labelStyle.fontSize = 50;
-        labelStyle.normal.textColor = Color.yellow;
-        GUILayout.Label("\n\n현재 플레이어의 공격력 : " + playerAttack, labelStyle);
+        var labelStyle1 = new GUIStyle();
+        var labelStyle2 = new GUIStyle();
+        labelStyle1.fontSize = 50;
+        labelStyle2.fontSize = 40;
+        labelStyle1.normal.textColor = Color.red;
+        labelStyle2.normal.textColor = Color.yellow;
+        GUILayout.Label("\n\n현재 플레이어의 공격력 : " + playerAttack, labelStyle1);
+        GUILayout.Label("현재 플레이어의 방어력 : " + playerDefence, labelStyle1);
+        GUILayout.Label("현재 플레이어의 체력 : " + playerCurrentHealth, labelStyle1);
         //캐릭터 현재 돈
-        GUILayout.Label("현재 가진 돈 : " + currentMoney, labelStyle);
+        GUILayout.Label("현재 가진 돈 : " + currentMoney, labelStyle2);
         //현재 돈의 가치
-        GUILayout.Label("현재 돈의 가치 : " + moneyValue, labelStyle);
+        GUILayout.Label("현재 돈의 가치 : " + moneyValue, labelStyle2);
     }
 
     private void OnTriggerEnter(Collider collison)

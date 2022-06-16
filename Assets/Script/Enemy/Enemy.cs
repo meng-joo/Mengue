@@ -12,7 +12,6 @@ public class Enemy : Moving
 
     private Animator _animator;
 
-    private int enemyHP = 15;
     public Vector3 tempVec;
     private void Start()
     {
@@ -111,9 +110,10 @@ public class Enemy : Moving
 
     public void GetAttack()
     {
-        enemyHP -= playerAttack;
+        int realDamage = playerAttack - enemyDefence;
+        enemycurrnetHealth -= Mathf.Clamp(realDamage, 2, realDamage);
 
-        if (enemyHP <= 0)
+        if (enemycurrnetHealth <= 0)
         {
             Instantiate(_particleSystem[1], transform.position, Quaternion.identity);
             _backGround._enemyList.Remove(this);
@@ -123,6 +123,7 @@ public class Enemy : Moving
 
             _backGround.CreateEnemy();
         }
+
         else
         {
             Instantiate(_particleSystem[0], transform.position, Quaternion.identity);
