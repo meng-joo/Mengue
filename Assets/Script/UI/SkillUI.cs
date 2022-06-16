@@ -13,6 +13,10 @@ public class SkillUI : MonoBehaviour
     private TextMeshProUGUI _stateText;
     private TextMeshProUGUI _runAwayCost;
     private TextMeshProUGUI[] _skillCountText = new TextMeshProUGUI[2];
+    public Enemy _fightingEnemy;
+    public BackGround _backGround;
+    public StoreUI _storeUI;
+    public StateUI _stateUI;
 
     private int[] _skillCount = new int[2];
 
@@ -22,12 +26,17 @@ public class SkillUI : MonoBehaviour
     {
         skillUI = GetComponent<Image>();
         _stateText = transform.GetChild(0).Find("Text").GetComponent<TextMeshProUGUI>();
-        _runAwayCost = transform.GetChild(2).Find("PenaltyText").GetComponent<TextMeshProUGUI>();
+        _runAwayCost = transform.GetChild(3).Find("PenaltyText").GetComponent<TextMeshProUGUI>();
         skillPanel = transform.Find("SkillPanel").GetComponent<Image>();
         _skillCountText[0] = transform.Find("SkillPanel/AttackSkill/CountSkillText").GetComponent<TextMeshProUGUI>();
-        _skillCountText[1] = transform.GetChild(3).Find("HealSkill/CountSkillText").GetComponent<TextMeshProUGUI>();
+        _skillCountText[1] = transform.GetChild(4).Find("HealSkill/CountSkillText").GetComponent<TextMeshProUGUI>();
         _skillCount[0] = 10;
-        _skillCount[0] = 10;
+        _skillCount[1] = 3;
+    }
+
+    public void SetEnemy(GameObject _enemy)
+    {
+        _fightingEnemy = _enemy.GetComponent<Enemy>();
     }
 
     public void ViewSkillUI()
@@ -35,8 +44,10 @@ public class SkillUI : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         _runAwayCost.text = string.Format("-{0}$", Mathf.RoundToInt(Mathf.Clamp(Moving.currentMoney / 10, 0, Moving.currentMoney)));
         sequence.Append(skillUI.transform.DOLocalMoveY(-354f, 1));
+        StartCoroutine(WriteText("당신은 슬라임(을)를 만났습니다!"));
         //다른 스킬을 더 띄어주기 위해 시퀀스 구현해야함
     }
+
     public void HideSkillUI()
     {
         Sequence sequence = DOTween.Sequence();
@@ -50,10 +61,10 @@ public class SkillUI : MonoBehaviour
     {
         if (!_isAttaking && _skillCount[0] > 0)
         {
-            StartCoroutine(SetATKDelay());
             int realDamage = Moving.playerAttack - Moving.enemyDefence;
             playerBehave.SetTrigger("Attack");
-            StartCoroutine(WriteText($"당신이 {Mathf.Clamp(realDamage, 2, realDamage)}의 공격력으로 상대방을 공격했습니다."));
+            StartCoroutine(WriteText($"당신이 {Mathf.Max(2, realDamage)}의 공격력으로 적을 공격했습니다."));
+            _fightingEnemy.GetAttack();
             EnemyTurn();
             _skillCount[0]--;
             SetCountText();
@@ -61,33 +72,51 @@ public class SkillUI : MonoBehaviour
         //Dotext가 텍스트 메쉬 프로에 없어...
         else
         {
-            StartCoroutine(WriteText("아직 상대 턴입니다."));
+            if (_skillCount[0] <= 0)
+            {
+                StartCoroutine(WriteText("스킬을 다 소모하였습니다."));
+            }
+            else if(!Moving._isPlayerTurn)
+            {
+                StartCoroutine(WriteText("아직 상대 턴입니다."));
+            }
         }
+    }
+
+    public void BackButton()
+    {
+        skillPanel.transform.DOLocalMoveX(1250, 0.27f);
     }
 
     public void EnemyStateButton()
     {
-        StartCoroutine(WriteText($"이름: 어쩔티비\n체력: {Moving.enemycurrnetHealth}/{Moving.enemyHealth}\n공격력: {Moving.enemyAttack}\n방어력: {Moving.enemyDefence}\n특징: 어쩔티비"));
+        StartCoroutine(WriteText($"이름: 흥행행\n체력: {Moving.enemycurrnetHealth}/{Moving.enemyHealth}\n공격력: {Moving.enemyAttack}\n방어력: {Moving.enemyDefence}\n특징: 어쩔티비 "));
     }
 
     public void InputSkillButton()
     {
-        if (!_isAttaking)
+        if(!Moving._isPlayerTurn)
         {
-            skillPanel.transform.DOLocalMoveX(670, 0.4f);
+            StartCoroutine(WriteText("아직 상대 턴입니다."));
         }
         else
         {
-            StartCoroutine(WriteText("아직 상대 턴입니다."));
+            SetCountText();
+            skillPanel.transform.DOLocalMoveX(670, 0.4f);
         }
     }
 
     private void EnemyTurn()
     {
-        skillPanel.transform.DOLocalMoveX(1250, 0.27f);
+        BackButton();
     }
 
-    IEnumerator WriteText(string text)
+    public void OtherWriteText(string text)
+    {
+        StartCoroutine(WriteText(text));
+    }
+
+    public IEnumerator WriteText(string text)
     {
         //_stateText.text = string.Format(text);
         //yield return null;
@@ -99,12 +128,6 @@ public class SkillUI : MonoBehaviour
         }
     }
 
-    IEnumerator SetATKDelay()
-    {
-        _isAttaking = true;
-        yield return new WaitForSeconds(1f);
-        _isAttaking = false;
-    }
 
     public void HealButton()
     {
@@ -113,14 +136,49 @@ public class SkillUI : MonoBehaviour
             playerBehave.SetTrigger("Heal");
             GameObject effect = Instantiate(PlayerBehave.instance._healEffect);
             effect.transform.position = PlayerBehave.instance.transform.position;
+            StartCoroutine(WriteText($"체력을 10 회복 하였습니다."));
+            Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 10, Moving.playerHealth);
+            _stateUI.UpdateStateText();
             EnemyTurn();
             _skillCount[1]--;
             SetCountText();
         }
         else
         {
+            if (_skillCount[1] <= 0)
+            {
+                StartCoroutine(WriteText("스킬을 다 소모하였습니다."));
+            }
+            else if(!Moving._isPlayerTurn)
+            {
+                StartCoroutine(WriteText("아직 상대 턴입니다."));
+            }
+        }
+    }
+
+    public void RunAwayButton()
+    {
+        if (Moving._isPlayerTurn)
+        {
+            Enemy.currentMoney -= Mathf.RoundToInt(Mathf.Clamp(Moving.currentMoney / 10, 0, Moving.currentMoney));
+            Destroy(_fightingEnemy.gameObject);
+            _backGround.CreateEnemy();
+            Moving.enemycurrnetHealth = Moving.enemyHealth;
+            Moving._playerState = Moving.PlayerState.IDLE;
+            PlayerBehave.instance.EndBattle();
+        }
+        else
+        {
             StartCoroutine(WriteText("아직 상대 턴입니다."));
         }
+    }
+
+    public void BuySkills(int num)
+    {
+        if (Moving.currentMoney < _storeUI.skillPrice[num]) return;
+
+        Moving.currentMoney -= _storeUI.skillPrice[num];
+        _skillCount[num] += 1;
     }
 
 

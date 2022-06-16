@@ -7,16 +7,20 @@ using TMPro;
 public class PlayerBehave : Moving
 {
     private GameObject _enemy = null;
+    public Enemy _currentEnemy = null;
+
     public BattleCamera _battleCamera = null;
     private CharacterController characterController;
     [Range(1, 60f)]
     public float moveSpeed = 20;
     private TextMeshPro exclamationMark;
-    private Animator ani;
+    public Animator ani;
     public SkillUI _skillUI;
     private BoxCollider _boxCollider;
     public StoreUI _storeUI;
+    public StateUI _stateUI;
 
+    public GameObject _hitEffect;
     public GameObject _healEffect;
 
     public static PlayerBehave instance;
@@ -108,12 +112,15 @@ public class PlayerBehave : Moving
         {
             currentMoney += moneyValue;
             Destroy(collison.gameObject);
+            _stateUI.UpdateStateText();
         }
         if (collison.tag == "Enemy")
         {
             _playerState = PlayerState.BATTLE;
+            _skillUI.SetEnemy(collison.transform.parent.gameObject);
             _boxCollider.enabled = false;
             _enemy = collison.gameObject;
+            //_currentEnemy = _enemy.transform.parent.GetComponent<Enemy>();
             StartCoroutine(PlayerFindEnemyToBattle());
             //Camera.main.depth = -1;
             //transform.LookAt(collison.transform);
@@ -161,6 +168,11 @@ public class PlayerBehave : Moving
         transform.rotation *= quaternion;
         Debug.Log(transform.position);
         //ani.SetTrigger("Battle");
+    }
+
+    public void PlayerDead()
+    {
+        //아직 아무것도 없음
     }
 
     public void ChangeStateToMove()

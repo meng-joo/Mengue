@@ -20,8 +20,10 @@ public abstract class Moving : MonoBehaviour
     public static int enemyAttack = 3;
     public static int enemyHealth = 30;
     public static int enemycurrnetHealth = enemyHealth;
-    public static int enemyDefence = 8;
+    public static int enemyDefence = 4;
     #endregion
+
+    public static bool _isPlayerTurn = true;
 
     protected BackGround _backGround = null;
     public enum PlayerState

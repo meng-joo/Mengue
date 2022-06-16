@@ -8,11 +8,15 @@ using TMPro;
 public class StoreUI : MonoBehaviour
 {
     public Button[] upgradePanel;
+    public Button[] skillPanel;
     private TextMeshProUGUI[] lvText = new TextMeshProUGUI[5];
     private List<Text> priceText = new List<Text>();
     //private int[] skillLv;
     private int[] price = new int[5];
     private int[] skillLevel = new int[5];
+    private TextMeshProUGUI[] skillPricetext = new TextMeshProUGUI[2];
+
+    public int[] skillPrice = new int[2];
     
     void Start()
     {
@@ -37,13 +41,16 @@ public class StoreUI : MonoBehaviour
             priceText.Add(upgradePanel[i].transform.Find("GoldText").GetComponent<Text>());
             price[i] = 10;
         }
+
+        for (int i = 0; i < skillPanel.Length; i++)
+        {
+            skillPricetext[i] = skillPanel[i].transform.Find("PriceText").GetComponent<TextMeshProUGUI>();
+
+        }
+        skillPrice[0] = 5;
+        skillPrice[1] = 7;
     }
 
-    
-    void Update()
-    {
-        
-    }
 
     public void SetStoreUI()
     {
@@ -52,8 +59,11 @@ public class StoreUI : MonoBehaviour
         seq.Append(transform.DOMoveY(520, 0.4f));
         for (int i = 0; i < upgradePanel.Length; i++)
         {
-            seq.Append(upgradePanel[i].transform.DOMoveY(750, 0.2f));
+            seq.Append(upgradePanel[i].transform.DOMoveY(750, 0.1f));
         }
+
+        seq.Append(skillPanel[0].transform.DOLocalMoveX(-640, 0.2f));
+        seq.Append(skillPanel[1].transform.DOLocalMoveX(-640, 0.2f));
     }
 
     public void GetBackStoreUI()
@@ -62,8 +72,11 @@ public class StoreUI : MonoBehaviour
 
         for (int i = 0; i < upgradePanel.Length; i++)
         {
-            seq.Append(upgradePanel[i].transform.DOMoveY(1400, 0.2f));
+            seq.Append(upgradePanel[i].transform.DOMoveY(1400, 0.14f));
         }
+
+        seq.Append(skillPanel[0].transform.DOLocalMoveX(-1270, 0.2f));
+        seq.Append(skillPanel[1].transform.DOLocalMoveX(-1270, 0.2f));
 
         seq.Append(transform.DOMoveY(1600, 0.4f));
     }
@@ -78,7 +91,7 @@ public class StoreUI : MonoBehaviour
         Moving.currentMoney -= price[num];
         price[num] += Mathf.RoundToInt(price[num] * 0.42f);
         skillLevel[num]++;
-        lvText[num].text = string.Format($"Lv.{skillLevel}");
+        lvText[num].text = string.Format($"Lv.{skillLevel[num]}");
         priceText[num].text = string.Format($"$ {price[num]}");
 
         UpgradeState(num);

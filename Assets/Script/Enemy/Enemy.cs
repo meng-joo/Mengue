@@ -6,6 +6,8 @@ using DG.Tweening;
 public class Enemy : Moving
 {
     public GameObject enemyView;
+    private SkillUI _skillUI;
+    private StateUI _stateUI;
 
     public PlayerBehave pPos;
     public ParticleSystem[] _particleSystem;
@@ -16,7 +18,9 @@ public class Enemy : Moving
     private void Start()
     {
         _animator = GetComponent<Animator>();
+        _stateUI = FindObjectOfType<StateUI>();
         pPos = GameObject.Find("Player").GetComponent<PlayerBehave>();
+        _skillUI = FindObjectOfType<SkillUI>();
         tempVec = transform.position;
     }
 
@@ -72,7 +76,7 @@ public class Enemy : Moving
             else
             {
                 Debug.Log("¿Ã∞‘ ø÷....");
-                transform.DOMove(transform.position + randomTransform, 0.13f);
+                transform.DOLocalMove(transform.position + randomTransform, 0.13f);
             }
         }
     }
@@ -99,14 +103,14 @@ public class Enemy : Moving
         //}
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.tag == "Sword")
-        {
-            Debug.Log("¿˚¿Ã ∏¬¿Ω!!!!!!¿˚¿Ã ∏¬¿Ω!!!!!");
-            GetAttack();
-        }
-    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if(other.tag == "Sword")
+    //    {
+    //        Debug.Log("¿˚¿Ã ∏¬¿Ω!!!!!!¿˚¿Ã ∏¬¿Ω!!!!!");
+    //        GetAttack();
+    //    }
+    //}
 
     public void GetAttack()
     {
@@ -126,8 +130,50 @@ public class Enemy : Moving
 
         else
         {
-            Instantiate(_particleSystem[0], transform.position, Quaternion.identity);
             //_animator.SetTrigger("GetHit");
+            EnemyTurn();
+        }
+    }
+    IEnumerator EnemyHitParticle()
+    {
+        yield return new WaitForSeconds(0.65f);
+        Debug.Log("¿Ã¿Áø±¿Ã¿Áø±¿Ã¿Áø±");
+        Instantiate(_particleSystem[0], transform.position + Vector3.forward, Quaternion.identity);
+    }
+
+    public void EnemyTurn()
+    {
+        StartCoroutine(EnemyAttack());
+        StartCoroutine(EnemyHitParticle());
+    }
+
+    IEnumerator EnemyAttack()
+    {
+        _isPlayerTurn = false;
+        yield return new WaitForSeconds(1.5f);
+
+        _skillUI.SendMessage("OtherWriteText", $"»Â«Û«Û(¿«)ø° ∆¯∆»∆›ƒ°!! ");
+        yield return new WaitForSeconds(1.5f);
+
+        int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
+
+        playerCurrentHealth -= Mathf.Max(1, enemyPower - playerDefence);
+        Instantiate(PlayerBehave.instance._hitEffect, PlayerBehave.instance.transform);
+        PlayerBehave.instance.ani.SetTrigger("GetHit");
+        yield return new WaitForSeconds(1.2f);
+
+        _skillUI.SendMessage("OtherWriteText", $"»Â«Û«Û(¿Ã)∞° ¥ÁΩ≈¿« ««∏¶ {enemyPower}∏∏≈≠ ±æ“Ω¿¥œ¥Ÿ.");
+
+        if(playerCurrentHealth <= 0)
+        {
+            PlayerBehave.instance.PlayerDead();
+            yield return null;
+        }
+
+        else
+        {
+            _stateUI.UpdateStateText();
+            _isPlayerTurn = true;
         }
     }
 }
