@@ -13,14 +13,15 @@ public abstract class Moving : MonoBehaviour
     public static int playerAttack = 5;
     public static int playerHealth = 100;
     public static int playerCurrentHealth = playerHealth;
-    public static int playerDefence = 12;
+    public static int playerDefence = 3;
     #endregion
 
     #region 적의 공격력, 피, 방어력
     public static int enemyAttack = 3;
     public static int enemyHealth = 30;
     public static int enemycurrnetHealth = enemyHealth;
-    public static int enemyDefence = 4;
+    public static int enemyDefence = 3;
+    public static int enemyMoney = 3;
     #endregion
 
     public static bool _isPlayerTurn = true;

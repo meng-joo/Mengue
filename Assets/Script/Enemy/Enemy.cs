@@ -95,6 +95,7 @@ public class Enemy : Moving
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
         transform.LookAt(player.transform);
         transform.rotation *= quaternion;
+        enemycurrnetHealth = enemyHealth;
 
         //for (int i = 0; i < _backGround.enemycount; i++)
         //{
@@ -119,13 +120,9 @@ public class Enemy : Moving
 
         if (enemycurrnetHealth <= 0)
         {
-            Instantiate(_particleSystem[1], transform.position, Quaternion.identity);
-            _backGround._enemyList.Remove(this);
-            Destroy(gameObject);
-            Moving._playerState = PlayerState.IDLE;
-            pPos.EndBattle();
+            StartCoroutine(EnemyDead());
+            //Instantiate(_particleSystem[1], transform.position, Quaternion.identity);
 
-            _backGround.CreateEnemy();
         }
 
         else
@@ -134,6 +131,22 @@ public class Enemy : Moving
             EnemyTurn();
         }
     }
+
+    IEnumerator EnemyDead()
+    {
+        _skillUI.SendMessage("OtherWriteText", $"´ç½ÅÀº ÈïÇóÇóÀ» Á×ÀÌ°í {moneyValue * enemyMoney}¿øÀ» ¾ò¾ú½À´Ï´Ù!");
+        currentMoney += moneyValue * enemyMoney;
+        _stateUI.UpdateStateText();
+
+        yield return new WaitForSeconds(5f);
+        _backGround._enemyList.Remove(this);
+        Destroy(gameObject);
+        Moving._playerState = PlayerState.IDLE;
+        pPos.EndBattle();
+
+        _backGround.CreateEnemy();
+    }
+
     IEnumerator EnemyHitParticle()
     {
         yield return new WaitForSeconds(0.65f);
@@ -150,19 +163,20 @@ public class Enemy : Moving
     IEnumerator EnemyAttack()
     {
         _isPlayerTurn = false;
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f);
 
         _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÇ)¿¡ ÆøÆÈÆÝÄ¡!! ");
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
 
         int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
 
-        playerCurrentHealth -= Mathf.Max(1, enemyPower - playerDefence);
+        int damage = Mathf.Max(1, enemyPower - playerDefence);
+        playerCurrentHealth -= damage;
         Instantiate(PlayerBehave.instance._hitEffect, PlayerBehave.instance.transform);
         PlayerBehave.instance.ani.SetTrigger("GetHit");
         yield return new WaitForSeconds(1.2f);
 
-        _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÌ)°¡ ´ç½ÅÀÇ ÇÇ¸¦ {enemyPower}¸¸Å­ ±ð¾Ò½À´Ï´Ù.");
+        _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÌ)°¡ ´ç½ÅÀÇ ÇÇ¸¦ {damage}¸¸Å­ ±ð¾Ò½À´Ï´Ù.");
 
         if(playerCurrentHealth <= 0)
         {

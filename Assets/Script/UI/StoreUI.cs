@@ -100,14 +100,15 @@ public class StoreUI : MonoBehaviour
     public void UpgradeState(int num)
     {
         if (num == 0) PlayerBehave.playerAttack += 2;
-        else if (num == 1) PlayerBehave.playerCurrentHealth += 10;
+        else if (num == 1) { PlayerBehave.playerHealth += 10; PlayerBehave.playerCurrentHealth += 10; }
         else if (num == 2) PlayerBehave.moneyValue += 1;
         else if (num == 3) PlayerBehave.playerDefence += 2;
         else if (num == 4)
         {
-            Moving.enemycurrnetHealth += Mathf.RoundToInt(Moving.enemycurrnetHealth * 0.33f);
+            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.33f);
             Moving.enemyDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.25f);
             Moving.enemyAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.25f);
+            Moving.enemyMoney += 1;
         }
     }
 }

@@ -132,6 +132,7 @@ public class PlayerBehave : Moving
         {
             _playerState = PlayerState.INSTORE;
             StartCoroutine(PlayerInStore());
+            _stateUI.UpdateStateText();
         }
     }
 
