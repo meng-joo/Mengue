@@ -115,7 +115,7 @@ public class BackGround : MonoBehaviour
 
         while (true)
         {
-            yield return new WaitForSeconds(4f);
+            yield return new WaitForSeconds(1f);
             int x = Random.Range(MinX + 1, MaxX);
             int z = Random.Range(MinZ + 1, MaxZ);
             
