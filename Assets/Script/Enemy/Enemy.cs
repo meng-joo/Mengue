@@ -68,15 +68,13 @@ public class Enemy : Moving
             if ((enemyX >= BackGround.MaxX) || (enemyX <= BackGround.MinX) || (enemyZ <= BackGround.MinZ) || (enemyZ >= BackGround.MaxZ) || isOverlap || isOverlapToPlayer)
             {
                 Debug.Log("안돼 돌아가");
-                //transform.position -= Vector3.Lerp();
-                //transform.DOKill();
-                //transform.DOMove(transform.position - randomTransform, 0.3f);
+                _canEnemyMove = true;
                 return;
             }
             else
             {
                 Debug.Log("이게 왜....");
-                transform.DOLocalMove(transform.position + randomTransform, 0.13f);
+                transform.DOLocalMove(transform.position + randomTransform, 0.13f).OnComplete(() => _canEnemyMove = true);
             }
         }
     }
@@ -134,22 +132,27 @@ public class Enemy : Moving
 
     IEnumerator EnemyDead()
     {
-        _skillUI.SendMessage("OtherWriteText", $"당신은 흥헹헹을 죽이고 {moneyValue * enemyMoney}원을 얻었습니다!");
+        StartCoroutine(EnemyHitParticle());
+        yield return new WaitForSeconds(2f);
+
+        _skillUI.SendMessage("OtherWriteText", $"당신은 흥헹헹을 죽이고 {moneyValue * enemyMoney}원을 얻었습니다! ");
         currentMoney += moneyValue * enemyMoney;
         _stateUI.UpdateStateText();
 
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(3f);
         _backGround._enemyList.Remove(this);
         Destroy(gameObject);
         Moving._playerState = PlayerState.IDLE;
         pPos.EndBattle();
 
         _backGround.CreateEnemy();
+
+        _skillUI.StartCoroutine("ShowButtons");
     }
 
     IEnumerator EnemyHitParticle()
     {
-        yield return new WaitForSeconds(0.65f);
+        yield return new WaitForSeconds(0.8f);
         Debug.Log("이재엽이재엽이재엽");
         Instantiate(_particleSystem[0], transform.position + Vector3.forward, Quaternion.identity);
     }
@@ -159,6 +162,8 @@ public class Enemy : Moving
         StartCoroutine(EnemyAttack());
         StartCoroutine(EnemyHitParticle());
     }
+
+
 
     IEnumerator EnemyAttack()
     {
@@ -178,7 +183,9 @@ public class Enemy : Moving
 
         _skillUI.SendMessage("OtherWriteText", $"흐헹헹(이)가 당신의 피를 {damage}만큼 깎았습니다.");
 
-        if(playerCurrentHealth <= 0)
+        _skillUI.StartCoroutine("ShowButtons");
+
+        if (playerCurrentHealth <= 0)
         {
             PlayerBehave.instance.PlayerDead();
             yield return null;

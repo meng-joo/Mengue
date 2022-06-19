@@ -10,7 +10,7 @@ public abstract class Moving : MonoBehaviour
     public static int moneyValue = 1;
 
     #region 플레이어의 공격력, 피, 방어력
-    public static int playerAttack = 5;
+    public static int playerAttack = 80;
     public static int playerHealth = 100;
     public static int playerCurrentHealth = playerHealth;
     public static int playerDefence = 3;
@@ -25,6 +25,8 @@ public abstract class Moving : MonoBehaviour
     #endregion
 
     public static bool _isPlayerTurn = true;
+
+    public bool _canEnemyMove = true;
 
     protected BackGround _backGround = null;
     public enum PlayerState
@@ -51,11 +53,23 @@ public abstract class Moving : MonoBehaviour
     {
         if (_playerState == PlayerState.IDLE)
         {
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKeyDown(KeyCode.W) || 
+                Input.GetKeyDown(KeyCode.A) || 
+                Input.GetKeyDown(KeyCode.S) || 
+                Input.GetKeyDown(KeyCode.D) || 
+                Input.GetKeyDown(KeyCode.DownArrow) || 
+                Input.GetKeyDown(KeyCode.UpArrow) || 
+                Input.GetKeyDown(KeyCode.LeftArrow) || 
+                Input.GetKeyDown(KeyCode.RightArrow))
             {
-                InputEnemyMovingKey();
+                if (_canEnemyMove)
+                {
+                    _canEnemyMove = false;
+                    InputEnemyMovingKey();
+
+                }
                 InputPlayerMovingKey();
-                //Invoke("ChangeStateToMove", 0.3f);
+                
             }
         }
     }

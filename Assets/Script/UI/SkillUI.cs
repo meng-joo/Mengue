@@ -18,6 +18,8 @@ public class SkillUI : MonoBehaviour
     public StoreUI _storeUI;
     public StateUI _stateUI;
 
+    public GameObject[] buttons;
+
     private int[] _skillCount = new int[2];
 
     private bool _isAttaking = false;
@@ -61,6 +63,7 @@ public class SkillUI : MonoBehaviour
     {
         if (!_isAttaking && _skillCount[0] > 0)
         {
+            StartCoroutine(HideButtons());
             int realDamage = Moving.playerAttack - Moving.enemyDefence;
             playerBehave.SetTrigger("Attack");
             StartCoroutine(WriteText($"당신이 {Mathf.Max(2, realDamage)}의 공격력으로 적을 공격했습니다."));
@@ -133,12 +136,14 @@ public class SkillUI : MonoBehaviour
     {
         if (!_isAttaking && _skillCount[1] > 0)
         {
+            StartCoroutine(HideButtons());
             playerBehave.SetTrigger("Heal");
             GameObject effect = Instantiate(PlayerBehave.instance._healEffect);
             effect.transform.position = PlayerBehave.instance.transform.position;
             StartCoroutine(WriteText($"체력을 10 회복 하였습니다."));
             Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 10, Moving.playerHealth);
             _stateUI.UpdateStateText();
+            _fightingEnemy.StartCoroutine("EnemyAttack");
             EnemyTurn();
             _skillCount[1]--;
             SetCountText();
@@ -160,6 +165,7 @@ public class SkillUI : MonoBehaviour
     {
         if (Moving._isPlayerTurn)
         {
+            StartCoroutine(WriteText("도망가~~!"));
             Enemy.currentMoney -= Mathf.RoundToInt(Mathf.Clamp(Moving.currentMoney / 10, 0, Moving.currentMoney));
             Destroy(_fightingEnemy.gameObject);
             _backGround.CreateEnemy();
@@ -181,10 +187,29 @@ public class SkillUI : MonoBehaviour
         _skillCount[num] += 1;
     }
 
-
     private void SetCountText()
     {
         _skillCountText[0].text = string.Format($"{_skillCount[0]} X");
         _skillCountText[1].text = string.Format($"{_skillCount[1]} X");
+    }
+
+    public IEnumerator HideButtons()
+    {
+        yield return new WaitForSeconds(0.2f);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            buttons[i].transform.DOMoveX(2190, 0.14f);
+            yield return new WaitForSeconds(0.08f);
+        }
+    }
+
+    public IEnumerator ShowButtons()
+    {
+        yield return new WaitForSeconds(0.2f);
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            buttons[i].transform.DOMoveX(1920 - 230, 0.12f);
+            yield return new WaitForSeconds(0.08f);
+        }
     }
 }

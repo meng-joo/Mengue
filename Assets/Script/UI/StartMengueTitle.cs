@@ -9,12 +9,27 @@ public class StartMengueTitle : MonoBehaviour
     public TextMeshProUGUI[] titleText;
     public GameClient _gameClient;
 
+    public GameObject windowPanel;
+    float _isWindowOpen = 3f;
+
     private void Start()
     {
         for (int i = 0; i < titleText.Length; i++)
         {
             titleText[i] = transform.GetChild(i).GetComponent<TextMeshProUGUI>();
         }
+    }
+
+    public void InputFileButton()
+    {
+
+    }
+
+    public void InputWindowButton()
+    {
+        
+        windowPanel.transform.DOMoveY(-5 + _isWindowOpen, 0.4f);
+        _isWindowOpen *= -1;
     }
 
     public void StartGame()
@@ -37,7 +52,7 @@ public class StartMengueTitle : MonoBehaviour
             yield return new WaitForSeconds(0.3f);
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         for (int i = 0; i < titleText.Length; i++)
         {
@@ -45,7 +60,7 @@ public class StartMengueTitle : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
         }
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.7f);
 
         _gameClient.StartGame();
     }
