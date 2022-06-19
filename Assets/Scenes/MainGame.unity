@@ -9941,6 +9941,7 @@ MonoBehaviour:
   _fightingEnemy: {fileID: 0}
   _backGround: {fileID: 1853123372}
   _storeUI: {fileID: 27491701}
+  _stateUI: {fileID: 0}
 --- !u!1 &2041690086
 GameObject:
   m_ObjectHideFlags: 0
