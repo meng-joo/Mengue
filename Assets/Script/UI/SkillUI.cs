@@ -140,8 +140,8 @@ public class SkillUI : MonoBehaviour
             playerBehave.SetTrigger("Heal");
             GameObject effect = Instantiate(PlayerBehave.instance._healEffect);
             effect.transform.position = PlayerBehave.instance.transform.position;
-            StartCoroutine(WriteText($"체력을 10 회복 하였습니다."));
-            Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 10, Moving.playerHealth);
+            StartCoroutine(WriteText($"체력을 {Mathf.Min(7, Moving.playerHealth - Moving.currentMoney)}회복 하였습니다."));
+            Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 7, Moving.playerHealth);
             _stateUI.UpdateStateText();
             _fightingEnemy.StartCoroutine("EnemyAttack");
             EnemyTurn();
@@ -167,11 +167,11 @@ public class SkillUI : MonoBehaviour
         {
             StartCoroutine(WriteText("도망가~~!"));
             Enemy.currentMoney -= Mathf.RoundToInt(Mathf.Clamp(Moving.currentMoney / 10, 0, Moving.currentMoney));
-            Destroy(_fightingEnemy.gameObject);
             _backGround.CreateEnemy();
             Moving.enemycurrnetHealth = Moving.enemyHealth;
             Moving._playerState = Moving.PlayerState.IDLE;
             PlayerBehave.instance.EndBattle();
+            Destroy(_fightingEnemy.gameObject);
         }
         else
         {
@@ -181,10 +181,15 @@ public class SkillUI : MonoBehaviour
 
     public void BuySkills(int num)
     {
-        if (Moving.currentMoney < _storeUI.skillPrice[num]) return;
+        _storeUI.AblingButtons(false);
+        if (Moving.currentMoney < _storeUI.skillPrice[num]) { return; _storeUI.StartCoroutine("ShowStoreBehave", "스킬을 구매하였습니다."); }
+
 
         Moving.currentMoney -= _storeUI.skillPrice[num];
         _skillCount[num] += 1;
+
+        
+        _storeUI.StartCoroutine("ShowStoreBehave", "스킬을 구매하였습니다.");
     }
 
     private void SetCountText()
