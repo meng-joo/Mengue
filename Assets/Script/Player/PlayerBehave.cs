@@ -49,12 +49,11 @@ public class PlayerBehave : Moving
             Debug.Log("aa");
         }
 
-        if(_playerState == PlayerState.INSTORE && !_isGacha)
+        if(_playerState == PlayerState.INSTORE && !_isGacha && !_isStoresetting)
         {
             if(Input.GetKeyDown(KeyCode.Escape))
             {
                 _storeUI.GetBackStoreUI();
-                _playerState = PlayerState.IDLE;
             }
         }
     }

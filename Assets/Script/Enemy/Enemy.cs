@@ -65,7 +65,7 @@ public class Enemy : Moving
                 }
             }
 
-            if ((enemyX >= BackGround.MaxX) || (enemyX <= BackGround.MinX) || (enemyZ <= BackGround.MinZ) || (enemyZ >= BackGround.MaxZ) || isOverlap || isOverlapToPlayer)
+            if ((enemyX >= BackGround.MaxX) || (enemyX <= BackGround.MinX) || (enemyZ <= BackGround.MinZ) || (enemyZ >= BackGround.MaxZ - 2) || isOverlap || isOverlapToPlayer)
             {
                 Debug.Log("¾ÈµÅ µ¹¾Æ°¡");
                 _canEnemyMove = true;

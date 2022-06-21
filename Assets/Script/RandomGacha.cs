@@ -145,6 +145,8 @@ public class RandomGacha : MonoBehaviour
         }
         Moving._isGacha = false;
 
+        _itemName.text = string.Format(" ");
+        _showGachaItem.enabled = true;
         fadeImage.gameObject.SetActive(false);
     }
 }

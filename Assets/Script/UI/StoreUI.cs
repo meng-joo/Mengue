@@ -77,13 +77,18 @@ public class StoreUI : MonoBehaviour
         else if(num == 2)
         {
             Moving._isGacha = true;
+            
             _randomGacha.SetPassiveItem();
+
+            StartCoroutine(ShowStoreBehave($"·£´ý »Ì±â!"));
         }
     }
 
     public void SetStoreUI()
     {
         Sequence seq = DOTween.Sequence();
+
+        Moving._isStoresetting = true;
 
         skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
         skillPricetext[2].text = string.Format($"$ {skillPrice[2]}");
@@ -99,6 +104,8 @@ public class StoreUI : MonoBehaviour
 
         seq.Append(skillPanel[3].transform.DOLocalMoveX(90, 0.14f));
         seq.Append(skillPanel[2].transform.DOLocalMoveX(90, 0.14f));
+
+        seq.AppendCallback(() => Moving._isStoresetting = false);
 
         StartCoroutine(ShowStoreBehave($"¾î¼­¿À¼¼¿ä~~~!"));
     }
@@ -119,6 +126,7 @@ public class StoreUI : MonoBehaviour
         seq.Append(skillPanel[2].transform.DOLocalMoveX(716, 0.14f));
 
         seq.Append(transform.DOMoveY(1600, 0.4f));
+        seq.AppendCallback(() => Moving._playerState = Moving.PlayerState.IDLE);
     }
 
     public void SelectUpgradePanel(int num)
@@ -173,7 +181,7 @@ public class StoreUI : MonoBehaviour
 
     public void AblingButtons(bool _is)
     {
-        for(int i=0;i<upgradePanel.Length;i++)
+        for (int i = 0; i < upgradePanel.Length; i++)
         {
             upgradePanel[i].enabled = _is;
         }

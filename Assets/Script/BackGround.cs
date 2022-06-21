@@ -117,7 +117,7 @@ public class BackGround : MonoBehaviour
         {
             yield return new WaitForSeconds(10f);
             int x = Random.Range(MinX + 1, MaxX);
-            int z = Random.Range(MinZ + 1, MaxZ);
+            int z = Random.Range(MinZ + 1, MaxZ - 2);
             
             Instantiate(coin, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
         }
