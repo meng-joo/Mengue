@@ -109,13 +109,13 @@ public class BackGround : MonoBehaviour
         enemy.gameObject.SetActive(true);
     }
 
-    IEnumerator SpawnCoin()
+    public IEnumerator SpawnCoin()
     {
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(6f);
 
         while (true)
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(10f);
             int x = Random.Range(MinX + 1, MaxX);
             int z = Random.Range(MinZ + 1, MaxZ);
             

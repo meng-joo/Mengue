@@ -27,6 +27,7 @@ public abstract class Moving : MonoBehaviour
     public static bool _isPlayerTurn = true;
 
     public bool _canEnemyMove = true;
+    public static bool _isGacha = false;
 
     protected BackGround _backGround = null;
     public enum PlayerState

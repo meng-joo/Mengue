@@ -23,6 +23,8 @@ public class StoreUI : MonoBehaviour
     public int[] skillPrice = new int[4];
     private bool _ischatting;
 
+    public RandomGacha _randomGacha;
+
     void Start()
     {
         SetPrice();
@@ -53,7 +55,7 @@ public class StoreUI : MonoBehaviour
         }
         skillPrice[0] = 5;
         skillPrice[1] = 7;
-        skillPrice[2] = Mathf.RoundToInt(Mathf.Max(2000, Moving.currentMoney * 0.9f));
+        skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
         skillPrice[3] = 150;
     }
 
@@ -61,7 +63,8 @@ public class StoreUI : MonoBehaviour
     {
         AblingButtons(false);
         if (Moving.currentMoney < skillPrice[num]) { StartCoroutine(ShowStoreBehave("돈이 부족합니다")); return; }
-        if (Moving.playerHealth == Moving.playerCurrentHealth) { StartCoroutine(ShowStoreBehave("이미 최대체력입니다.")); return; }
+        if (Moving.playerHealth == Moving.playerCurrentHealth && num == 3) { StartCoroutine(ShowStoreBehave("이미 최대체력입니다.")); return; }
+        if (_randomGacha.count > 5 && num == 2) { StartCoroutine(ShowStoreBehave("아이템이 가득찼습니다.")); return; }
 
         Moving.currentMoney -= skillPrice[num];
 
@@ -71,9 +74,10 @@ public class StoreUI : MonoBehaviour
             Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerHealth);
         }
 
-        else if(num == 4)
+        else if(num == 2)
         {
-
+            Moving._isGacha = true;
+            _randomGacha.SetPassiveItem();
         }
     }
 
@@ -81,7 +85,7 @@ public class StoreUI : MonoBehaviour
     {
         Sequence seq = DOTween.Sequence();
 
-        skillPrice[2] = Mathf.RoundToInt(Mathf.Max(2000, Moving.currentMoney * 0.9f));
+        skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
         skillPricetext[2].text = string.Format($"$ {skillPrice[2]}");
 
         seq.Append(transform.DOMoveY(520, 0.4f));
@@ -131,7 +135,7 @@ public class StoreUI : MonoBehaviour
         skillLevel[num]++;
         lvText[num].text = string.Format($"Lv.{skillLevel[num]}");
         priceText[num].text = string.Format($"$ {price[num]}");
-        skillPrice[2] = Mathf.RoundToInt(Mathf.Max(2000, Moving.currentMoney * 0.9f));
+        skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
         skillPricetext[2].text = string.Format($"$ {skillPrice[2]}");
         UpgradeState(num);
     }

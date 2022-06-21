@@ -25,6 +25,8 @@ public class PlayerBehave : Moving
 
     public static PlayerBehave instance;
 
+    
+
     private void Awake()
     {
         instance = this;
@@ -47,7 +49,7 @@ public class PlayerBehave : Moving
             Debug.Log("aa");
         }
 
-        if(_playerState == PlayerState.INSTORE)
+        if(_playerState == PlayerState.INSTORE && !_isGacha)
         {
             if(Input.GetKeyDown(KeyCode.Escape))
             {
