@@ -11,12 +11,15 @@ public class StateUI : MonoBehaviour
     int range = 232;
 
     private Button _settingButton;
+    public Button[] passiveSkillButton;
     public Image settingBackGround;
 
+    public Button settingButton;
     private void Start()
     {
         _stateText = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         _settingButton = transform.Find("SettingButton").GetComponent<Button>();
+        SetPassiveButton();
     }
 
     void Update()
@@ -42,4 +45,17 @@ public class StateUI : MonoBehaviour
         _stateText.text = string.Format($"이름: 맹주영\n체력: {Moving.playerCurrentHealth}/{Moving.playerHealth}\n공격력: {Moving.playerAttack}\n방어력: {Moving.playerDefence}\n돈: ${Moving.currentMoney}\n돈 가치: {Moving.moneyValue}");
 
     }
+
+    public void SetPassiveButton()
+    {
+        for(int i=0;i<passiveSkillButton.Length;i++)
+        {
+            passiveSkillButton[i] = transform.Find("PassiveBackground").GetChild(i).GetComponent<Button>();
+        }
+    }
+
+    //public void InputPassiveButton(int num)
+    //{
+        
+    //}
 }

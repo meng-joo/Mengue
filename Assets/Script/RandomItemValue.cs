@@ -16,6 +16,7 @@ public class RandomItemValue
 {
     public string skillName;
     public Sprite passiveImage;
+    public string itemText;
     public ItemRating _ItemRating;
     public int weight;
 
@@ -23,6 +24,7 @@ public class RandomItemValue
     {
         this.skillName = _item.skillName;
         this.passiveImage = _item.passiveImage;
+        this.itemText = _item.itemText;
         this._ItemRating = _item._ItemRating;
         this.weight = _item.weight;
     }

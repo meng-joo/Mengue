@@ -118,6 +118,7 @@ public class PlayerBehave : Moving
         if (collison.tag == "Enemy")
         {
             _playerState = PlayerState.BATTLE;
+            _stateUI.settingButton.enabled = false;
             _skillUI.SetEnemy(collison.transform.parent.gameObject);
             _boxCollider.enabled = false;
             _enemy = collison.gameObject;
@@ -202,6 +203,8 @@ public class PlayerBehave : Moving
         ani.ResetTrigger("Battle");
         ani.SetTrigger("NoBattle");
         _boxCollider.enabled = true;
+
+        _stateUI.settingButton.enabled = false;
 
         yield return new WaitForSeconds(1.1f);
         //for (int i = 0; i < _backGround._enemyList.Count; i++)

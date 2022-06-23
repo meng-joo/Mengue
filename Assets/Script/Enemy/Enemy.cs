@@ -65,7 +65,7 @@ public class Enemy : Moving
                 }
             }
 
-            if ((enemyX >= BackGround.MaxX) || (enemyX <= BackGround.MinX) || (enemyZ <= BackGround.MinZ) || (enemyZ >= BackGround.MaxZ - 2) || isOverlap || isOverlapToPlayer)
+            if ((enemyX >= BackGround.MaxX - 1) || (enemyX <= BackGround.MinX + 1) || (enemyZ <= BackGround.MinZ + 1) || (enemyZ >= BackGround.MaxZ - 2) || isOverlap || isOverlapToPlayer)
             {
                 Debug.Log("¾ÈµÅ µ¹¾Æ°¡");
                 _canEnemyMove = true;
@@ -74,6 +74,12 @@ public class Enemy : Moving
             else
             {
                 Debug.Log("ÀÌ°Ô ¿Ö....");
+                transform.DOKill();
+                int goX = Mathf.CeilToInt(transform.position.x);
+                int goZ = Mathf.CeilToInt(transform.position.z);
+
+                transform.position = new Vector3(goX, transform.position.y, goZ);
+
                 transform.DOLocalMove(transform.position + randomTransform, 0.13f).OnComplete(() => _canEnemyMove = true);
             }
         }
@@ -86,6 +92,7 @@ public class Enemy : Moving
 
     IEnumerator BattleEnemy(GameObject player)
     {
+        
         enemyView.SetActive(false);
         yield return new WaitForSeconds(0.2f);
         Quaternion quaternion = Quaternion.Euler(75, 0, 0);
@@ -168,16 +175,16 @@ public class Enemy : Moving
     IEnumerator EnemyAttack()
     {
         _isPlayerTurn = false;
-        yield return new WaitForSeconds(2f);
-
-        _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÇ)¿¡ ÆøÆÈÆÝÄ¡!! ");
         yield return new WaitForSeconds(1f);
+        pPos._battleCamera.EnemyAttack();
+        _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÇ)¿¡ ÆøÆÈÆÝÄ¡!! ");
+        yield return new WaitForSeconds(2f);
 
         int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
 
         int damage = Mathf.Max(1, enemyPower - playerDefence);
         playerCurrentHealth -= damage;
-        Instantiate(PlayerBehave.instance._hitEffect, PlayerBehave.instance.transform);
+        Instantiate(PlayerBehave.instance._hitEffect, transform);
         PlayerBehave.instance.ani.SetTrigger("GetHit");
         yield return new WaitForSeconds(1.2f);
 

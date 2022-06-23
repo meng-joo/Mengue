@@ -7,6 +7,10 @@ using UnityEngine.UI;
 
 public class RandomGacha : MonoBehaviour
 {
+    public TextMeshProUGUI skillExplanText;
+    public PassiveButton[] passiveButtons;
+
+
     public List<RandomItemValue> items = new List<RandomItemValue>();
     public int total = 0;
 
@@ -21,9 +25,12 @@ public class RandomGacha : MonoBehaviour
     public Sprite idleImage;
     public Image whiteImage;
 
-    public string _name;
+    public string _name, _grade;
 
     public TextMeshProUGUI _itemName;
+    public TextMeshProUGUI _itemGrade;
+
+    private Color[] textColor = new Color[3];
 
     private void Start()
     {
@@ -53,8 +60,13 @@ public class RandomGacha : MonoBehaviour
         yield return new WaitForSeconds(1.2f);
 
         RandomItemValue temp = StartGacha();
+
+
+        passiveButtons[count].itemData = temp;
         passiveItem[count].sprite = temp.passiveImage;
         _name = temp.skillName;
+        _grade = temp._ItemRating.ToString().Trim();
+        
         count++;
 
         _showGachaItem.image.sprite = idleImage;
@@ -109,6 +121,55 @@ public class RandomGacha : MonoBehaviour
             _itemName.text = string.Format(_name + " ");
         });
 
+        seq.AppendCallback(() =>
+        {
+            VertexGradient ver = _itemGrade.colorGradient;
+            _itemGrade.gameObject.SetActive(true);
+
+            if (_grade == "Bronze") 
+            {
+                ColorUtility.TryParseHtmlString("#4F2B15FF", out textColor[0]);
+                ColorUtility.TryParseHtmlString("#BE6D2AFF", out textColor[1]);
+                ColorUtility.TryParseHtmlString("#713115FF", out textColor[2]);
+            }
+
+            else if(_grade == "Silver")
+            {
+                ColorUtility.TryParseHtmlString("#6A6A6AFF", out textColor[0]);
+                ColorUtility.TryParseHtmlString("#484848FF", out textColor[1]);
+                ColorUtility.TryParseHtmlString("#1A1A1AFF", out textColor[2]);
+            }
+
+            else if(_grade == "Gold")
+            {
+                ColorUtility.TryParseHtmlString("#FFDA68FF", out textColor[0]);
+                ColorUtility.TryParseHtmlString("#B08502FF", out textColor[1]);
+                ColorUtility.TryParseHtmlString("#F1C53EFF", out textColor[2]);
+            }
+
+            else if(_grade == "Platinum")
+            {
+                ColorUtility.TryParseHtmlString("#2AEBFFFF", out textColor[0]);
+                ColorUtility.TryParseHtmlString("#11AD89FF", out textColor[1]);
+                ColorUtility.TryParseHtmlString("#40FF7FFF", out textColor[2]);
+            }
+
+            else if (_grade == "Meng")
+            {
+                ColorUtility.TryParseHtmlString("#FF5623FF", out textColor[0]);
+                ColorUtility.TryParseHtmlString("#FF1B00FF", out textColor[1]);
+                ColorUtility.TryParseHtmlString("#FF4800FF", out textColor[2]);
+            }
+
+            ver.topLeft = textColor[0];
+            ver.bottomLeft = textColor[1];
+            ver.bottomRight = textColor[2];
+
+            _itemGrade.colorGradient = ver;
+
+            _itemGrade.text = string.Format(_grade + " ");
+        });
+
         seq.Append(_exitButton.transform.DOLocalMoveY(-403, 0.1f));
     }
 
@@ -131,7 +192,7 @@ public class RandomGacha : MonoBehaviour
 
     IEnumerator Exit()
     {
-        _showGachaItem.transform.DOLocalMoveY(-760, 0.18f);
+        _showGachaItem.transform.DOLocalMoveY(-830, 0.18f);
         _exitButton.transform.DOLocalMoveY(-760, 0.1f);
 
         yield return new WaitForSeconds(1f);
@@ -146,6 +207,7 @@ public class RandomGacha : MonoBehaviour
         Moving._isGacha = false;
 
         _itemName.text = string.Format(" ");
+        _itemGrade.text = string.Format(" ");
         _showGachaItem.enabled = true;
         fadeImage.gameObject.SetActive(false);
     }

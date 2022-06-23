@@ -64,7 +64,7 @@ public class StoreUI : MonoBehaviour
         AblingButtons(false);
         if (Moving.currentMoney < skillPrice[num]) { StartCoroutine(ShowStoreBehave("돈이 부족합니다")); return; }
         if (Moving.playerHealth == Moving.playerCurrentHealth && num == 3) { StartCoroutine(ShowStoreBehave("이미 최대체력입니다.")); return; }
-        if (_randomGacha.count > 5 && num == 2) { StartCoroutine(ShowStoreBehave("아이템이 가득찼습니다.")); return; }
+        if (_randomGacha.count > 4 && num == 2) { StartCoroutine(ShowStoreBehave("아이템이 가득찼습니다.")); return; }
 
         Moving.currentMoney -= skillPrice[num];
 
