@@ -140,7 +140,7 @@ public class SkillUI : MonoBehaviour
             playerBehave.SetTrigger("Heal");
             GameObject effect = Instantiate(PlayerBehave.instance._healEffect);
             effect.transform.position = PlayerBehave.instance.transform.position;
-            StartCoroutine(WriteText($"체력을 {Mathf.Min(7, Moving.playerHealth - Moving.currentMoney)}회복 하였습니다."));
+            StartCoroutine(WriteText($"체력을 {Mathf.Min(7, Moving.playerHealth - Moving.playerCurrentHealth)}회복 하였습니다."));
             Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 7, Moving.playerHealth);
             _stateUI.UpdateStateText();
             _fightingEnemy.StartCoroutine("EnemyAttack");
@@ -182,8 +182,9 @@ public class SkillUI : MonoBehaviour
     public void BuySkills(int num)
     {
         _storeUI.AblingButtons(false);
-        if (Moving.currentMoney < _storeUI.skillPrice[num]) { return; _storeUI.StartCoroutine("ShowStoreBehave", "스킬을 구매하였습니다."); }
 
+        if (Moving.currentMoney < _storeUI.skillPrice[num]) { _storeUI.StartCoroutine("ShowStoreBehave", "돈이 부족해요."); return; }
+        if (_skillCount[num] > 10) { _storeUI.StartCoroutine("ShowStoreBehave", "스킬은 최대 10개까지 살수 있습니다."); return; }
 
         Moving.currentMoney -= _storeUI.skillPrice[num];
         _skillCount[num] += 1;

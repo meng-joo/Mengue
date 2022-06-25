@@ -175,10 +175,10 @@ public class Enemy : Moving
     IEnumerator EnemyAttack()
     {
         _isPlayerTurn = false;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
         pPos._battleCamera.EnemyAttack();
         _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÇ)¿¡ ÆøÆÈÆÝÄ¡!! ");
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2.2f);
 
         int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
 

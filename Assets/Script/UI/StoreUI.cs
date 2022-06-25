@@ -156,9 +156,9 @@ public class StoreUI : MonoBehaviour
         else if (num == 3) { PlayerBehave.playerDefence += 2; StartCoroutine(ShowStoreBehave("방어력이 2올라갔습니다.")); }
         else if (num == 4)
         {
-            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.33f);
-            Moving.enemyDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.25f);
-            Moving.enemyAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.25f);
+            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.15f);
+            Moving.enemyDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.17f);
+            Moving.enemyAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.17f);
             Moving.enemyMoney += 1;
             StartCoroutine(ShowStoreBehave("적이 강화되었습니다."));
             if (skillLevel[num] % 11 == 10)

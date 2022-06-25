@@ -20,6 +20,8 @@ public class RandomItemValue
     public ItemRating _ItemRating;
     public int weight;
 
+    public bool isactive;
+
     public RandomItemValue(RandomItemValue _item)
     {
         this.skillName = _item.skillName;
