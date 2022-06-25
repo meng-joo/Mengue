@@ -6,8 +6,10 @@ using TMPro;
 
 public class PlayerBehave : Moving
 {
+    public Camera maincam;
     private GameObject _enemy = null;
     public Enemy _currentEnemy = null;
+    public PassiveData _passiveData;
 
     public BattleCamera _battleCamera = null;
     private CharacterController characterController;
@@ -25,7 +27,8 @@ public class PlayerBehave : Moving
 
     public static PlayerBehave instance;
 
-    
+    public BattleEffect _battleEffect;
+    private bool[] isPassiveOn = new bool[20];
 
     private void Awake()
     {
@@ -36,8 +39,13 @@ public class PlayerBehave : Moving
     {
         characterController = GetComponent<CharacterController>();
         exclamationMark = transform.Find("ExclamationMark").GetComponent<TextMeshPro>();
+        _passiveData = transform.Find("PassiveData").GetComponent<PassiveData>();
         ani = GetComponent<Animator>();
         _boxCollider = GetComponent<BoxCollider>();
+        for (int i = 0; i < isPassiveOn.Length; i++)
+        {
+            isPassiveOn[i] = false;
+        }
     }
 
     protected override void Move()
@@ -54,6 +62,117 @@ public class PlayerBehave : Moving
             if(Input.GetKeyDown(KeyCode.Escape))
             {
                 _storeUI.GetBackStoreUI();
+                PassiveApply();
+            }
+        }
+    }
+
+    void PassiveApply()
+    {
+        playerAddHealth = playerHealth;
+        playerCurrentDefence = playerDefence;
+        playerCurrentAttack = playerAttack;
+
+        
+
+        for (int i = 0; i < _passiveData.activeItem.Count; i++) {
+            if(_passiveData.activeItem[i].isactive == true)
+            {
+                if (i == 0)
+                {
+                    playerCurrentAttack = Mathf.RoundToInt(playerAttack * 1.15f);
+                    //isPassiveOn[i] = true;
+                }
+                else if(i == 1)
+                {
+                    int Ran = Random.Range(0, 3);
+                    switch (Ran)
+                    {
+                        case 0:
+                            playerAddHealth = Mathf.RoundToInt(playerAddHealth > playerHealth ? playerAddHealth * 2.5f : playerHealth * 2.5f);
+                            break;
+                        case 1:
+                            playerCurrentAttack = playerCurrentAttack > playerAttack ? playerCurrentAttack * 3 : playerAttack * 3;
+                            break;
+                        case 2:
+                            playerCurrentDefence = playerCurrentDefence > playerDefence ? playerCurrentDefence * 2 : playerDefence * 2;
+                            break;
+                    }
+                }
+                else if (i == 2)
+                {
+
+                }
+                else if (i == 3)
+                {
+                    playerAddHealth = Mathf.RoundToInt(playerHealth * 1.2f);
+                }
+                else if (i == 4) // 
+                {
+                    _skillUI.runvalue = 20;
+                }
+                else if (i == 5) // 방어증가
+                {
+                    playerCurrentDefence = Mathf.RoundToInt(playerCurrentDefence > playerDefence ? playerCurrentDefence * 1.15f : playerDefence * 1.15f);
+                }
+                else if (i == 6) //가방
+                {
+                    _skillUI.skillLimite = 18;
+                }
+                else if (i == 7)
+                {
+                    //방울 방패
+                }
+                else if (i == 8)
+                {
+                    maincam.orthographicSize = 7;
+                }
+                else if (i == 9)
+                {
+                    //미다스의 힘
+                }
+                else if (i == 10)
+                {
+                    //독
+                }
+                else if (i == 11 && !isPassiveOn[i])
+                {
+                    //가시방패
+                }
+                else if (i == 12)
+                {
+                    _backGround.coinSpawnDeley = 8f;
+                }
+                else if (i == 13)
+                {
+                    passive_100m = 2;
+                }
+                else if (i == 14)
+                {
+                    //강강약약
+                }
+                else if (i == 15)
+                {
+                    //피해 흡혈
+                }
+                else if (i == 16)
+                {
+                    playerAddHealth = Mathf.RoundToInt(playerAddHealth > playerHealth ? playerAddHealth * 2.5f : playerHealth * 2.5f);
+                    playerCurrentAttack = playerCurrentAttack > playerAttack ? playerCurrentAttack * 3 : playerAttack * 3;
+                    playerCurrentDefence = playerCurrentDefence > playerDefence ? playerCurrentDefence * 2 : playerDefence * 2;
+                }
+                else if (i == 17)
+                {
+                    _storeUI.passive_Sale = 2;
+                }
+                else if (i == 18)
+                {
+
+                }
+                else if (i == 19)
+                {
+
+                }
             }
         }
     }
@@ -112,23 +231,17 @@ public class PlayerBehave : Moving
         if(collison.tag == "Coin")
         {
             currentMoney += moneyValue;
+            _backGround.coinCount--;
             Destroy(collison.gameObject);
             _stateUI.UpdateStateText();
         }
         if (collison.tag == "Enemy")
         {
-            _playerState = PlayerState.BATTLE;
-            _stateUI.settingButton.enabled = false;
-            _skillUI.SetEnemy(collison.transform.parent.gameObject);
-            _boxCollider.enabled = false;
-            _enemy = collison.gameObject;
-            //_currentEnemy = _enemy.transform.parent.GetComponent<Enemy>();
-            StartCoroutine(PlayerFindEnemyToBattle());
-            //Camera.main.depth = -1;
-            //transform.LookAt(collison.transform);
-            //transform.position = new Vector3(transform.position.x, 1, transform.position.z);
-            //collison.transform.LookAt(transform);
-            //collison.transform.position = new Vector3(collison.transform.position.x, 1, collison.transform.position.z);
+            SetBattle(collison.gameObject, 0);
+        }
+        if(collison.tag == "Boss")
+        {
+            SetBattle(collison.gameObject, 1);
         }
         if(collison.tag == "Store")
         {
@@ -138,11 +251,26 @@ public class PlayerBehave : Moving
         }
     }
 
-    IEnumerator PlayerFindEnemyToBattle()
+    void SetBattle(GameObject g, int i)
+    {
+        _playerState = PlayerState.BATTLE;
+        _stateUI.settingButton.enabled = false;
+        _skillUI.SetEnemy(g.transform.parent.gameObject);
+        _boxCollider.enabled = false;
+        _enemy = g.gameObject;
+        //_currentEnemy = _enemy.transform.parent.GetComponent<Enemy>();
+        StartCoroutine(PlayerFindEnemyToBattle(i));
+    }
+
+    IEnumerator PlayerFindEnemyToBattle(int i)
     {
         exclamationMark.gameObject.SetActive(true);
 
-        yield return new WaitForSeconds(1.3f);
+        yield return new WaitForSeconds(1f);
+
+        _battleEffect.SetProfile(i);
+
+        yield return new WaitForSeconds(8f);
 
         characterController.enabled = false;
         exclamationMark.gameObject.SetActive(false);

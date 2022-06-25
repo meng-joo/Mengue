@@ -9,6 +9,9 @@ public class BackGround : MonoBehaviour
     public const int MaxZ = 15;
     public const int MinZ = -15;
 
+    public float coinSpawnDeley = 10f;
+    public int coinCount = 0;
+
     public List<Enemy> _enemyList = new List<Enemy>();
 
     public GameObject backGroundPrefab = null;
@@ -111,15 +114,21 @@ public class BackGround : MonoBehaviour
 
     public IEnumerator SpawnCoin()
     {
-        yield return new WaitForSeconds(6f);
+        yield return new WaitForSeconds(7f);
 
         while (true)
         {
-            yield return new WaitForSeconds(10f);
-            int x = Random.Range(MinX + 1, MaxX);
-            int z = Random.Range(MinZ + 1, MaxZ - 2);
-            
-            Instantiate(coin, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
+            if (coinCount < 40)
+            {
+                yield return new WaitForSeconds(coinSpawnDeley);
+                int x = Random.Range(MinX + 1, MaxX);
+                int z = Random.Range(MinZ + 1, MaxZ - 2);
+
+                Instantiate(coin, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
+                coinCount++;
+            }
+
+            yield return new WaitForSeconds(coinSpawnDeley * coinSpawnDeley - 30);
         }
     }
 }

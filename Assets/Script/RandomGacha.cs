@@ -10,6 +10,7 @@ public class RandomGacha : MonoBehaviour
     public TextMeshProUGUI skillExplanText;
     public PassiveButton[] passiveButtons;
 
+    public PassiveData _playerPassiveData;
 
     public List<RandomItemValue> items = new List<RandomItemValue>();
     public int total = 0;
@@ -37,6 +38,7 @@ public class RandomGacha : MonoBehaviour
         for (int i = 0; i < items.Count; i++)
         {
             total += items[i].weight;
+            _playerPassiveData.activeItem.Add(items[i]);
         }
     }
 
@@ -87,6 +89,10 @@ public class RandomGacha : MonoBehaviour
             if (selectNum <= weight)
             {
                 RandomItemValue temp = new RandomItemValue(items[i]);
+                items[i].isactive = true;
+                _playerPassiveData.activeItem[i].isactive = true;
+                total -= items[i].weight;
+                items.Remove(items[i]);
                 return temp;
             }
         }

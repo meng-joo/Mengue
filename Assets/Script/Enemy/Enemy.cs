@@ -120,7 +120,7 @@ public class Enemy : Moving
 
     public void GetAttack()
     {
-        int realDamage = playerAttack - enemyDefence;
+        int realDamage = playerCurrentAttack - enemyDefence;
         enemycurrnetHealth -= Mathf.Clamp(realDamage, 2, realDamage);
 
         if (enemycurrnetHealth <= 0)
@@ -166,40 +166,62 @@ public class Enemy : Moving
 
     public void EnemyTurn()
     {
-        StartCoroutine(EnemyAttack());
+        EnemyAttack();
         StartCoroutine(EnemyHitParticle());
     }
 
 
 
-    IEnumerator EnemyAttack()
+    void EnemyAttack()
     {
-        _isPlayerTurn = false;
-        yield return new WaitForSeconds(3f);
-        pPos._battleCamera.EnemyAttack();
-        _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÇ)¿¡ ÆøÆÈÆÝÄ¡!! ");
-        yield return new WaitForSeconds(2.2f);
+        StartCoroutine(Attacking());
+    }
 
-        int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
+    IEnumerator Attacking()
+    {
+        int canAttack = Random.Range(0, passive_100m);
 
-        int damage = Mathf.Max(1, enemyPower - playerDefence);
-        playerCurrentHealth -= damage;
-        Instantiate(PlayerBehave.instance._hitEffect, transform);
-        PlayerBehave.instance.ani.SetTrigger("GetHit");
-        yield return new WaitForSeconds(1.2f);
-
-        _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÌ)°¡ ´ç½ÅÀÇ ÇÇ¸¦ {damage}¸¸Å­ ±ð¾Ò½À´Ï´Ù.");
-
-        _skillUI.StartCoroutine("ShowButtons");
-
-        if (playerCurrentHealth <= 0)
+        if (canAttack == 0)
         {
-            PlayerBehave.instance.PlayerDead();
-            yield return null;
+            _isPlayerTurn = false;
+            yield return new WaitForSeconds(3f);
+            pPos._battleCamera.EnemyAttack();
+            _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÇ)¿¡ ÆøÆÈÆÝÄ¡!! ");
+            yield return new WaitForSeconds(2.2f);
+
+            int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
+
+            int damage = Mathf.Max(1, enemyPower - playerDefence);
+            playerCurrentHealth -= damage;
+            Instantiate(PlayerBehave.instance._hitEffect, transform);
+            PlayerBehave.instance.ani.SetTrigger("GetHit");
+            yield return new WaitForSeconds(1.2f);
+
+            _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÌ)°¡ ´ç½ÅÀÇ ÇÇ¸¦ {damage}¸¸Å­ ±ð¾Ò½À´Ï´Ù.");
+
+            _skillUI.StartCoroutine("ShowButtons");
+
+            if (playerCurrentHealth <= 0)
+            {
+                PlayerBehave.instance.PlayerDead();
+                yield return null;
+            }
+
+            else
+            {
+                _stateUI.UpdateStateText();
+                _isPlayerTurn = true;
+            }
         }
 
-        else
+        else if (canAttack == 1)
         {
+            _isPlayerTurn = false;
+            yield return new WaitForSeconds(3f);
+            _skillUI.SendMessage("OtherWriteText", $"ÀûÀº ´ç½Å¿¡°Ô ¼ÕÀÌ ´êÁö ¾Ê½À´Ï´Ù");
+            yield return new WaitForSeconds(2f);
+
+            _skillUI.StartCoroutine("ShowButtons");
             _stateUI.UpdateStateText();
             _isPlayerTurn = true;
         }

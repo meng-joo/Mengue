@@ -18,4 +18,6 @@ public class CameraMoving : MonoBehaviour
         pos.y = transform.position.y;
         transform.position = Vector3.Lerp(transform.position, pos, 0.03f);
     }
+
+
 }

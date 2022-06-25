@@ -25,6 +25,8 @@ public class StoreUI : MonoBehaviour
 
     public RandomGacha _randomGacha;
 
+    public int passive_Sale = 1;
+
     void Start()
     {
         SetPrice();
@@ -62,11 +64,11 @@ public class StoreUI : MonoBehaviour
     public void BuySkills(int num)
     {
         AblingButtons(false);
-        if (Moving.currentMoney < skillPrice[num]) { StartCoroutine(ShowStoreBehave("돈이 부족합니다")); return; }
+        if (Moving.currentMoney < skillPrice[num] / passive_Sale) { StartCoroutine(ShowStoreBehave("돈이 부족합니다")); return; }
         if (Moving.playerHealth == Moving.playerCurrentHealth && num == 3) { StartCoroutine(ShowStoreBehave("이미 최대체력입니다.")); return; }
         if (_randomGacha.count > 4 && num == 2) { StartCoroutine(ShowStoreBehave("아이템이 가득찼습니다.")); return; }
 
-        Moving.currentMoney -= skillPrice[num];
+        Moving.currentMoney -= skillPrice[num] / passive_Sale;
 
         if(num == 3)
         {
@@ -77,6 +79,7 @@ public class StoreUI : MonoBehaviour
         else if(num == 2)
         {
             Moving._isGacha = true;
+            
             
             _randomGacha.SetPassiveItem();
 
@@ -91,7 +94,7 @@ public class StoreUI : MonoBehaviour
         Moving._isStoresetting = true;
 
         skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
-        skillPricetext[2].text = string.Format($"$ {skillPrice[2]}");
+        skillPricetext[2].text = string.Format($"$ {skillPrice[2] / passive_Sale}");
 
         seq.Append(transform.DOMoveY(520, 0.4f));
         for (int i = 0; i < upgradePanel.Length; i++)
@@ -144,7 +147,7 @@ public class StoreUI : MonoBehaviour
         lvText[num].text = string.Format($"Lv.{skillLevel[num]}");
         priceText[num].text = string.Format($"$ {price[num]}");
         skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
-        skillPricetext[2].text = string.Format($"$ {skillPrice[2]}");
+        skillPricetext[2].text = string.Format($"$ {skillPrice[2] / passive_Sale}");
         UpgradeState(num);
     }
 

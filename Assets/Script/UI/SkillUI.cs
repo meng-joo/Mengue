@@ -24,6 +24,10 @@ public class SkillUI : MonoBehaviour
 
     private bool _isAttaking = false;
 
+    public int runvalue;
+
+    public int skillLimite = 10;
+
     private void Start()
     {
         skillUI = GetComponent<Image>();
@@ -166,7 +170,7 @@ public class SkillUI : MonoBehaviour
         if (Moving._isPlayerTurn)
         {
             StartCoroutine(WriteText("도망가~~!"));
-            Enemy.currentMoney -= Mathf.RoundToInt(Mathf.Clamp(Moving.currentMoney / 10, 0, Moving.currentMoney));
+            Enemy.currentMoney -= Mathf.RoundToInt(Mathf.Clamp(Moving.currentMoney / runvalue, 0, Moving.currentMoney));
             _backGround.CreateEnemy();
             Moving.enemycurrnetHealth = Moving.enemyHealth;
             Moving._playerState = Moving.PlayerState.IDLE;
@@ -183,10 +187,10 @@ public class SkillUI : MonoBehaviour
     {
         _storeUI.AblingButtons(false);
 
-        if (Moving.currentMoney < _storeUI.skillPrice[num]) { _storeUI.StartCoroutine("ShowStoreBehave", "돈이 부족해요."); return; }
-        if (_skillCount[num] > 10) { _storeUI.StartCoroutine("ShowStoreBehave", "스킬은 최대 10개까지 살수 있습니다."); return; }
+        if (Moving.currentMoney < _storeUI.skillPrice[num] / _storeUI.passive_Sale) { _storeUI.StartCoroutine("ShowStoreBehave", "돈이 부족해요."); return; }
+        if (_skillCount[num] > skillLimite) { _storeUI.StartCoroutine("ShowStoreBehave", $"스킬은 최대 {skillLimite}개까지 살수 있습니다."); return; }
 
-        Moving.currentMoney -= _storeUI.skillPrice[num];
+        Moving.currentMoney -= _storeUI.skillPrice[num] / _storeUI.passive_Sale;
         _skillCount[num] += 1;
 
         
