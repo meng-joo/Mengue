@@ -32,12 +32,12 @@ public class BattleEffect : MonoBehaviour
 
         seq.AppendInterval(1.8f);
 
-        seq.Append(_profileImage[0].transform.DOLocalMoveX(1300, 0.3f));
-        seq.Append(_profileImage[1].transform.DOLocalMoveX(-1300, 0.3f));
-        seq.Append(_battleEffectPanel[0].transform.DOLocalMoveX(2643.6f, 0.5f).SetEase(Ease.InQuart));
-        seq.Append(_battleEffectPanel[1].transform.DOLocalMoveX(-2643.6f, 0.5f).SetEase(Ease.InQuart));
-        seq.Append(_vs[0].transform.DOLocalMoveX(-1300, 0.3f));
-        seq.Append(_vs[1].transform.DOLocalMoveX(1300, 0.3f));
+        seq.Append(_profileImage[0].transform.DOLocalMoveX(1300, 0.2f));
+        seq.Join(_profileImage[1].transform.DOLocalMoveX(-1300, 0.23f));
+        seq.Append(_battleEffectPanel[0].transform.DOLocalMoveX(2643.6f, 0.2f).SetEase(Ease.InQuart));
+        seq.Append(_battleEffectPanel[1].transform.DOLocalMoveX(-2643.6f, 0.2f).SetEase(Ease.InQuart));
+        seq.Append(_vs[0].transform.DOLocalMoveX(-1300, 0.2f));
+        seq.Join(_vs[1].transform.DOLocalMoveX(1300, 0.23f));
 
         seq.AppendCallback(() =>
         {

@@ -26,7 +26,7 @@ public class SkillUI : MonoBehaviour
 
     public int runvalue;
 
-    public int skillLimite = 10;
+    public int skillLimite = 14;
 
     private void Start()
     {
@@ -38,6 +38,7 @@ public class SkillUI : MonoBehaviour
         _skillCountText[1] = transform.GetChild(4).Find("HealSkill/CountSkillText").GetComponent<TextMeshProUGUI>();
         _skillCount[0] = 10;
         _skillCount[1] = 3;
+        runvalue = 2;
     }
 
     public void SetEnemy(GameObject _enemy)
@@ -48,7 +49,7 @@ public class SkillUI : MonoBehaviour
     public void ViewSkillUI()
     {
         Sequence sequence = DOTween.Sequence();
-        _runAwayCost.text = string.Format("-{0}$", Mathf.RoundToInt(Mathf.Clamp(Moving.currentMoney / 10, 0, Moving.currentMoney)));
+        _runAwayCost.text = string.Format("-{0}$", Mathf.RoundToInt(Mathf.Min(Moving.currentMoney / runvalue, 0)));
         sequence.Append(skillUI.transform.DOLocalMoveY(-354f, 1));
         StartCoroutine(WriteText("당신은 슬라임(을)를 만났습니다!"));
         //다른 스킬을 더 띄어주기 위해 시퀀스 구현해야함
@@ -70,7 +71,7 @@ public class SkillUI : MonoBehaviour
             StartCoroutine(HideButtons());
             int realDamage = Moving.playerAttack - Moving.enemyDefence;
             playerBehave.SetTrigger("Attack");
-            StartCoroutine(WriteText($"당신이 {Mathf.Max(2, realDamage)}의 공격력으로 적을 공격했습니다."));
+            //StartCoroutine(WriteText($"당신이 {Mathf.Max(2, realDamage)}의 공격력으로 적을 공격했습니다."));
             _fightingEnemy.GetAttack();
             EnemyTurn();
             _skillCount[0]--;
@@ -144,8 +145,8 @@ public class SkillUI : MonoBehaviour
             playerBehave.SetTrigger("Heal");
             GameObject effect = Instantiate(PlayerBehave.instance._healEffect);
             effect.transform.position = PlayerBehave.instance.transform.position;
-            StartCoroutine(WriteText($"체력을 {Mathf.Min(7, Moving.playerHealth - Moving.playerCurrentHealth)}회복 하였습니다."));
-            Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 7, Moving.playerHealth);
+            StartCoroutine(WriteText($"체력을 {Mathf.Min(7, Moving.playerAddHealth - Moving.playerCurrentHealth)}회복 하였습니다."));
+            Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 7, Moving.playerAddHealth);
             _stateUI.UpdateStateText();
             _fightingEnemy.StartCoroutine("EnemyAttack");
             EnemyTurn();
@@ -169,9 +170,9 @@ public class SkillUI : MonoBehaviour
     {
         if (Moving._isPlayerTurn)
         {
-            StartCoroutine(WriteText("도망가~~!"));
-            Enemy.currentMoney -= Mathf.RoundToInt(Mathf.Clamp(Moving.currentMoney / runvalue, 0, Moving.currentMoney));
-            _backGround.CreateEnemy();
+            StartCoroutine(WriteText("도망가~~! "));
+            Moving.currentMoney -= Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 0));
+            _backGround.Create();
             Moving.enemycurrnetHealth = Moving.enemyHealth;
             Moving._playerState = Moving.PlayerState.IDLE;
             PlayerBehave.instance.EndBattle();

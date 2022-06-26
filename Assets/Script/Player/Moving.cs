@@ -13,7 +13,7 @@ public abstract class Moving : MonoBehaviour
     public static int playerAttack = 3;
     public static int playerCurrentAttack = playerAttack;
     public static int playerHealth = 20;
-    public static int playerAddHealth = 20;
+    public static int playerAddHealth = playerHealth;
     public static int playerCurrentHealth = playerHealth;
     public static int playerDefence = 3;
     public static int playerCurrentDefence = playerDefence;
@@ -27,6 +27,14 @@ public abstract class Moving : MonoBehaviour
     public static int enemyMoney = 3;
     #endregion
 
+    #region 보스 공격력, 피, 방어력
+    public static int bossAttack = 3;
+    public static int bossHealth = 20;
+    public static int bosscurrnetHealth = bossHealth;
+    public static int bossDefence = 3;
+    public static int bossMoney = 10;
+    #endregion
+
     public static bool _isPlayerTurn = true;
 
     public bool _canEnemyMove = true;
@@ -34,7 +42,20 @@ public abstract class Moving : MonoBehaviour
 
     protected int passive_100m = 1;
 
-    protected BackGround _backGround = null;
+    
+    protected bool demageBlock = false;
+
+    #region 패시브 아이템 불체크
+    public bool passive_Critical = false;
+    public bool passive_Bouble = false;
+    public bool passive_Midas = false;
+    public bool passive_Poison = false;
+    public bool passive_Reflect = false;
+    public bool passive_David = false;
+    public bool passive_Boold = false;
+    public bool passive_DemiGod = false;
+    public bool passive_TheKing = false;
+    #endregion
     public enum PlayerState
     {
         IDLE,
@@ -44,11 +65,6 @@ public abstract class Moving : MonoBehaviour
     }
 
     public static PlayerState _playerState = PlayerState.IDLE;
-
-    private void Awake()
-    {
-        _backGround = FindObjectOfType<BackGround>();
-    }
 
     protected virtual void Update()
     {

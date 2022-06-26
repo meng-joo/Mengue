@@ -38,11 +38,12 @@ public class StateUI : MonoBehaviour
     public void OnClickSettingButton()
     {
         settingBackGround.transform.DOLocalMoveX(0, 0.2f);
+        PlayerBehave.instance._backGround.StopCoroutine("SpawnCoin");
     }
 
     public void UpdateStateText()
     {
-        _stateText.text = string.Format($"이름: 맹주영\n체력: {Moving.playerCurrentHealth}/{Moving.playerHealth}\n공격력: {Moving.playerAttack}\n방어력: {Moving.playerDefence}\n돈: ${Moving.currentMoney}\n돈 가치: {Moving.moneyValue}");
+        _stateText.text = string.Format($"이름: 맹주영\n체력: {Moving.playerCurrentHealth}/{Moving.playerAddHealth}\n공격력: {Moving.playerAttack}\n방어력: {Moving.playerDefence}\n돈: ${Moving.currentMoney}\n돈 가치: {Moving.moneyValue}");
 
     }
 

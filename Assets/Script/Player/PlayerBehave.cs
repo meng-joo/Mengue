@@ -30,9 +30,14 @@ public class PlayerBehave : Moving
     public BattleEffect _battleEffect;
     private bool[] isPassiveOn = new bool[20];
 
+    public BackGround _backGround;
     private void Awake()
     {
         instance = this;
+
+        Debug.Log("전에 백그라운드" + _backGround);
+        if (_backGround == null) _backGround = FindObjectOfType<BackGround>();
+        Debug.Log("후에 백그라운드" + _backGround);
     }
 
     private void Start()
@@ -63,6 +68,7 @@ public class PlayerBehave : Moving
             {
                 _storeUI.GetBackStoreUI();
                 PassiveApply();
+                _backGround.StartCoroutine("SpawnCoin");
             }
         }
     }
@@ -72,8 +78,6 @@ public class PlayerBehave : Moving
         playerAddHealth = playerHealth;
         playerCurrentDefence = playerDefence;
         playerCurrentAttack = playerAttack;
-
-        
 
         for (int i = 0; i < _passiveData.activeItem.Count; i++) {
             if(_passiveData.activeItem[i].isactive == true)
@@ -101,7 +105,7 @@ public class PlayerBehave : Moving
                 }
                 else if (i == 2)
                 {
-
+                    passive_Critical = true;
                 }
                 else if (i == 3)
                 {
@@ -109,7 +113,7 @@ public class PlayerBehave : Moving
                 }
                 else if (i == 4) // 
                 {
-                    _skillUI.runvalue = 20;
+                    _skillUI.runvalue = 5;
                 }
                 else if (i == 5) // 방어증가
                 {
@@ -117,11 +121,12 @@ public class PlayerBehave : Moving
                 }
                 else if (i == 6) //가방
                 {
-                    _skillUI.skillLimite = 18;
+                    _skillUI.skillLimite = 24;
                 }
                 else if (i == 7)
                 {
                     //방울 방패
+                    passive_Bouble = true;
                 }
                 else if (i == 8)
                 {
@@ -130,14 +135,17 @@ public class PlayerBehave : Moving
                 else if (i == 9)
                 {
                     //미다스의 힘
+                    passive_Midas = true;
                 }
                 else if (i == 10)
                 {
                     //독
+                    passive_Poison = true;
                 }
-                else if (i == 11 && !isPassiveOn[i])
+                else if (i == 11)
                 {
                     //가시방패
+                    passive_Reflect = true;
                 }
                 else if (i == 12)
                 {
@@ -150,16 +158,18 @@ public class PlayerBehave : Moving
                 else if (i == 14)
                 {
                     //강강약약
+                    passive_Reflect = true;
                 }
                 else if (i == 15)
                 {
                     //피해 흡혈
+                    passive_Boold = true;
                 }
                 else if (i == 16)
                 {
-                    playerAddHealth = Mathf.RoundToInt(playerAddHealth > playerHealth ? playerAddHealth * 2.5f : playerHealth * 2.5f);
-                    playerCurrentAttack = playerCurrentAttack > playerAttack ? playerCurrentAttack * 3 : playerAttack * 3;
-                    playerCurrentDefence = playerCurrentDefence > playerDefence ? playerCurrentDefence * 2 : playerDefence * 2;
+                    playerAddHealth = Mathf.RoundToInt(playerAddHealth > playerHealth ? playerAddHealth * 3f : playerHealth * 3f);
+                    playerCurrentAttack = playerCurrentAttack > playerAttack ? playerCurrentAttack * 5 : playerAttack * 5;
+                    playerCurrentDefence = playerCurrentDefence > playerDefence ? playerCurrentDefence * 5 : playerDefence * 5;
                 }
                 else if (i == 17)
                 {
@@ -213,12 +223,12 @@ public class PlayerBehave : Moving
     {
         var labelStyle1 = new GUIStyle();
         var labelStyle2 = new GUIStyle();
-        labelStyle1.fontSize = 50;
-        labelStyle2.fontSize = 40;
+        labelStyle1.fontSize = 20;
+        labelStyle2.fontSize = 15;
         labelStyle1.normal.textColor = Color.red;
         labelStyle2.normal.textColor = Color.yellow;
-        GUILayout.Label("\n\n현재 플레이어의 공격력 : " + playerAttack, labelStyle1);
-        GUILayout.Label("현재 플레이어의 방어력 : " + playerDefence, labelStyle1);
+        GUILayout.Label("\n\n현재 플레이어의 공격력 : " + playerCurrentAttack, labelStyle1);
+        GUILayout.Label("현재 플레이어의 방어력 : " + playerCurrentDefence, labelStyle1);
         GUILayout.Label("현재 플레이어의 체력 : " + playerCurrentHealth, labelStyle1);
         //캐릭터 현재 돈
         GUILayout.Label("현재 가진 돈 : " + currentMoney, labelStyle2);
@@ -230,8 +240,11 @@ public class PlayerBehave : Moving
     {
         if(collison.tag == "Coin")
         {
+            Debug.Log("00000000000 : " + _backGround);
+            _backGround.coinCount = _backGround.coinCount - 1;
+
+
             currentMoney += moneyValue;
-            _backGround.coinCount--;
             Destroy(collison.gameObject);
             _stateUI.UpdateStateText();
         }
@@ -245,6 +258,7 @@ public class PlayerBehave : Moving
         }
         if(collison.tag == "Store")
         {
+            _backGround.StopCoroutine("SpawnCoin");
             _playerState = PlayerState.INSTORE;
             StartCoroutine(PlayerInStore());
             _stateUI.UpdateStateText();
@@ -258,6 +272,7 @@ public class PlayerBehave : Moving
         _skillUI.SetEnemy(g.transform.parent.gameObject);
         _boxCollider.enabled = false;
         _enemy = g.gameObject;
+        if (passive_Bouble) demageBlock = true;
         //_currentEnemy = _enemy.transform.parent.GetComponent<Enemy>();
         StartCoroutine(PlayerFindEnemyToBattle(i));
     }
@@ -270,7 +285,7 @@ public class PlayerBehave : Moving
 
         _battleEffect.SetProfile(i);
 
-        yield return new WaitForSeconds(8f);
+        yield return new WaitForSeconds(5f);
 
         characterController.enabled = false;
         exclamationMark.gameObject.SetActive(false);

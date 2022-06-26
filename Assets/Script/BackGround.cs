@@ -13,6 +13,7 @@ public class BackGround : MonoBehaviour
     public int coinCount = 0;
 
     public List<Enemy> _enemyList = new List<Enemy>();
+    public List<Boss> _bossList = new List<Boss>();
 
     public GameObject backGroundPrefab = null;
     public GameObject Wall = null;
@@ -20,15 +21,19 @@ public class BackGround : MonoBehaviour
     public GameObject storeBlock = null;
     public GameObject coin = null;
     public Enemy _enemy = null;
+    public Boss _boss = null;
+
+
     [Range(1, 25)]
     public int enemycount;
 
     void Start()
     {
+        coinCount = 0;
         if (backGroundPrefab != null)
         {
             StartCoroutine(CreateBackGroundBlock());
-            StartCoroutine(SpawnCoin());
+            StartCoroutine("SpawnCoin");
         }
     }
 
@@ -74,11 +79,52 @@ public class BackGround : MonoBehaviour
 
     IEnumerator CreateEnemyForCount(int Px, int Pz)
     {
+        int random = Random.Range(1, 11);
         for (int i = 0; i < enemycount; i++)
         {
-            CreateEnemy(Px, Pz);
+            if (random < 2) CreateBoss();
+            else CreateEnemy(Px, Pz);
             yield return new WaitForSeconds(0.002f);
         }
+    }
+
+    public void Create()
+    {
+        int random = Random.Range(1, 11);
+
+        if (random < 2) CreateBoss();
+        else CreateEnemy();
+    }
+
+    public void CreateBoss(int Px = 0, int Pz = 0)
+    {
+        Boss boss = _boss;
+
+        int z = Random.Range(MinZ + 2, MaxZ - 1);
+        int x = Random.Range(MinX + 2, MaxX - 1);
+
+        for (int j = 0; j < _bossList.Count; j++)
+        {
+            if (x == Mathf.RoundToInt(_bossList[j].transform.position.x) && z == Mathf.RoundToInt(_bossList[j].transform.position.z))
+            {
+                x += Random.Range(-3, 3);
+                z += Random.Range(-3, 3);
+            }
+        }
+
+        if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
+        {
+            x += Random.Range(4, 8);
+            z += Random.Range(-8, -4);
+            if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
+            {
+                x += Random.Range(4, 8);
+                z += Random.Range(-8, -4);
+            }
+        }
+        _bossList.Add(boss);
+        Instantiate(boss, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
+        boss.gameObject.SetActive(true);
     }
 
     public void CreateEnemy(int Px = 0, int Pz = 0)
@@ -120,7 +166,7 @@ public class BackGround : MonoBehaviour
         {
             if (coinCount < 40)
             {
-                yield return new WaitForSeconds(coinSpawnDeley);
+                yield return new WaitForSeconds(1);
                 int x = Random.Range(MinX + 1, MaxX);
                 int z = Random.Range(MinZ + 1, MaxZ - 2);
 
@@ -128,7 +174,7 @@ public class BackGround : MonoBehaviour
                 coinCount++;
             }
 
-            yield return new WaitForSeconds(coinSpawnDeley * coinSpawnDeley - 30);
+            else yield return new WaitForSeconds(coinSpawnDeley * coinSpawnDeley - 30);
         }
     }
 }

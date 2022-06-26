@@ -16,5 +16,6 @@ public class SettingUI : MonoBehaviour
     public void OnClickExitButton()
     {
         transform.DOLocalMoveX(1920, 0.2f);
+        if(PlayerBehave.instance != null) PlayerBehave.instance._backGround.StartCoroutine("SpawnCoin");
     }
 }

@@ -65,15 +65,15 @@ public class StoreUI : MonoBehaviour
     {
         AblingButtons(false);
         if (Moving.currentMoney < skillPrice[num] / passive_Sale) { StartCoroutine(ShowStoreBehave("돈이 부족합니다")); return; }
-        if (Moving.playerHealth == Moving.playerCurrentHealth && num == 3) { StartCoroutine(ShowStoreBehave("이미 최대체력입니다.")); return; }
+        if (Moving.playerCurrentHealth == Moving.playerAddHealth && num == 3) { StartCoroutine(ShowStoreBehave("이미 최대체력입니다.")); return; }
         if (_randomGacha.count > 4 && num == 2) { StartCoroutine(ShowStoreBehave("아이템이 가득찼습니다.")); return; }
 
         Moving.currentMoney -= skillPrice[num] / passive_Sale;
 
         if(num == 3)
         {
-            StartCoroutine(ShowStoreBehave($"체력을 {Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerHealth)}만큼 회복하였습니다."));
-            Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerHealth);
+            StartCoroutine(ShowStoreBehave($"체력을 {Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth)}만큼 회복하였습니다."));
+            Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth);
         }
 
         else if(num == 2)
@@ -166,7 +166,7 @@ public class StoreUI : MonoBehaviour
             StartCoroutine(ShowStoreBehave("적이 강화되었습니다."));
             if (skillLevel[num] % 11 == 10)
             {
-                _backGround.CreateEnemy();
+                _backGround.Create();
             }
         }
 

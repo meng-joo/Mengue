@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class Enemy : Moving
+public class Boss : Moving
 {
     public GameObject enemyView;
     private SkillUI _skillUI;
@@ -33,12 +33,13 @@ public class Enemy : Moving
         if (_backGround == null) _backGround = FindObjectOfType<BackGround>();
         Debug.Log("ÈÄ¿¡ ¹é±×¶ó¿îµå" + _backGround);
     }
-
     protected override void InputEnemyMovingKey()
     {
         Debug.Log("serhejwkyetkexulrle5lele5l5ek7l5");
         for (int c = 0; c < _backGround.enemycount; c++)
         {
+            Sequence seq = DOTween.Sequence();
+
             int x = Random.Range(-1, 2);
             int z = Random.Range(-1, 2);
             bool isOverlap = false;
@@ -73,7 +74,7 @@ public class Enemy : Moving
                 }
             }
 
-            if ((enemyX >= BackGround.MaxX - 1) || (enemyX <= BackGround.MinX + 1) || (enemyZ <= BackGround.MinZ + 1) || (enemyZ >= BackGround.MaxZ - 2) || isOverlap || isOverlapToPlayer)
+            if ((enemyX >= BackGround.MaxX - 2) || (enemyX <= BackGround.MinX + 2) || (enemyZ <= BackGround.MinZ + 2) || (enemyZ >= BackGround.MaxZ - 3) || isOverlap || isOverlapToPlayer)
             {
                 Debug.Log("¾ÈµÅ µ¹¾Æ°¡");
                 _canEnemyMove = true;
@@ -95,12 +96,12 @@ public class Enemy : Moving
 
     private void StartBattle(GameObject player)
     {
-        StartCoroutine(BattleEnemy(player));
+        StartCoroutine(BattleBoss(player));
     }
 
-    IEnumerator BattleEnemy(GameObject player)
+    IEnumerator BattleBoss(GameObject player)
     {
-        
+
         enemyView.SetActive(false);
         yield return new WaitForSeconds(0.2f);
         Quaternion quaternion = Quaternion.Euler(75, 0, 0);
@@ -129,9 +130,9 @@ public class Enemy : Moving
         posisonReducedDamage = Random.Range(1, 11);
         if (passive_Critical) { if (posisonReducedDamage < 2) enemycurrnetHealth -= Mathf.Max(2, realDamage * 2); }
 
-        
+
         else enemycurrnetHealth -= Mathf.Max(2, realDamage);
-        
+
         playerCurrentHealth += passive_Boold ? realDamage / 2 : 0;
 
         realDamage = Mathf.Max(2, realDamage);
@@ -157,13 +158,13 @@ public class Enemy : Moving
 
         yield return new WaitForSeconds(2f);
 
-        _skillUI.SendMessage("OtherWriteText", $"´ç½ÅÀº ÈïÇóÇóÀ» Á×ÀÌ°í {moneyValue * enemyMoney}¿øÀ» ¾ò¾ú½À´Ï´Ù! ");
-        currentMoney += moneyValue * enemyMoney;
+        _skillUI.SendMessage("OtherWriteText", $"´ç½ÅÀº »Ç½ºÀ» Á×ÀÌ°í {moneyValue * bossMoney}¿øÀ» ¾ò¾ú½À´Ï´Ù! ");
+        currentMoney += moneyValue * bossMoney;
         _stateUI.UpdateStateText();
 
         yield return new WaitForSeconds(3f);
         _isPlayerTurn = true;
-        _backGround._enemyList.Remove(this);
+        _backGround._bossList.Remove(this);
         Destroy(gameObject);
         Moving._playerState = PlayerState.IDLE;
         pPos.EndBattle();
@@ -217,7 +218,7 @@ public class Enemy : Moving
                 _isPlayerTurn = false;
                 yield return new WaitForSeconds(3f);
                 pPos._battleCamera.EnemyAttack();
-                _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÇ)¿¡ ÆøÆÈÆÝÄ¡!! ");
+                _skillUI.SendMessage("OtherWriteText", $"»Ç½º(ÀÇ)¿¡ ÆøÆÈÆÝÄ¡!! ");
                 yield return new WaitForSeconds(2.2f);
 
                 int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
@@ -233,10 +234,10 @@ public class Enemy : Moving
                 PlayerBehave.instance.ani.SetTrigger("GetHit");
                 yield return new WaitForSeconds(1.2f);
 
-                if (!passive_Poison) _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÌ)°¡ ´ç½ÅÀÇ ÇÇ¸¦ {damage}¸¸Å­ ±ð¾Ò½À´Ï´Ù.");
-                else _skillUI.SendMessage("OtherWriteText", $"[Áßµ¶µÈ] ÈåÇóÇó(ÀÌ)°¡ ´ç½ÅÀÇ ÇÇ¸¦ {damage}¸¸Å­ ±ð¾Ò½À´Ï´Ù.");
+                if (!passive_Poison) _skillUI.SendMessage("OtherWriteText", $"»Ç½º(ÀÌ)°¡ ´ç½ÅÀÇ ÇÇ¸¦ {damage}¸¸Å­ ±ð¾Ò½À´Ï´Ù.");
+                else _skillUI.SendMessage("OtherWriteText", $"[Áßµ¶µÈ] »Ç½º(ÀÌ)°¡ ´ç½ÅÀÇ ÇÇ¸¦ {damage}¸¸Å­ ±ð¾Ò½À´Ï´Ù.");
 
-                if(passive_Reflect) _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇóÀº ´ç½ÅÀº ¶§¸®´Ù°¡ °¡½Ã¿¡ Âñ·Á {damage / 5}ÀÇ µ¥¹ÌÁö¸¦ ¹Þ¾Ò½À´Ï´Ù.");
+                if (passive_Reflect) _skillUI.SendMessage("OtherWriteText", $"»Ç½ºÀº ´ç½ÅÀº ¶§¸®´Ù°¡ °¡½Ã¿¡ Âñ·Á {damage / 5}ÀÇ µ¥¹ÌÁö¸¦ ¹Þ¾Ò½À´Ï´Ù.");
                 enemycurrnetHealth -= damage / 5;
                 if (enemycurrnetHealth <= 0) { StartCoroutine(EnemyDead()); yield return null; }
 
