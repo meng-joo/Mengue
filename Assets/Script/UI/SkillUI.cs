@@ -13,7 +13,8 @@ public class SkillUI : MonoBehaviour
     private TextMeshProUGUI _stateText;
     private TextMeshProUGUI _runAwayCost;
     private TextMeshProUGUI[] _skillCountText = new TextMeshProUGUI[2];
-    public Enemy _fightingEnemy;
+    public Enemy _fightingEnemy = null;
+    public Boss _fightingBoss = null;
     public BackGround _backGround;
     public StoreUI _storeUI;
     public StateUI _stateUI;
@@ -44,14 +45,15 @@ public class SkillUI : MonoBehaviour
     public void SetEnemy(GameObject _enemy)
     {
         _fightingEnemy = _enemy.GetComponent<Enemy>();
+        if (_fightingEnemy == null) _fightingBoss = _enemy.GetComponent<Boss>();
     }
 
     public void ViewSkillUI()
     {
         Sequence sequence = DOTween.Sequence();
-        _runAwayCost.text = string.Format("-{0}$", Mathf.RoundToInt(Mathf.Min(Moving.currentMoney / runvalue, 0)));
+        _runAwayCost.text = string.Format($"-{Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 1))}$");
         sequence.Append(skillUI.transform.DOLocalMoveY(-354f, 1));
-        StartCoroutine(WriteText("당신은 슬라임(을)를 만났습니다!"));
+        StartCoroutine(WriteText("당신은 적(을)를 만났습니다!"));
         //다른 스킬을 더 띄어주기 위해 시퀀스 구현해야함
     }
 
@@ -69,10 +71,9 @@ public class SkillUI : MonoBehaviour
         if (!_isAttaking && _skillCount[0] > 0)
         {
             StartCoroutine(HideButtons());
-            int realDamage = Moving.playerAttack - Moving.enemyDefence;
             playerBehave.SetTrigger("Attack");
-            //StartCoroutine(WriteText($"당신이 {Mathf.Max(2, realDamage)}의 공격력으로 적을 공격했습니다."));
-            _fightingEnemy.GetAttack();
+            if (_fightingEnemy != null) _fightingEnemy.GetAttack();
+            else _fightingBoss.GetAttack();
             EnemyTurn();
             _skillCount[0]--;
             SetCountText();
@@ -98,7 +99,8 @@ public class SkillUI : MonoBehaviour
 
     public void EnemyStateButton()
     {
-        StartCoroutine(WriteText($"이름: 흥행행\n체력: {Moving.enemycurrnetHealth}/{Moving.enemyHealth}\n공격력: {Moving.enemyAttack}\n방어력: {Moving.enemyDefence}\n특징: 어쩔티비 "));
+        if (_fightingEnemy != null) StartCoroutine(WriteText($"이름: 흥행행\n체력: {Moving.enemycurrnetHealth}/{Moving.enemyHealth}\n공격력: {Moving.enemyAttack}\n방어력: {Moving.enemyDefence}\n특징: 어쩔티비 "));
+        else StartCoroutine(WriteText($"이름: 뽀스\n체력: {Moving.bosscurrnetHealth}/{Moving.bossHealth}\n공격력: {Moving.bossAttack}\n방어력: {Moving.enemyDefence}\n특징: 꽤 쎄다 "));
     }
 
     public void InputSkillButton()
@@ -148,7 +150,8 @@ public class SkillUI : MonoBehaviour
             StartCoroutine(WriteText($"체력을 {Mathf.Min(7, Moving.playerAddHealth - Moving.playerCurrentHealth)}회복 하였습니다."));
             Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 7, Moving.playerAddHealth);
             _stateUI.UpdateStateText();
-            _fightingEnemy.StartCoroutine("EnemyAttack");
+            if (_fightingEnemy != null) _fightingEnemy.StartCoroutine("EnemyAttack");
+            else _fightingBoss.StartCoroutine("EnemyAttack");
             EnemyTurn();
             _skillCount[1]--;
             SetCountText();
@@ -159,7 +162,7 @@ public class SkillUI : MonoBehaviour
             {
                 StartCoroutine(WriteText("스킬을 다 소모하였습니다."));
             }
-            else if(!Moving._isPlayerTurn)
+            else if (!Moving._isPlayerTurn)
             {
                 StartCoroutine(WriteText("아직 상대 턴입니다."));
             }
@@ -170,13 +173,28 @@ public class SkillUI : MonoBehaviour
     {
         if (Moving._isPlayerTurn)
         {
-            StartCoroutine(WriteText("도망가~~! "));
-            Moving.currentMoney -= Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 0));
-            _backGround.Create();
-            Moving.enemycurrnetHealth = Moving.enemyHealth;
-            Moving._playerState = Moving.PlayerState.IDLE;
-            PlayerBehave.instance.EndBattle();
-            Destroy(_fightingEnemy.gameObject);
+            if (_fightingEnemy != null)
+            {
+                StartCoroutine(WriteText("도망가~~! "));
+                Moving.currentMoney -= Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 0));
+                _backGround.CreateEnemy();
+                Moving.enemycurrnetHealth = Moving.enemyHealth;
+                Moving._playerState = Moving.PlayerState.IDLE;
+                PlayerBehave.instance.EndBattle();
+                Destroy(_fightingEnemy.gameObject);
+                _fightingEnemy = null;
+            }
+            else
+            {
+                StartCoroutine(WriteText("도망가~~! "));
+                Moving.currentMoney -= Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 0));
+                _backGround.CreateBoss();
+                Moving.bosscurrnetHealth = Moving.bossHealth;
+                Moving._playerState = Moving.PlayerState.IDLE;
+                PlayerBehave.instance.EndBattle();
+                Destroy(_fightingBoss.gameObject);
+                _fightingBoss = null;
+            }
         }
         else
         {

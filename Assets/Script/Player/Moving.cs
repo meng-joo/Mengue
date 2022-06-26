@@ -10,7 +10,7 @@ public abstract class Moving : MonoBehaviour
     public static int moneyValue = 1;
 
     #region 플레이어의 공격력, 피, 방어력
-    public static int playerAttack = 3;
+    public static int playerAttack = 60;
     public static int playerCurrentAttack = playerAttack;
     public static int playerHealth = 20;
     public static int playerAddHealth = playerHealth;
@@ -28,10 +28,10 @@ public abstract class Moving : MonoBehaviour
     #endregion
 
     #region 보스 공격력, 피, 방어력
-    public static int bossAttack = 3;
-    public static int bossHealth = 20;
+    public static int bossAttack = 6;
+    public static int bossHealth = 75;
     public static int bosscurrnetHealth = bossHealth;
-    public static int bossDefence = 3;
+    public static int bossDefence = 8;
     public static int bossMoney = 10;
     #endregion
 

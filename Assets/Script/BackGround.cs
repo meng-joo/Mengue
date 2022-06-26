@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class BackGround : MonoBehaviour
 {
-    public const int MinX = -15;
-    public const int MaxX = 15;
-    public const int MaxZ = 15;
-    public const int MinZ = -15;
+    public const int MinX = -25;
+    public const int MaxX = 25;
+    public const int MaxZ = 25;
+    public const int MinZ = -25;
 
     public float coinSpawnDeley = 10f;
     public int coinCount = 0;
@@ -82,19 +82,13 @@ public class BackGround : MonoBehaviour
         int random = Random.Range(1, 11);
         for (int i = 0; i < enemycount; i++)
         {
-            if (random < 2) CreateBoss();
-            else CreateEnemy(Px, Pz);
+            CreateEnemy(Px, Pz);
             yield return new WaitForSeconds(0.002f);
         }
+
+        CreateBoss(Px, Pz);
     }
 
-    public void Create()
-    {
-        int random = Random.Range(1, 11);
-
-        if (random < 2) CreateBoss();
-        else CreateEnemy();
-    }
 
     public void CreateBoss(int Px = 0, int Pz = 0)
     {
@@ -114,8 +108,8 @@ public class BackGround : MonoBehaviour
 
         if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
         {
-            x += Random.Range(4, 8);
-            z += Random.Range(-8, -4);
+            x += Random.Range(8, 16);
+            z += Random.Range(-16, -8);
             if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
             {
                 x += Random.Range(4, 8);

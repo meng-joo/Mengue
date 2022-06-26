@@ -36,9 +36,9 @@ public class Enemy : Moving
 
     protected override void InputEnemyMovingKey()
     {
-        Debug.Log("serhejwkyetkexulrle5lele5l5ek7l5");
-        for (int c = 0; c < _backGround.enemycount; c++)
-        {
+        //Debug.Log("serhejwkyetkexulrle5lele5l5ek7l5");
+        //for (int c = 0; c < _backGround.enemycount; c++)
+        //{
             int x = Random.Range(-1, 2);
             int z = Random.Range(-1, 2);
             bool isOverlap = false;
@@ -73,23 +73,22 @@ public class Enemy : Moving
                 }
             }
 
-            if ((enemyX >= BackGround.MaxX - 1) || (enemyX <= BackGround.MinX + 1) || (enemyZ <= BackGround.MinZ + 1) || (enemyZ >= BackGround.MaxZ - 2) || isOverlap || isOverlapToPlayer)
-            {
-                Debug.Log("안돼 돌아가");
-                _canEnemyMove = true;
-                return;
-            }
-            else
-            {
-                Debug.Log("이게 왜....");
-                transform.DOKill();
-                int goX = Mathf.CeilToInt(transform.position.x);
-                int goZ = Mathf.CeilToInt(transform.position.z);
+        if ((enemyX >= BackGround.MaxX - 1) || (enemyX <= BackGround.MinX + 1) || (enemyZ <= BackGround.MinZ + 1) || (enemyZ >= BackGround.MaxZ - 2) || isOverlap || isOverlapToPlayer)
+        {
+            Debug.Log("안돼 돌아가");
+            _canEnemyMove = true;
+            return;
+        }
+        else
+        {
+            Debug.Log("이게 왜....");
+            transform.DOKill();
+            int goX = Mathf.CeilToInt(transform.position.x);
+            int goZ = Mathf.CeilToInt(transform.position.z);
 
-                transform.position = new Vector3(goX, transform.position.y, goZ);
+            transform.position = new Vector3(goX, transform.position.y, goZ);
 
-                transform.DOLocalMove(transform.position + randomTransform, 0.13f).OnComplete(() => _canEnemyMove = true);
-            }
+            transform.DOLocalMove(transform.position + randomTransform, 0.13f).OnComplete(() => _canEnemyMove = true);
         }
     }
 
@@ -138,13 +137,13 @@ public class Enemy : Moving
 
         if (enemycurrnetHealth <= 0)
         {
-            StartCoroutine(EnemyDead(realDamage / 5));
+            StartCoroutine(EnemyDead(realDamage / 2));
         }
 
         else
         {
             _skillUI.SendMessage("OtherWriteText", $"당신은 상대방의 피를 {realDamage + midasExtraDamage}(+{midasExtraDamage}) 만큼 깍았습니다. ");
-            EnemyTurn(realDamage / 5);
+            EnemyTurn(realDamage / 2);
         }
     }
 
@@ -162,13 +161,15 @@ public class Enemy : Moving
         _stateUI.UpdateStateText();
 
         yield return new WaitForSeconds(3f);
+        _skillUI._fightingEnemy = null;
         _isPlayerTurn = true;
         _backGround._enemyList.Remove(this);
         Destroy(gameObject);
         Moving._playerState = PlayerState.IDLE;
         pPos.EndBattle();
+        enemycurrnetHealth = enemyHealth;
 
-        _backGround.Create();
+        _backGround.CreateEnemy();
 
         _skillUI.StartCoroutine("ShowButtons");
     }
@@ -229,7 +230,7 @@ public class Enemy : Moving
 
                 //damage = passive_Poison?posisonReducedDamage : 
                 playerCurrentHealth -= damage;
-                Instantiate(PlayerBehave.instance._hitEffect, transform);
+                Instantiate(PlayerBehave.instance._hitEffect[0], transform);
                 PlayerBehave.instance.ani.SetTrigger("GetHit");
                 yield return new WaitForSeconds(1.2f);
 

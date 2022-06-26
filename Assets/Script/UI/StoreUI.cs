@@ -163,14 +163,24 @@ public class StoreUI : MonoBehaviour
             Moving.enemyDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.17f);
             Moving.enemyAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.17f);
             Moving.enemyMoney += 1;
+
+            Moving.bossHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.2f);
+            Moving.bossDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.2f);
+            Moving.bossAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.2f);
+            Moving.bossMoney += 2;
+
             StartCoroutine(ShowStoreBehave("적이 강화되었습니다."));
             if (skillLevel[num] % 11 == 10)
             {
-                _backGround.Create();
+                _backGround.CreateEnemy();
+            }
+            if(skillLevel[num] % 25 == 24)
+            {
+                _backGround.CreateBoss();
             }
         }
 
-        StartCoroutine(SetIdle(1.1f));
+        StartCoroutine(SetIdle(0.9f));
     }
 
     IEnumerator SetIdle(float value)

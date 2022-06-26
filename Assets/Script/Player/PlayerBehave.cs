@@ -22,7 +22,7 @@ public class PlayerBehave : Moving
     public StoreUI _storeUI;
     public StateUI _stateUI;
 
-    public GameObject _hitEffect;
+    public GameObject[] _hitEffect;
     public GameObject _healEffect;
 
     public static PlayerBehave instance;
@@ -290,7 +290,7 @@ public class PlayerBehave : Moving
         characterController.enabled = false;
         exclamationMark.gameObject.SetActive(false);
         _battleCamera.gameObject.SetActive(true);
-        StartBattle();
+        StartBattle(i);
         ani.SetTrigger("Battle");
         _skillUI.ViewSkillUI();
     }
@@ -302,7 +302,7 @@ public class PlayerBehave : Moving
         yield return null;
     }
 
-    private void StartBattle()
+    private void StartBattle(int i)
     {
         //_battleCamera.SettingBattleCam();
         Debug.Log(transform.position);
@@ -310,7 +310,8 @@ public class PlayerBehave : Moving
         Quaternion quaternion = Quaternion.Euler(new Vector3(75f , 0f , 0f));
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
         //transform.localEulerAngles = new Vector3(75, 0, 0);
-        transform.LookAt(_enemy.transform);
+        if (i == 0) transform.LookAt(_enemy.transform);
+        else transform.LookAt(_enemy.transform.position - new Vector3(0, 0.8f, 0f));
         transform.rotation *= quaternion;
         Debug.Log(transform.position);
         //ani.SetTrigger("Battle");
@@ -339,9 +340,7 @@ public class PlayerBehave : Moving
     IEnumerator EndBattleSettting()
     {
         _skillUI.HideSkillUI();
-        //_battleCamera.SettingBattleCam();
         _battleCamera.gameObject.SetActive(false);
-        //transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
         Vector3 currentPos = new Vector3(Mathf.RoundToInt(transform.position.x), 0, Mathf.RoundToInt(transform.position.z));
         ani.ResetTrigger("Battle");
         ani.SetTrigger("NoBattle");
@@ -349,11 +348,9 @@ public class PlayerBehave : Moving
 
         _stateUI.settingButton.enabled = false;
 
+        if (passive_Bouble) demageBlock = true;
+
         yield return new WaitForSeconds(1.1f);
-        //for (int i = 0; i < _backGround._enemyList.Count; i++)
-        //{
-        //    _backGround._enemyList[i].gameObject.SetActive(true);
-        //}
         transform.localPosition = currentPos;
         transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
         characterController.enabled = true;
