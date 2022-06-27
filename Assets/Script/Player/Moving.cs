@@ -6,11 +6,11 @@ using Cinemachine;
 
 public abstract class Moving : MonoBehaviour
 {
-    public static int currentMoney = 999998;
+    public static int currentMoney = 0;
     public static int moneyValue = 1;
 
     #region 플레이어의 공격력, 피, 방어력
-    public static int playerAttack = 45;
+    public static int playerAttack = 3;
     public static int playerCurrentAttack = playerAttack;
     public static int playerHealth = 20;
     public static int playerAddHealth = playerHealth;
@@ -21,7 +21,7 @@ public abstract class Moving : MonoBehaviour
 
     #region 적의 공격력, 피, 방어력
     public static int enemyAttack = 3;
-    public static int enemyHealth = 70;
+    public static int enemyHealth = 17;
     public static int enemycurrnetHealth = enemyHealth;
     public static int enemyDefence = 3;
     public static int enemyMoney = 3;
