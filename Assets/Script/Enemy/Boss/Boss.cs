@@ -144,8 +144,8 @@ public class Boss : Moving
 
         else
         {
-            if(!_isCri) _skillUI.SendMessage("OtherWriteText", $"당신은 뽀스의 피를 {realDamage}(+{midasExtraDamage}) 만큼 깍았습니다. ");
-            else _skillUI.SendMessage("OtherWriteText", $"크리티컬! 당신은 뽀스의 피를 {Mathf.RoundToInt(realDamage * 1.7f)}(+{midasExtraDamage}) 만큼 깍았습니다. ");
+            if(!_isCri) _skillUI.SendMessage("OtherWriteText", $"당신은 뽀스의 피를 {realDamage}(+{midasExtraDamage}) 만큼 깎았습니다. ");
+            else _skillUI.SendMessage("OtherWriteText", $"크리티컬! 당신은 뽀스의 피를 {Mathf.RoundToInt(realDamage * 1.7f)}(+{midasExtraDamage}) 만큼 깎았습니다. ");
             EnemyTurn(realDamage / 2);
         }
     }

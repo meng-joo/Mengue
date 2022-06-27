@@ -136,8 +136,8 @@ public class Enemy : Moving
 
         else
         {
-            if (!_isCri) _skillUI.SendMessage("OtherWriteText", $"당신은 상대방의 피를 {realDamage}(+{midasExtraDamage}) 만큼 깍았습니다. ");
-            else _skillUI.SendMessage("OtherWriteText", $"당신은 상대방의 피를 {Mathf.RoundToInt(Mathf.Max(2, realDamage * 1.7f))}(+{midasExtraDamage}) 만큼 깍았습니다. ");
+            if (!_isCri) _skillUI.SendMessage("OtherWriteText", $"당신은 상대방의 피를 {realDamage}(+{midasExtraDamage}) 만큼 깎았습니다. ");
+            else _skillUI.SendMessage("OtherWriteText", $"당신은 상대방의 피를 {Mathf.RoundToInt(Mathf.Max(2, realDamage * 1.7f))}(+{midasExtraDamage}) 만큼 깎았습니다. ");
             EnemyTurn(realDamage / 2);
         }
     }
@@ -219,7 +219,7 @@ public class Enemy : Moving
                 _isPlayerTurn = false;
                 yield return new WaitForSeconds(3f);
                 pPos._battleCamera.EnemyAttack();
-                _skillUI.SendMessage("OtherWriteText", $"흐헹헹(의)에 폭팔펀치!! ");
+                _skillUI.SendMessage("OtherWriteText", $"흐헹헹(의)에 폭발펀치!! ");
                 yield return new WaitForSeconds(2.2f);
 
                 int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
