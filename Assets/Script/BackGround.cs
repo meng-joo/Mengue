@@ -59,9 +59,8 @@ public class BackGround : MonoBehaviour
                 {
                     Instantiate(_groundprefab, new Vector3(j, 0, i), Quaternion.identity);
                 }
-
-                yield return new WaitForSeconds(0.00001f);
             }
+            yield return new WaitForSeconds(0.1f);
         }
 
         CreatePlayer();
@@ -94,8 +93,16 @@ public class BackGround : MonoBehaviour
     {
         Boss boss = _boss;
 
-        int z = Random.Range(MinZ + 2, MaxZ - 1);
-        int x = Random.Range(MinX + 2, MaxX - 1);
+        int z1 = Random.Range(MinZ + 2, -5);
+        int z2 = Random.Range(5, MaxZ - 2);
+        int x1 = Random.Range(MinX + 2, -5);
+        int x2 = Random.Range(5, MaxX - 2);
+
+        int a = Random.Range(0, 2);
+
+        int x, z;
+        x = a == 1 ? x1 : x2;
+        z = a == 1 ? z1 : z2;
 
         for (int j = 0; j < _bossList.Count; j++)
         {
@@ -106,16 +113,6 @@ public class BackGround : MonoBehaviour
             }
         }
 
-        if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
-        {
-            x += Random.Range(8, 16);
-            z += Random.Range(-16, -8);
-            if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
-            {
-                x += Random.Range(4, 8);
-                z += Random.Range(-8, -4);
-            }
-        }
         _bossList.Add(boss);
         Instantiate(boss, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
         boss.gameObject.SetActive(true);
@@ -125,8 +122,16 @@ public class BackGround : MonoBehaviour
     {
         Debug.Log("利捞 积己   利捞 积己   利捞 积己   利捞 积己   利捞 积己");
         Enemy enemy = _enemy;
-        int z = Random.Range(MinZ + 1, MaxZ);
-        int x = Random.Range(MinX + 1, MaxX);
+        int z1 = Random.Range(MinZ + 2, -3);
+        int z2 = Random.Range(3, MaxZ - 2);
+        int x1 = Random.Range(MinX + 2, -3);
+        int x2 = Random.Range(3, MaxX - 2);
+
+        int a = Random.Range(0, 2);
+
+        int x, z;
+        x = a == 1 ? x1 : x2;
+        z = a == 1 ? z1 : z2;
 
         for (int j = 0; j < _enemyList.Count; j++)
         {
@@ -137,16 +142,7 @@ public class BackGround : MonoBehaviour
             }
         }
 
-        if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
-        {
-            x += Random.Range(4, 8);
-            z += Random.Range(-8, -4);
-            if (Mathf.Abs(x) <= Mathf.Abs(Px) && Mathf.Abs(z) <= Mathf.Abs(Pz))
-            {
-                x += Random.Range(4, 8);
-                z += Random.Range(-8, -4);
-            }
-        }
+        
         _enemyList.Add(enemy);
         Instantiate(enemy, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
         enemy.gameObject.SetActive(true);

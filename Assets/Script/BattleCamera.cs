@@ -23,6 +23,21 @@ public class BattleCamera : MonoBehaviour
         SetCamera();
     }
 
+    public void BossHeal()
+    {
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(subCam.transform.DOMove(target.transform.position, 0.3f));
+        seq.AppendCallback(() => transform.LookAt(target.transform.position + new Vector3(1, 0, 1)));
+        seq.AppendCallback(() => subCam.fieldOfView = 100);
+        seq.AppendInterval(2f);
+        seq.AppendCallback(() => StartCoroutine(ChangeFieldOfView()));
+        seq.Join(subCam.transform.DOShakePosition(1.5f, 0.05f, 90));
+
+        seq.AppendInterval(1f);
+        //seq.AppendCallback(() => subCam.fieldOfView = 93.8f);
+        seq.AppendCallback(() => SetCamera());
+    }
 
     public void EnemyAttack()
     {
@@ -60,6 +75,25 @@ public class BattleCamera : MonoBehaviour
             c.a -= 0.1f;
             hitSprite.color = c;
             yield return new WaitForSeconds(0.03f);
+        }
+    }
+
+    IEnumerator ChangeFieldOfView()
+    {
+        float a = subCam.fieldOfView;
+
+        while (a >= 45.3f)
+        {
+            a -= 2f;
+            subCam.fieldOfView = a;
+            yield return new WaitForSeconds(0.02f);
+        }
+
+        while (a <= 93.8f)
+        {
+            a += 4.5f;
+            subCam.fieldOfView = a;
+            yield return new WaitForSeconds(0.01f);
         }
     }
 

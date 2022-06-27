@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerBehave : Moving
 {
@@ -85,7 +86,6 @@ public class PlayerBehave : Moving
                 if (i == 0)
                 {
                     playerCurrentAttack = Mathf.RoundToInt(playerAttack * 1.15f);
-                    //isPassiveOn[i] = true;
                 }
                 else if(i == 1)
                 {
@@ -93,13 +93,13 @@ public class PlayerBehave : Moving
                     switch (Ran)
                     {
                         case 0:
-                            playerAddHealth = Mathf.RoundToInt(playerAddHealth > playerHealth ? playerAddHealth * 2.5f : playerHealth * 2.5f);
+                            playerAddHealth = Mathf.RoundToInt(playerAddHealth > playerHealth ? playerAddHealth * 1.1f : playerHealth * 1.1f);
                             break;
                         case 1:
-                            playerCurrentAttack = playerCurrentAttack > playerAttack ? playerCurrentAttack * 3 : playerAttack * 3;
+                            playerCurrentAttack = Mathf.RoundToInt(playerCurrentAttack > playerAttack ? playerCurrentAttack * 1.1f : playerAttack * 1.1f);
                             break;
                         case 2:
-                            playerCurrentDefence = playerCurrentDefence > playerDefence ? playerCurrentDefence * 2 : playerDefence * 2;
+                            playerCurrentDefence = Mathf.RoundToInt(playerCurrentDefence > playerDefence ? playerCurrentDefence * 1.1f : playerDefence * 1.1f);
                             break;
                     }
                 }
@@ -110,6 +110,8 @@ public class PlayerBehave : Moving
                 else if (i == 3)
                 {
                     playerAddHealth = Mathf.RoundToInt(playerHealth * 1.2f);
+                    playerCurrentHealth += Mathf.RoundToInt(playerHealth * 0.2f);
+                    playerCurrentHealth = playerCurrentHealth > playerAddHealth ? playerAddHealth : playerCurrentHealth;
                 }
                 else if (i == 4) // 
                 {
@@ -122,6 +124,8 @@ public class PlayerBehave : Moving
                 else if (i == 6) //가방
                 {
                     _skillUI.skillLimite = 24;
+                    _storeUI._skillCountText[0].text = string.Format("{0}/{1}", _skillUI._skillCount[0], _skillUI.skillLimite);
+                    _storeUI._skillCountText[1].text = string.Format("{0}/{1}", _skillUI._skillCount[0], _skillUI.skillLimite);
                 }
                 else if (i == 7)
                 {
@@ -130,7 +134,7 @@ public class PlayerBehave : Moving
                 }
                 else if (i == 8)
                 {
-                    maincam.orthographicSize = 7;
+                    maincam.orthographicSize = 7.5f;
                 }
                 else if (i == 9)
                 {
@@ -158,7 +162,7 @@ public class PlayerBehave : Moving
                 else if (i == 14)
                 {
                     //강강약약
-                    passive_Reflect = true;
+                    passive_David = true;
                 }
                 else if (i == 15)
                 {
@@ -167,9 +171,10 @@ public class PlayerBehave : Moving
                 }
                 else if (i == 16)
                 {
-                    playerAddHealth = Mathf.RoundToInt(playerAddHealth > playerHealth ? playerAddHealth * 3f : playerHealth * 3f);
+                    playerAddHealth = Mathf.RoundToInt(playerAddHealth > playerHealth ? playerAddHealth * 4f : playerHealth * 4f);
                     playerCurrentAttack = playerCurrentAttack > playerAttack ? playerCurrentAttack * 5 : playerAttack * 5;
                     playerCurrentDefence = playerCurrentDefence > playerDefence ? playerCurrentDefence * 5 : playerDefence * 5;
+                    playerCurrentHealth = playerCurrentHealth + playerAddHealth * 3 > playerAddHealth ? playerAddHealth : playerCurrentHealth;
                 }
                 else if (i == 17)
                 {
@@ -177,19 +182,19 @@ public class PlayerBehave : Moving
                 }
                 else if (i == 18)
                 {
-
+                    passive_DemiGod = true;
                 }
                 else if (i == 19)
                 {
-
+                    passive_TheKing = true;
                 }
             }
         }
+        _stateUI.UpdateStateText();
     }
 
     protected override void InputPlayerMovingKey()
     {
-        //ChangeStateToMove();
         int vertical = Mathf.RoundToInt(Input.GetAxisRaw("Vertical"));
         int horizontal = Mathf.RoundToInt(Input.GetAxisRaw("Horizontal"));
 
@@ -203,18 +208,12 @@ public class PlayerBehave : Moving
         Vector3 inputTransform = new Vector3(horizontal, 0, vertical);
         if (inputTransform != Vector3.zero) transform.rotation = Quaternion.LookRotation(inputTransform);
 
-        //gravityVec = new Vector3(0, gravityScale, 0);
         inputTransform.y = 0;
-        //Vector3 pos = inputTransform;
-
-        //Vector3 finalpos = inputTransform * Time.deltaTime;
-
+        
         if(transform.position.x + inputTransform.x >= BackGround.MaxX || transform.position.x + inputTransform.x <= BackGround.MinX || transform.position.z + inputTransform.z >= BackGround.MaxZ || transform.position.z + inputTransform.z <= BackGround.MinZ)
         {
             return;
         }
-
-        //Vector3 pos = Vector3.Lerp(transform.position, inputTransform, 0.6f * Time.deltaTime);
 
         characterController.Move(inputTransform);
     }
@@ -240,11 +239,12 @@ public class PlayerBehave : Moving
     {
         if(collison.tag == "Coin")
         {
-            Debug.Log("00000000000 : " + _backGround);
             _backGround.coinCount = _backGround.coinCount - 1;
 
-
             currentMoney += moneyValue;
+
+            if (currentMoney >= 1000000) PlayerWin();
+
             Destroy(collison.gameObject);
             _stateUI.UpdateStateText();
         }
@@ -304,22 +304,19 @@ public class PlayerBehave : Moving
 
     private void StartBattle(int i)
     {
-        //_battleCamera.SettingBattleCam();
         Debug.Log(transform.position);
         transform.position += new Vector3(0, 0.5f, 0);
         Quaternion quaternion = Quaternion.Euler(new Vector3(75f , 0f , 0f));
-        //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
-        //transform.localEulerAngles = new Vector3(75, 0, 0);
         if (i == 0) transform.LookAt(_enemy.transform);
         else transform.LookAt(_enemy.transform.position - new Vector3(0, 0.8f, 0f));
         transform.rotation *= quaternion;
         Debug.Log(transform.position);
-        //ani.SetTrigger("Battle");
     }
 
     public void PlayerDead()
     {
         //아직 아무것도 없음
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void ChangeStateToMove()
@@ -346,7 +343,7 @@ public class PlayerBehave : Moving
         ani.SetTrigger("NoBattle");
         _boxCollider.enabled = true;
 
-        _stateUI.settingButton.enabled = false;
+        _stateUI.settingButton.enabled = true;
 
         if (passive_Bouble) demageBlock = true;
 
@@ -354,5 +351,11 @@ public class PlayerBehave : Moving
         transform.localPosition = currentPos;
         transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
         characterController.enabled = true;
+        _stateUI.UpdateStateText();
+    }
+
+    public void PlayerWin()
+    {
+        SceneManager.LoadScene("END");
     }
 }

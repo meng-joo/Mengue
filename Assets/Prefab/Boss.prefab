@@ -110,15 +110,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _canEnemyMove: 1
-  passive_Critical: 0
-  passive_Bouble: 0
-  passive_Midas: 0
-  passive_Poison: 0
-  passive_Reflect: 0
-  passive_David: 0
-  passive_Boold: 0
-  passive_DemiGod: 0
-  passive_TheKing: 0
   enemyView: {fileID: 6299359874589681016}
   pPos: {fileID: 0}
   _particleSystem:

@@ -103,19 +103,14 @@ public class Boss : Moving
         Quaternion quaternion = Quaternion.Euler(60, 0, 0);
         transform.position = player.transform.position + new Vector3(1, 1.5f, 1);
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
+        bosscurrnetHealth = bossHealth;
         transform.LookAt(player.transform);
         transform.rotation *= quaternion;
-        enemycurrnetHealth = enemyHealth;
-
-        //for (int i = 0; i < _backGround.enemycount; i++)
-        //{
-        //    _backGround._enemyList[i].gameObject.SetActive(false);
-        //    gameObject.SetActive(true);
-        //}
     }
 
     public void GetAttack()
     {
+        bool _isCri = false;
         int realDamage = playerCurrentAttack - bossDefence;
         int midasExtraDamage = passive_Midas ? Mathf.RoundToInt(Mathf.Min(realDamage, realDamage * (currentMoney * 0.000005f))) : 0;
 
@@ -124,7 +119,15 @@ public class Boss : Moving
         if (passive_David) realDamage *= playerAddHealth < bossHealth ? 2 : 1;
 
         posisonReducedDamage = Random.Range(1, 11);
-        if (passive_Critical) { if (posisonReducedDamage < 2) bosscurrnetHealth -= Mathf.Max(2, realDamage * 2); }
+        
+        if (passive_Critical)
+        {
+            if (posisonReducedDamage <= 10)
+            {
+                bosscurrnetHealth -= Mathf.RoundToInt(Mathf.Max(2, realDamage * 1.7f));
+                _isCri = true;
+            }
+        }
 
 
         else bosscurrnetHealth -= Mathf.Max(2, realDamage);
@@ -136,26 +139,32 @@ public class Boss : Moving
 
         if (bosscurrnetHealth <= 0)
         {
-            StartCoroutine(EnemyDead(realDamage / 2));
+            StartCoroutine(EnemyDead(realDamage / 2, _isCri));
         }
 
         else
         {
-            _skillUI.SendMessage("OtherWriteText", $"당신은 상대방의 피를 {realDamage + midasExtraDamage}(+{midasExtraDamage}) 만큼 깍았습니다. ");
+            if(!_isCri) _skillUI.SendMessage("OtherWriteText", $"당신은 뽀스의 피를 {realDamage}(+{midasExtraDamage}) 만큼 깍았습니다. ");
+            else _skillUI.SendMessage("OtherWriteText", $"크리티컬! 당신은 뽀스의 피를 {Mathf.RoundToInt(realDamage * 1.7f)}(+{midasExtraDamage}) 만큼 깍았습니다. ");
             EnemyTurn(realDamage / 2);
         }
     }
 
-    IEnumerator EnemyDead(int a = 0)
+    IEnumerator EnemyDead(int a = 0, bool critical = false)
     {
         StartCoroutine(EnemyHitParticle());
 
         if (passive_Boold) { yield return new WaitForSeconds(2f); _skillUI.SendMessage("OtherWriteText", $"당신은 +{a}만큼 피를 빨았습니다. "); }
+        if (critical) { yield return new WaitForSeconds(2f); _skillUI.SendMessage("OtherWriteText", $"치명적인 공격!!!"); }
 
         yield return new WaitForSeconds(2f);
 
         _skillUI.SendMessage("OtherWriteText", $"당신은 뽀스을 죽이고 {moneyValue * bossMoney}원을 얻었습니다! ");
         currentMoney += moneyValue * bossMoney;
+
+        if (currentMoney >= 1000000)
+            PlayerBehave.instance.PlayerWin();
+
         _stateUI.UpdateStateText();
 
         yield return new WaitForSeconds(3f);
@@ -194,14 +203,20 @@ public class Boss : Moving
     IEnumerator BossHeal(int a)
     {
         _isPlayerTurn = false;
-        yield return new WaitForSeconds(2f);
 
-        if (passive_Boold) _skillUI.SendMessage("OtherWriteText", $"당신은 +{a}만큼 피를 빨았습니다. ");
+        if (passive_Boold)
+        {
+            yield return new WaitForSeconds(2f);
+            _skillUI.SendMessage("OtherWriteText", $"당신은 +{a}만큼 피를 빨았습니다. ");
+        }
 
         yield return new WaitForSeconds(1.8f);
 
         _skillUI.SendMessage("OtherWriteText", $"뽀스는 위기를 느껴 피를 {Mathf.RoundToInt(bossAttack * 2 - bossAttack / 3)}회복하였습니다!");
         bosscurrnetHealth += bossAttack * 2 - bossAttack / 3;
+
+        //pPos._battleCamera.EnemyAttack();
+        pPos._battleCamera.BossHeal();
 
         if (bosscurrnetHealth > bossHealth) bosscurrnetHealth = bossHealth;
 
@@ -210,9 +225,10 @@ public class Boss : Moving
 
         _stateUI.UpdateStateText();
         healCount++;
+        yield return new WaitForSeconds(2.2f);
         _skillUI.StartCoroutine("ShowButtons");
+        yield return new WaitForSeconds(0.3f);
         _isPlayerTurn = true;
-        yield return new WaitForSeconds(0.5f);
         _skillUI.SendMessage("OtherWriteText", $"무엇을 하시겠습니까? ");
     }
 
@@ -228,16 +244,20 @@ public class Boss : Moving
         int canAttack = Random.Range(0, passive_100m);
         bool ispoison = false;
 
-        yield return new WaitForSeconds(2f);
-
-        if (passive_Boold) { _skillUI.SendMessage("OtherWriteText", $"당신은 +{a}만큼 피를 빨았습니다. "); }
+        if (passive_Boold)
+        {
+            yield return new WaitForSeconds(2f);
+            _skillUI.SendMessage("OtherWriteText", $"당신은 +{a}만큼 피를 빨았습니다. ");
+        }
 
         if (demageBlock)
         {
             _isPlayerTurn = false;
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(2f);
             _skillUI.SendMessage("OtherWriteText", $"당신은 비눗방울로 공격을 막았습니다! 비눗방울은 터졌습니다.");
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(4.3f);
+            _skillUI.StartCoroutine("ShowButtons");
+            _stateUI.UpdateStateText();
             demageBlock = false;
             _isPlayerTurn = true;
         }
@@ -272,12 +292,26 @@ public class Boss : Moving
                 bosscurrnetHealth -= damage / 5;
                 if (bosscurrnetHealth <= 0) { StartCoroutine(EnemyDead()); yield return null; }
 
+
+                yield return new WaitForSeconds(2.1f);
                 _skillUI.StartCoroutine("ShowButtons");
 
                 if (playerCurrentHealth <= 0)
                 {
-                    PlayerBehave.instance.PlayerDead();
-                    yield return null;
+                    if (!passive_DemiGod)
+                    {
+                        _skillUI.SendMessage("OtherWriteText", $"크아아아악...!! 당신은 뽀스의 전기에 맞고 타버렸습니다!!");
+                        yield return new WaitForSeconds(1.3f);
+                        _skillUI.SendMessage("OtherWriteText", $"안타깝지만 당신은 모든 것을 잃었습니다.");
+                        yield return new WaitForSeconds(1.5f);
+                        PlayerBehave.instance.PlayerDead();
+                        yield return null;
+                    }
+                    else
+                    {
+                        _skillUI.SendMessage("OtherWriteText", $"'신은 죽지 않는다'");
+                        playerCurrentHealth = 1;
+                    }
                 }
 
                 else

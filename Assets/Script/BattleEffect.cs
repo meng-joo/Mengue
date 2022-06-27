@@ -19,25 +19,30 @@ public class BattleEffect : MonoBehaviour
     void SetBattleAni()
     {
         Sequence seq = DOTween.Sequence();
-        seq.Append(_battleEffectPanel[0].transform.DOMoveX(960, 0.5f).SetEase(Ease.OutQuart));
-        seq.Append(_battleEffectPanel[1].transform.DOMoveX(960, 0.5f).SetEase(Ease.OutQuart));
-        seq.Append(_profileImage[0].transform.DOLocalMoveX(-638, 0.7f));
-        seq.Join(_profileImage[1].transform.DOLocalMoveX(638, 0.7f));
+        seq.Append(_battleEffectPanel[0].transform.DOMoveX(960, 0.3f));
+        seq.Append(_battleEffectPanel[1].transform.DOMoveX(960, 0.3f));
+        seq.Append(_profileImage[0].transform.DOLocalMoveX(-638, 0.4f));
+        seq.Join(_profileImage[1].transform.DOLocalMoveX(638, 0.4f));
+
+        seq.Append(_profileImage[0].transform.DOShakePosition(0.25f, 60f, 95));
+        seq.Join(_profileImage[1].transform.DOShakePosition(0.25f, 60f, 95));
 
 
-        seq.Append(_vs[0].transform.DOLocalMoveX(-50, 0.5f));
+        seq.Append(_vs[0].transform.DOLocalMoveX(-50, 0.5f));//.SetEase(Ease.InCubic);
         seq.Append(_vs[0].transform.DOShakePosition(0.3f, 100f, 60));
-        seq.Join(_vs[1].transform.DOLocalMoveX(73, 0.5f));
+        seq.Join(_vs[1].transform.DOLocalMoveX(73, 0.5f));//.SetEase(Ease.InCubic);
         seq.Append(_vs[1].transform.DOShakePosition(0.3f, 100f, 60));
 
-        seq.AppendInterval(1.8f);
+        seq.AppendInterval(1.2f);
 
-        seq.Append(_profileImage[0].transform.DOLocalMoveX(1300, 0.2f));
-        seq.Join(_profileImage[1].transform.DOLocalMoveX(-1300, 0.23f));
-        seq.Append(_battleEffectPanel[0].transform.DOLocalMoveX(2643.6f, 0.2f).SetEase(Ease.InQuart));
-        seq.Append(_battleEffectPanel[1].transform.DOLocalMoveX(-2643.6f, 0.2f).SetEase(Ease.InQuart));
-        seq.Append(_vs[0].transform.DOLocalMoveX(-1300, 0.2f));
-        seq.Join(_vs[1].transform.DOLocalMoveX(1300, 0.23f));
+        seq.Append(_profileImage[0].transform.DOLocalMoveX(1300, 0.3f));
+        seq.Join(_profileImage[1].transform.DOLocalMoveX(-1300, 0.33f));
+
+
+        seq.Append(_battleEffectPanel[0].transform.DOLocalMoveX(2643.6f, 0.3f).SetEase(Ease.InQuart));
+        seq.Append(_battleEffectPanel[1].transform.DOLocalMoveX(-2643.6f, 0.3f).SetEase(Ease.InQuart));
+        seq.Append(_vs[0].transform.DOLocalMoveX(-1300, 0.3f));
+        seq.Join(_vs[1].transform.DOLocalMoveX(1300, 0.33f));
 
         seq.AppendCallback(() =>
         {

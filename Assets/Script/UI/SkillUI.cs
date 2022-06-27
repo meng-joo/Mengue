@@ -21,13 +21,13 @@ public class SkillUI : MonoBehaviour
 
     public GameObject[] buttons;
 
-    private int[] _skillCount = new int[2];
+    public int[] _skillCount = new int[2];
 
     private bool _isAttaking = false;
 
     public int runvalue;
 
-    public int skillLimite = 14;
+    public int skillLimite;
 
     private void Start()
     {
@@ -39,6 +39,7 @@ public class SkillUI : MonoBehaviour
         _skillCountText[1] = transform.GetChild(4).Find("HealSkill/CountSkillText").GetComponent<TextMeshProUGUI>();
         _skillCount[0] = 10;
         _skillCount[1] = 3;
+        skillLimite = 14;
         runvalue = 2;
     }
 
@@ -52,7 +53,7 @@ public class SkillUI : MonoBehaviour
     {
         Sequence sequence = DOTween.Sequence();
         _runAwayCost.text = string.Format($"-{Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 1))}$");
-        sequence.Append(skillUI.transform.DOLocalMoveY(-354f, 1));
+        sequence.Append(skillUI.transform.DOLocalMoveY(-354f, 1.3f));
         StartCoroutine(WriteText("당신은 적(을)를 만났습니다!"));
         //다른 스킬을 더 띄어주기 위해 시퀀스 구현해야함
     }
@@ -62,7 +63,7 @@ public class SkillUI : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
 
         sequence.AppendInterval(0.4f);
-        sequence.Append(skillUI.transform.DOLocalMoveY(-730, 1));
+        sequence.Append(skillUI.transform.DOLocalMoveY(-800, 1.4f));
         //다른 스킬을 더 띄어주기 위해 시퀀스 구현해야함
     }
 
@@ -150,8 +151,8 @@ public class SkillUI : MonoBehaviour
             StartCoroutine(WriteText($"체력을 {Mathf.Min(7, Moving.playerAddHealth - Moving.playerCurrentHealth)}회복 하였습니다."));
             Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 7, Moving.playerAddHealth);
             _stateUI.UpdateStateText();
-            if (_fightingEnemy != null) _fightingEnemy.StartCoroutine("EnemyAttack");
-            else _fightingBoss.StartCoroutine("EnemyAttack");
+            if (_fightingEnemy != null) _fightingEnemy.StartCoroutine("EnemyAttack", 0);
+            else _fightingBoss.StartCoroutine("EnemyAttack", 0);
             EnemyTurn();
             _skillCount[1]--;
             SetCountText();
@@ -200,20 +201,29 @@ public class SkillUI : MonoBehaviour
         {
             StartCoroutine(WriteText("아직 상대 턴입니다."));
         }
+        _stateUI.UpdateStateText();
     }
 
     public void BuySkills(int num)
     {
         _storeUI.AblingButtons(false);
 
-        if (Moving.currentMoney < _storeUI.skillPrice[num] / _storeUI.passive_Sale) { _storeUI.StartCoroutine("ShowStoreBehave", "돈이 부족해요."); return; }
-        if (_skillCount[num] > skillLimite) { _storeUI.StartCoroutine("ShowStoreBehave", $"스킬은 최대 {skillLimite}개까지 살수 있습니다."); return; }
+        if (Moving.currentMoney < _storeUI.skillPrice[num] / _storeUI.passive_Sale && !Moving.passive_TheKing) { _storeUI.StartCoroutine("ShowStoreBehave", "돈이 부족해요."); return; }
+        if (_skillCount[num] >= skillLimite) { _storeUI.StartCoroutine("ShowStoreBehave", $"스킬은 최대 {skillLimite}개까지 살수 있습니다."); return; }
 
-        Moving.currentMoney -= _storeUI.skillPrice[num] / _storeUI.passive_Sale;
+
+        if (!Moving.passive_TheKing)
+        {
+            Moving.currentMoney -= _storeUI.skillPrice[num] / _storeUI.passive_Sale;
+            _storeUI.StartCoroutine("ShowStoreBehave", "스킬을 구매하였습니다.");
+        }
+        else
+        {
+            _storeUI.StartCoroutine("ShowStoreBehave", "'왕은 돈을 내지 않습니다' ");
+        }
+
         _skillCount[num] += 1;
-
-        
-        _storeUI.StartCoroutine("ShowStoreBehave", "스킬을 구매하였습니다.");
+        _storeUI._skillCountText[num].text = string.Format("{0}/{1}", _skillCount[num], skillLimite);
     }
 
     private void SetCountText()
@@ -227,8 +237,8 @@ public class SkillUI : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         for (int i = 0; i < buttons.Length; i++)
         {
-            buttons[i].transform.DOMoveX(2190, 0.14f);
-            yield return new WaitForSeconds(0.08f);
+            buttons[i].transform.DOMoveX(2300, 0.18f);
+            yield return new WaitForSeconds(0.04f);
         }
     }
 

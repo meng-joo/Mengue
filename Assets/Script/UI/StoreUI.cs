@@ -12,7 +12,7 @@ public class StoreUI : MonoBehaviour
     private TextMeshProUGUI[] lvText = new TextMeshProUGUI[5];
     private List<Text> priceText = new List<Text>();
     //private int[] skillLv;
-    private int[] price = new int[5];
+    public int[] price = new int[5];
     private int[] skillLevel = new int[5];
     private TextMeshProUGUI[] skillPricetext = new TextMeshProUGUI[4];
 
@@ -26,11 +26,13 @@ public class StoreUI : MonoBehaviour
     public RandomGacha _randomGacha;
 
     public int passive_Sale = 1;
+    public TextMeshProUGUI[] _skillCountText = new TextMeshProUGUI[2];
 
     void Start()
     {
         SetPrice();
         SetLevel();
+        
     }
 
     public void SetLevel()
@@ -59,31 +61,53 @@ public class StoreUI : MonoBehaviour
         skillPrice[1] = 7;
         skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
         skillPrice[3] = 150;
+
+        _skillCountText[0] = skillPanel[0].transform.Find("SkillCount").GetComponent<TextMeshProUGUI>();
+        _skillCountText[1] = skillPanel[1].transform.Find("SkillCount").GetComponent<TextMeshProUGUI>();
+        _skillCountText[0].text = string.Format("{0}/{1}", 10, 14);
+        _skillCountText[1].text = string.Format("{0}/{1}", 3, 14);
     }
 
     public void BuySkills(int num)
     {
         AblingButtons(false);
-        if (Moving.currentMoney < skillPrice[num] / passive_Sale) { StartCoroutine(ShowStoreBehave("돈이 부족합니다")); return; }
+        if (Moving.currentMoney < skillPrice[num] / passive_Sale && !Moving.passive_TheKing) { StartCoroutine(ShowStoreBehave("돈이 부족합니다")); return; }
         if (Moving.playerCurrentHealth == Moving.playerAddHealth && num == 3) { StartCoroutine(ShowStoreBehave("이미 최대체력입니다.")); return; }
         if (_randomGacha.count > 4 && num == 2) { StartCoroutine(ShowStoreBehave("아이템이 가득찼습니다.")); return; }
 
-        Moving.currentMoney -= skillPrice[num] / passive_Sale;
-
-        if(num == 3)
+        if (!Moving.passive_TheKing)
         {
-            StartCoroutine(ShowStoreBehave($"체력을 {Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth)}만큼 회복하였습니다."));
-            Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth);
+            Moving.currentMoney -= skillPrice[num] / passive_Sale;
+            if (num == 3)
+            {
+                StartCoroutine(ShowStoreBehave($"체력을 {Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth)}만큼 회복하였습니다."));
+                Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth);
+            }
+
+            else if (num == 2)
+            {
+                Moving._isGacha = true;
+                _randomGacha.SetPassiveItem();
+
+                StartCoroutine(ShowStoreBehave($"랜덤 뽑기!"));
+            }
         }
 
-        else if(num == 2)
+        else
         {
-            Moving._isGacha = true;
-            
-            
-            _randomGacha.SetPassiveItem();
+            if (num == 3)
+            {
+                StartCoroutine(ShowStoreBehave($"'왕은 돈을 내지 않습니다' "));
+                Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth);
+            }
 
-            StartCoroutine(ShowStoreBehave($"랜덤 뽑기!"));
+            else if (num == 2)
+            {
+                Moving._isGacha = true;
+                _randomGacha.SetPassiveItem();
+
+                StartCoroutine(ShowStoreBehave($"랜덤 뽑기!"));
+            }
         }
     }
 
@@ -102,8 +126,8 @@ public class StoreUI : MonoBehaviour
             seq.Append(upgradePanel[i].transform.DOMoveY(750, 0.1f));
         }
 
-        seq.Append(skillPanel[0].transform.DOLocalMoveX(-640, 0.14f));
-        seq.Append(skillPanel[1].transform.DOLocalMoveX(-640, 0.14f));
+        seq.Append(skillPanel[0].transform.DOLocalMoveX(-540, 0.14f));
+        seq.Append(skillPanel[1].transform.DOLocalMoveX(-540, 0.14f));
 
         seq.Append(skillPanel[3].transform.DOLocalMoveX(90, 0.14f));
         seq.Append(skillPanel[2].transform.DOLocalMoveX(90, 0.14f));
@@ -122,8 +146,8 @@ public class StoreUI : MonoBehaviour
             seq.Append(upgradePanel[i].transform.DOMoveY(1400, 0.14f));
         }
 
-        seq.Append(skillPanel[0].transform.DOLocalMoveX(-1270, 0.2f));
-        seq.Append(skillPanel[1].transform.DOLocalMoveX(-1270, 0.2f));
+        seq.Append(skillPanel[0].transform.DOLocalMoveX(-1240, 0.2f));
+        seq.Append(skillPanel[1].transform.DOLocalMoveX(-1240, 0.2f));
 
         seq.Append(skillPanel[3].transform.DOLocalMoveX(716, 0.14f));
         seq.Append(skillPanel[2].transform.DOLocalMoveX(716, 0.14f));
@@ -135,19 +159,31 @@ public class StoreUI : MonoBehaviour
     public void SelectUpgradePanel(int num)
     {
         AblingButtons(false);
-        if(Moving.currentMoney < price[num])
+        if (Moving.currentMoney < price[num] / passive_Sale && !Moving.passive_TheKing)
         {
             StartCoroutine(ShowStoreBehave("돈이 모자랍니다!!"));
             return;
         }
 
-        Moving.currentMoney -= price[num];
-        price[num] += Mathf.RoundToInt(price[num] * 0.62f);
-        skillLevel[num]++;
-        lvText[num].text = string.Format($"Lv.{skillLevel[num]}");
-        priceText[num].text = string.Format($"$ {price[num]}");
-        skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
-        skillPricetext[2].text = string.Format($"$ {skillPrice[2] / passive_Sale}");
+        if (skillLevel[num] > 150) StartCoroutine(ShowStoreBehave("최대 레벨입니다.")); return;
+
+        if(!Moving.passive_TheKing)
+        {
+            Moving.currentMoney -= price[num] / passive_Sale;
+            price[num] += Mathf.RoundToInt(price[num] / passive_Sale * 0.62f);
+            skillLevel[num]++;
+            lvText[num].text = string.Format($"Lv.{skillLevel[num]}");
+            priceText[num].text = string.Format($"$ {price[num]}");
+            skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
+            skillPricetext[2].text = string.Format($"$ {skillPrice[2] / passive_Sale}");
+        }
+        else
+        {
+            StartCoroutine(ShowStoreBehave($"'왕은 돈을 내지 않습니다' "));
+            skillLevel[num]++;
+            lvText[num].text = string.Format($"Lv.{skillLevel[num]}");
+        }
+        AblingButtons(true);
         UpgradeState(num);
     }
 
@@ -159,15 +195,15 @@ public class StoreUI : MonoBehaviour
         else if (num == 3) { PlayerBehave.playerDefence += 2; StartCoroutine(ShowStoreBehave("방어력이 2올라갔습니다.")); }
         else if (num == 4)
         {
-            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.15f);
+            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.2f);
             Moving.enemyDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.17f);
             Moving.enemyAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.17f);
             Moving.enemyMoney += 1;
 
-            Moving.bossHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.2f);
-            Moving.bossDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.2f);
-            Moving.bossAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.2f);
-            Moving.bossMoney += 2;
+            Moving.bossHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.38f);
+            Moving.bossDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.3f);
+            Moving.bossAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.4f);
+            Moving.bossMoney += 3;
 
             StartCoroutine(ShowStoreBehave("적이 강화되었습니다."));
             if (skillLevel[num] % 11 == 10)
@@ -180,7 +216,7 @@ public class StoreUI : MonoBehaviour
             }
         }
 
-        StartCoroutine(SetIdle(0.9f));
+        StartCoroutine(SetIdle(1.6f));
     }
 
     IEnumerator SetIdle(float value)
@@ -188,7 +224,8 @@ public class StoreUI : MonoBehaviour
         yield return new WaitForSeconds(value);
         if (!_ischatting)
         {
-            StartCoroutine(ShowStoreBehave("어떤게 좋으신가요? "));
+            if (!Moving.passive_TheKing) StartCoroutine(ShowStoreBehave("어떤게 좋으신가요? "));
+            else StartCoroutine(ShowStoreBehave("'왕은 돈을 내지 않습니다' "));
         }
     }
 

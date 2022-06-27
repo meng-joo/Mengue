@@ -6,11 +6,11 @@ using Cinemachine;
 
 public abstract class Moving : MonoBehaviour
 {
-    public static int currentMoney = 50000;
+    public static int currentMoney = 999998;
     public static int moneyValue = 1;
 
     #region 플레이어의 공격력, 피, 방어력
-    public static int playerAttack = 60;
+    public static int playerAttack = 45;
     public static int playerCurrentAttack = playerAttack;
     public static int playerHealth = 20;
     public static int playerAddHealth = playerHealth;
@@ -21,18 +21,18 @@ public abstract class Moving : MonoBehaviour
 
     #region 적의 공격력, 피, 방어력
     public static int enemyAttack = 3;
-    public static int enemyHealth = 20;
+    public static int enemyHealth = 70;
     public static int enemycurrnetHealth = enemyHealth;
     public static int enemyDefence = 3;
     public static int enemyMoney = 3;
     #endregion
 
     #region 보스 공격력, 피, 방어력
-    public static int bossAttack = 6;
+    public static int bossAttack = 12;
     public static int bossHealth = 75;
     public static int bosscurrnetHealth = bossHealth;
-    public static int bossDefence = 8;
-    public static int bossMoney = 10;
+    public static int bossDefence = 11;
+    public static int bossMoney = 15;
     #endregion
 
     public static bool _isPlayerTurn = true;
@@ -43,19 +43,20 @@ public abstract class Moving : MonoBehaviour
     protected int passive_100m = 1;
 
     
-    protected bool demageBlock = false;
+    protected static bool demageBlock = false;
 
     #region 패시브 아이템 불체크
-    public bool passive_Critical = false;
-    public bool passive_Bouble = false;
-    public bool passive_Midas = false;
-    public bool passive_Poison = false;
-    public bool passive_Reflect = false;
-    public bool passive_David = false;
-    public bool passive_Boold = false;
-    public bool passive_DemiGod = false;
-    public bool passive_TheKing = false;
+    public static bool passive_Critical = false;
+    public static bool passive_Bouble = false;
+    public static bool passive_Midas = false;
+    public static bool passive_Poison = false;
+    public static bool passive_Reflect = false;
+    public static bool passive_David = false;
+    public static bool passive_Boold = false;
+    public static bool passive_DemiGod = false;
+    public static bool passive_TheKing = false;
     #endregion
+
     public enum PlayerState
     {
         IDLE,

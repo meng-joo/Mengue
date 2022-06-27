@@ -43,7 +43,7 @@ public class StateUI : MonoBehaviour
 
     public void UpdateStateText()
     {
-        _stateText.text = string.Format($"이름: 맹주영\n체력: {Moving.playerCurrentHealth}/{Moving.playerAddHealth}\n공격력: {Moving.playerAttack}\n방어력: {Moving.playerDefence}\n돈: ${Moving.currentMoney}\n돈 가치: {Moving.moneyValue}");
+        _stateText.text = string.Format($"이름: 맹주영\n체력: {Moving.playerCurrentHealth}/{Moving.playerAddHealth}\n공격력: {Moving.playerCurrentAttack}\n방어력: {Moving.playerCurrentDefence}\n돈: ${Moving.currentMoney}\n돈 가치: {Moving.moneyValue}");
 
     }
 
@@ -54,9 +54,4 @@ public class StateUI : MonoBehaviour
             passiveSkillButton[i] = transform.Find("PassiveBackground").GetChild(i).GetComponent<Button>();
         }
     }
-
-    //public void InputPassiveButton(int num)
-    //{
-        
-    //}
 }
