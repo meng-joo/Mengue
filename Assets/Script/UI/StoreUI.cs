@@ -71,7 +71,7 @@ public class StoreUI : MonoBehaviour
     public void BuySkills(int num)
     {
         AblingButtons(false);
-        if (Moving.currentMoney < skillPrice[num] / passive_Sale && !Moving.passive_TheKing) { StartCoroutine(ShowStoreBehave("돈이 부족합니다")); return; }
+        if (Moving.currentMoney < skillPrice[num] / passive_Sale && !Moving.passive_TheKing) { StartCoroutine(ShowStoreBehave("돈이 부족합니다 ")); return; }
         if (Moving.playerCurrentHealth == Moving.playerAddHealth && num == 3) { StartCoroutine(ShowStoreBehave("이미 최대체력입니다.")); return; }
         if (_randomGacha.count > 4 && num == 2) { StartCoroutine(ShowStoreBehave("아이템이 가득찼습니다.")); return; }
 
@@ -165,7 +165,7 @@ public class StoreUI : MonoBehaviour
             return;
         }
 
-        if (skillLevel[num] > 150) StartCoroutine(ShowStoreBehave("최대 레벨입니다.")); return;
+        if (skillLevel[num] > 150) { StartCoroutine(ShowStoreBehave("최대 레벨입니다.")); return; }
 
         if(!Moving.passive_TheKing)
         {

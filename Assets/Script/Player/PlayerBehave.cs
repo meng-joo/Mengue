@@ -134,7 +134,7 @@ public class PlayerBehave : Moving
                 }
                 else if (i == 8)
                 {
-                    maincam.orthographicSize = 7.5f;
+                    maincam.orthographicSize = 7.9f;
                 }
                 else if (i == 9)
                 {
@@ -153,7 +153,8 @@ public class PlayerBehave : Moving
                 }
                 else if (i == 12)
                 {
-                    _backGround.coinSpawnDeley = 8f;
+                    _backGround.coinSpawnDeley = 2.4f;
+                    _backGround.maxCoinCount = 200;
                 }
                 else if (i == 13)
                 {

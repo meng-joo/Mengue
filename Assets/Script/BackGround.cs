@@ -9,7 +9,7 @@ public class BackGround : MonoBehaviour
     public const int MaxZ = 25;
     public const int MinZ = -25;
 
-    public float coinSpawnDeley = 10f;
+    public float coinSpawnDeley = 7.5f;
     public int coinCount = 0;
 
     public List<Enemy> _enemyList = new List<Enemy>();
@@ -23,6 +23,7 @@ public class BackGround : MonoBehaviour
     public Enemy _enemy = null;
     public Boss _boss = null;
 
+    public int maxCoinCount = 100;
 
     [Range(1, 25)]
     public int enemycount;
@@ -35,6 +36,8 @@ public class BackGround : MonoBehaviour
             StartCoroutine(CreateBackGroundBlock());
             StartCoroutine("SpawnCoin");
         }
+        maxCoinCount = 100;
+        coinSpawnDeley = 6f;
     }
 
     IEnumerator CreateBackGroundBlock()
@@ -154,9 +157,9 @@ public class BackGround : MonoBehaviour
 
         while (true)
         {
-            if (coinCount < 40)
+            if (coinCount < maxCoinCount)
             {
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(coinSpawnDeley);
                 int x = Random.Range(MinX + 1, MaxX);
                 int z = Random.Range(MinZ + 1, MaxZ - 2);
 
@@ -164,7 +167,7 @@ public class BackGround : MonoBehaviour
                 coinCount++;
             }
 
-            else yield return new WaitForSeconds(coinSpawnDeley * coinSpawnDeley - 30);
+            else yield return new WaitForSeconds(coinSpawnDeley * coinSpawnDeley - 7);
         }
     }
 }
