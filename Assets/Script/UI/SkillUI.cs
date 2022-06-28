@@ -19,6 +19,9 @@ public class SkillUI : MonoBehaviour
     public StoreUI _storeUI;
     public StateUI _stateUI;
 
+    public AudioSource _audioSource;
+    public SoundClips _soundClips;
+
     public GameObject[] buttons;
 
     public int[] _skillCount = new int[2];

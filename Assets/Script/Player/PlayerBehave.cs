@@ -322,6 +322,8 @@ public class PlayerBehave : Moving
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    
+
     public void ChangeStateToMove()
     {
         if(_playerState == PlayerState.IDLE)
