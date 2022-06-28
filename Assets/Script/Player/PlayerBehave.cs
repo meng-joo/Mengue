@@ -261,6 +261,8 @@ public class PlayerBehave : Moving
         {
             _backGround.StopCoroutine("SpawnCoin");
             _playerState = PlayerState.INSTORE;
+            _storeUI._skillCountText[0].text = string.Format("{0}/{1}", _skillUI._skillCount[0], _skillUI.skillLimite);
+            _storeUI._skillCountText[1].text = string.Format("{0}/{1}", _skillUI._skillCount[1], _skillUI.skillLimite);
             StartCoroutine(PlayerInStore());
             _stateUI.UpdateStateText();
         }

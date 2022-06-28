@@ -16,6 +16,8 @@ public class StoreUI : MonoBehaviour
     private int[] skillLevel = new int[5];
     private TextMeshProUGUI[] skillPricetext = new TextMeshProUGUI[4];
 
+    public TextMeshProUGUI _playerCoin;
+
     public TextMeshProUGUI _storeBuyPanelText;
 
     public BackGround _backGround = null;
@@ -78,6 +80,7 @@ public class StoreUI : MonoBehaviour
         if (!Moving.passive_TheKing)
         {
             Moving.currentMoney -= skillPrice[num] / passive_Sale;
+            _playerCoin.text = string.Format("{0}＄", Moving.currentMoney);
             if (num == 3)
             {
                 StartCoroutine(ShowStoreBehave($"체력을 {Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth)}만큼 회복하였습니다."));
@@ -116,6 +119,7 @@ public class StoreUI : MonoBehaviour
         Sequence seq = DOTween.Sequence();
 
         Moving._isStoresetting = true;
+        _playerCoin.text = string.Format("{0}＄", Moving.currentMoney);
 
         skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
         skillPricetext[2].text = string.Format($"$ {skillPrice[2] / passive_Sale}");
@@ -170,12 +174,13 @@ public class StoreUI : MonoBehaviour
         if(!Moving.passive_TheKing)
         {
             Moving.currentMoney -= price[num] / passive_Sale;
-            price[num] += Mathf.RoundToInt(price[num] / passive_Sale * 0.62f);
+            price[num] += Mathf.RoundToInt(price[num] / passive_Sale * 0.45f);
             skillLevel[num]++;
             lvText[num].text = string.Format($"Lv.{skillLevel[num]}");
             priceText[num].text = string.Format($"$ {price[num]}");
-            skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
+            skillPrice[2] = Mathf.RoundToInt(Mathf.Max(600, Moving.moneyValue * Moving.moneyValue * 3.6f));
             skillPricetext[2].text = string.Format($"$ {skillPrice[2] / passive_Sale}");
+            _playerCoin.text = string.Format("{0}＄", Moving.currentMoney);
         }
         else
         {
@@ -216,7 +221,7 @@ public class StoreUI : MonoBehaviour
             }
         }
 
-        StartCoroutine(SetIdle(1.6f));
+        StartCoroutine(SetIdle(2.5f));
     }
 
     IEnumerator SetIdle(float value)

@@ -224,6 +224,7 @@ public class SkillUI : MonoBehaviour
 
         _skillCount[num] += 1;
         _storeUI._skillCountText[num].text = string.Format("{0}/{1}", _skillCount[num], skillLimite);
+        _storeUI._playerCoin.text = string.Format("{0}гд", Moving.currentMoney);
     }
 
     private void SetCountText()

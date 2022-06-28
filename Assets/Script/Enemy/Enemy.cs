@@ -217,7 +217,7 @@ public class Enemy : Moving
             if (canAttack == 0)
             {
                 _isPlayerTurn = false;
-                yield return new WaitForSeconds(3f);
+                yield return new WaitForSeconds(2f);
                 pPos._battleCamera.EnemyAttack();
                 _skillUI.SendMessage("OtherWriteText", $"ÈåÇóÇó(ÀÇ)¿¡ Æø¹ßÆÝÄ¡!! ");
                 yield return new WaitForSeconds(2.2f);
@@ -243,6 +243,8 @@ public class Enemy : Moving
                 if (enemycurrnetHealth <= 0) { StartCoroutine(EnemyDead()); yield return null; }
 
                 _skillUI.StartCoroutine("ShowButtons");
+
+                yield return new WaitForSeconds(0.7f);
 
                 if (playerCurrentHealth <= 0)
                 {
