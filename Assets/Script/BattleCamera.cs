@@ -27,15 +27,14 @@ public class BattleCamera : MonoBehaviour
     {
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(subCam.transform.DOMove(target.transform.position, 0.3f));
-        seq.AppendCallback(() => transform.LookAt(target.transform.position + new Vector3(1, 0, 1)));
+        seq.Append(subCam.transform.DOMove(target.transform.position + new Vector3(-1,2,-1), 0.3f));
+        seq.Append(transform.DOLookAt(target.transform.position + new Vector3(1, 0, 1), 0.1f));
         seq.AppendCallback(() => subCam.fieldOfView = 100);
         seq.AppendInterval(2f);
         seq.AppendCallback(() => StartCoroutine(ChangeFieldOfView()));
         seq.Join(subCam.transform.DOShakePosition(1.5f, 0.05f, 90));
 
-        seq.AppendInterval(1f);
-        //seq.AppendCallback(() => subCam.fieldOfView = 93.8f);
+        seq.AppendInterval(0.8f);
         seq.AppendCallback(() => SetCamera());
     }
 
@@ -43,8 +42,8 @@ public class BattleCamera : MonoBehaviour
     {
         Sequence seq = DOTween.Sequence();
 
-        seq.Append(subCam.transform.DOMove(target.transform.position, 0.3f));
-        seq.AppendCallback(() => transform.LookAt(target.transform.position + new Vector3(1, 0, 1)));
+        seq.Append(subCam.transform.DOMove(target.transform.position + new Vector3(-1, 2, -1), 0.3f));
+        seq.Append(transform.DOLookAt(target.transform.position + new Vector3(1, 0, 1), 0.1f));
         seq.AppendCallback(() => subCam.fieldOfView = 120);
         seq.AppendInterval(2f);
         //seq.Append(subCam.transform.DOShakePosition(0.2f, 10f));
@@ -53,8 +52,7 @@ public class BattleCamera : MonoBehaviour
         seq.Join(subCam.transform.DOShakePosition(0.5f, 2, 30));
 
 
-        //seq.AppendCallback(() => hitSprite.gameObject.SetActive(false));
-        seq.AppendInterval(1f);
+        seq.AppendInterval(0.8f);
         seq.AppendCallback(() => subCam.fieldOfView = 93.8f);
         seq.AppendCallback(() => SetCamera());
     }
@@ -99,9 +97,10 @@ public class BattleCamera : MonoBehaviour
 
     private void SetCamera()
     {
+        Sequence seq = DOTween.Sequence();
+
         Vector3 targetPos = target.transform.position;
-        transform.position = new Vector3(targetPos.x - 0.3f, targetPos.y + 2.4f, targetPos.z - 5.3f);
-        //transform.rotation *= Quaternion.Euler(new Vector3(21, 180, 0));
-        transform.LookAt(targetPos);
+        seq.Append(transform.DOMove(new Vector3(targetPos.x - 0.3f, targetPos.y + 2.4f, targetPos.z - 5.3f), 0.2f));
+        seq.Append(transform.DOLookAt(targetPos, 0.12f));
     }
 }

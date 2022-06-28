@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
 using UnityEngine.SceneManagement;
@@ -32,6 +33,10 @@ public class PlayerBehave : Moving
     private bool[] isPassiveOn = new bool[20];
 
     public BackGround _backGround;
+
+    public Canvas[] _canvas;
+    public Camera _battleCam;
+
     private void Awake()
     {
         instance = this;
@@ -67,11 +72,16 @@ public class PlayerBehave : Moving
         {
             if(Input.GetKeyDown(KeyCode.Escape))
             {
-                _storeUI.GetBackStoreUI();
-                PassiveApply();
-                _backGround.StartCoroutine("SpawnCoin");
+                ExitStoreButton();
             }
         }
+    }
+
+    public void ExitStoreButton()
+    {
+        _storeUI.GetBackStoreUI();
+        PassiveApply();
+        _backGround.StartCoroutine("SpawnCoin");
     }
 
     void PassiveApply()
@@ -241,6 +251,7 @@ public class PlayerBehave : Moving
         if(collison.tag == "Coin")
         {
             _backGround.coinCount = _backGround.coinCount - 1;
+            SoundClips.instance.EffectSound(0);
 
             currentMoney += moneyValue;
 
@@ -261,6 +272,7 @@ public class PlayerBehave : Moving
         {
             _backGround.StopCoroutine("SpawnCoin");
             _playerState = PlayerState.INSTORE;
+            SoundClips.instance.StartCoroutine("SetStoreSound");
             _storeUI._skillCountText[0].text = string.Format("{0}/{1}", _skillUI._skillCount[0], _skillUI.skillLimite);
             _storeUI._skillCountText[1].text = string.Format("{0}/{1}", _skillUI._skillCount[1], _skillUI.skillLimite);
             StartCoroutine(PlayerInStore());
@@ -283,16 +295,19 @@ public class PlayerBehave : Moving
     IEnumerator PlayerFindEnemyToBattle(int i)
     {
         exclamationMark.gameObject.SetActive(true);
+        SoundClips.instance.EffectSound(6);
 
         yield return new WaitForSeconds(1f);
 
         _battleEffect.SetProfile(i);
+        SoundClips.instance.StartCoroutine("SetBattleSound");
 
         yield return new WaitForSeconds(5f);
 
         characterController.enabled = false;
         exclamationMark.gameObject.SetActive(false);
         _battleCamera.gameObject.SetActive(true);
+        SetBattleCanvasCamera();
         StartBattle(i);
         ani.SetTrigger("Battle");
         _skillUI.ViewSkillUI();
@@ -322,8 +337,6 @@ public class PlayerBehave : Moving
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    
-
     public void ChangeStateToMove()
     {
         if(_playerState == PlayerState.IDLE)
@@ -342,17 +355,19 @@ public class PlayerBehave : Moving
     IEnumerator EndBattleSettting()
     {
         _skillUI.HideSkillUI();
+        yield return new WaitForSeconds(1.8f);
         _battleCamera.gameObject.SetActive(false);
+        SetMainCanvasCamera();
         Vector3 currentPos = new Vector3(Mathf.RoundToInt(transform.position.x), 0, Mathf.RoundToInt(transform.position.z));
         ani.ResetTrigger("Battle");
         ani.SetTrigger("NoBattle");
         _boxCollider.enabled = true;
-
+        SoundClips.instance.StartCoroutine("StartSound");
         _stateUI.settingButton.enabled = true;
 
         if (passive_Bouble) demageBlock = true;
 
-        yield return new WaitForSeconds(1.1f);
+        yield return new WaitForSeconds(0.9f);
         transform.localPosition = currentPos;
         transform.rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
         characterController.enabled = true;
@@ -362,5 +377,21 @@ public class PlayerBehave : Moving
     public void PlayerWin()
     {
         SceneManager.LoadScene("END");
+    }
+
+    void SetBattleCanvasCamera()
+    {
+        for(int i=0;i<_canvas.Length;i++)
+        {
+            _canvas[i].worldCamera = _battleCam;
+        }
+    }
+
+    void SetMainCanvasCamera()
+    {
+        for (int i = 0; i < _canvas.Length; i++)
+        {
+            _canvas[i].worldCamera = Camera.main;
+        }
     }
 }

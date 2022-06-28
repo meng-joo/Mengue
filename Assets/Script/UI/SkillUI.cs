@@ -65,8 +65,8 @@ public class SkillUI : MonoBehaviour
     {
         Sequence sequence = DOTween.Sequence();
 
-        sequence.AppendInterval(0.4f);
-        sequence.Append(skillUI.transform.DOLocalMoveY(-800, 1.4f));
+        sequence.AppendInterval(0.8f);
+        sequence.Append(skillUI.transform.DOLocalMoveY(-800, 0.9f));
         //다른 스킬을 더 띄어주기 위해 시퀀스 구현해야함
     }
 
@@ -132,16 +132,12 @@ public class SkillUI : MonoBehaviour
 
     public IEnumerator WriteText(string text)
     {
-        //_stateText.text = string.Format(text);
-        //yield return null;
         for (int i = 0; i < text.Length; i++)
         {
-            //Debug.Log("기ㅣㅁ필규");
             _stateText.text = string.Format("{0}", text.Substring(0, i));
             yield return new WaitForSeconds(0.037f);
         }
     }
-
 
     public void HealButton()
     {
@@ -241,7 +237,7 @@ public class SkillUI : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         for (int i = 0; i < buttons.Length; i++)
         {
-            buttons[i].transform.DOMoveX(2300, 0.18f);
+            buttons[i].transform.DOLocalMoveX(1800, 0.18f);
             yield return new WaitForSeconds(0.04f);
         }
     }
@@ -251,7 +247,7 @@ public class SkillUI : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         for (int i = 0; i < buttons.Length; i++)
         {
-            buttons[i].transform.DOMoveX(1920 - 230, 0.12f);
+            buttons[i].transform.DOLocalMoveX(680, 0.12f);
             yield return new WaitForSeconds(0.08f);
         }
     }

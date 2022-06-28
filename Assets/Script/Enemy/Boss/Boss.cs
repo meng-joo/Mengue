@@ -119,7 +119,9 @@ public class Boss : Moving
         if (passive_David) realDamage *= playerAddHealth < bossHealth ? 2 : 1;
 
         posisonReducedDamage = Random.Range(1, 11);
-        
+
+        SoundClips.instance.EffectSound(2);
+
         if (passive_Critical)
         {
             if (posisonReducedDamage <= 10)
@@ -128,7 +130,6 @@ public class Boss : Moving
                 _isCri = true;
             }
         }
-
 
         else bosscurrnetHealth -= Mathf.Max(2, realDamage);
 
@@ -282,6 +283,7 @@ public class Boss : Moving
                 //damage = passive_Poison?posisonReducedDamage : 
                 playerCurrentHealth -= damage;
                 Instantiate(PlayerBehave.instance._hitEffect[1], transform);
+                SoundClips.instance.EffectSound(4);
                 PlayerBehave.instance.ani.SetTrigger("GetHit");
                 yield return new WaitForSeconds(1.2f);
 
@@ -301,9 +303,9 @@ public class Boss : Moving
                     if (!passive_DemiGod)
                     {
                         _skillUI.SendMessage("OtherWriteText", $"크아아아악...!! 당신은 뽀스의 전기에 맞고 타버렸습니다!!");
-                        yield return new WaitForSeconds(1.3f);
+                        yield return new WaitForSeconds(2f);
                         _skillUI.SendMessage("OtherWriteText", $"안타깝지만 당신은 모든 것을 잃었습니다.");
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(2.2f);
                         PlayerBehave.instance.PlayerDead();
                         yield return null;
                     }

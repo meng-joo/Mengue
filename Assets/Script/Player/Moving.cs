@@ -6,7 +6,7 @@ using Cinemachine;
 
 public abstract class Moving : MonoBehaviour
 {
-    public static int currentMoney = 0;
+    public static int currentMoney = 10000;
     public static int moneyValue = 1;
 
     #region 플레이어의 공격력, 피, 방어력
@@ -62,10 +62,11 @@ public abstract class Moving : MonoBehaviour
         IDLE,
         MOVING,
         BATTLE,
-        INSTORE
+        INSTORE,
+        INSETTING
     }
 
-    public static PlayerState _playerState = PlayerState.IDLE;
+    public static PlayerState _playerState = PlayerState.INSETTING;
 
     protected virtual void Update()
     {
@@ -74,7 +75,7 @@ public abstract class Moving : MonoBehaviour
 
     protected virtual void Move()
     {
-        if (_playerState == PlayerState.IDLE)
+        if (_playerState == PlayerState.IDLE && _playerState != PlayerState.INSTORE && _playerState != PlayerState.INSETTING)
         {
             if (Input.GetKeyDown(KeyCode.W) || 
                 Input.GetKeyDown(KeyCode.A) || 

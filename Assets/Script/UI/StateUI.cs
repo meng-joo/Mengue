@@ -37,6 +37,7 @@ public class StateUI : MonoBehaviour
 
     public void OnClickSettingButton()
     {
+        Moving._playerState = Moving.PlayerState.INSETTING;
         settingBackGround.transform.DOLocalMoveX(0, 0.2f);
         PlayerBehave.instance._backGround.StopCoroutine("SpawnCoin");
     }

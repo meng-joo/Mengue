@@ -128,6 +128,8 @@ public class Enemy : Moving
 
         realDamage = Mathf.Max(2, realDamage);
 
+        SoundClips.instance.EffectSound(2);
+
         if (enemycurrnetHealth <= 0)
         {
             
@@ -233,6 +235,7 @@ public class Enemy : Moving
                 playerCurrentHealth -= damage;
                 Instantiate(PlayerBehave.instance._hitEffect[0], transform);
                 PlayerBehave.instance.ani.SetTrigger("GetHit");
+                SoundClips.instance.EffectSound(3);
                 yield return new WaitForSeconds(1.2f);
 
                 if (!passive_Poison) _skillUI.SendMessage("OtherWriteText", $"흐헹헹(이)가 당신의 피를 {damage}만큼 깎았습니다.");
@@ -251,9 +254,9 @@ public class Enemy : Moving
                     if (!passive_DemiGod)
                     {
                         _skillUI.SendMessage("OtherWriteText", $"크아아아악...!! 당신은 흐헹헹에게 죽고 말았습니다!!");
-                        yield return new WaitForSeconds(1.3f);
+                        yield return new WaitForSeconds(2.1f);
                         _skillUI.SendMessage("OtherWriteText", $"창피하지도 않으신가요? 당신은 모든 것을 잃었습니다.");
-                        yield return new WaitForSeconds(1.5f);
+                        yield return new WaitForSeconds(2.2f);
 
                         PlayerBehave.instance.PlayerDead();
                         yield return null;

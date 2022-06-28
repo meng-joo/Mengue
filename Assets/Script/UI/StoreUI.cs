@@ -124,10 +124,10 @@ public class StoreUI : MonoBehaviour
         skillPrice[2] = Mathf.RoundToInt(Mathf.Max(4000, Moving.moneyValue * 400f));
         skillPricetext[2].text = string.Format($"$ {skillPrice[2] / passive_Sale}");
 
-        seq.Append(transform.DOMoveY(520, 0.4f));
+        seq.Append(transform.DOLocalMoveY(14, 0.4f));
         for (int i = 0; i < upgradePanel.Length; i++)
         {
-            seq.Append(upgradePanel[i].transform.DOMoveY(750, 0.1f));
+            seq.Append(upgradePanel[i].transform.DOLocalMoveY(180, 0.1f));
         }
 
         seq.Append(skillPanel[0].transform.DOLocalMoveX(-540, 0.14f));
@@ -145,18 +145,20 @@ public class StoreUI : MonoBehaviour
     {
         Sequence seq = DOTween.Sequence();
 
+        SoundClips.instance.StartCoroutine("StartSound");
+
         for (int i = 0; i < upgradePanel.Length; i++)
         {
-            seq.Append(upgradePanel[i].transform.DOMoveY(1400, 0.14f));
+            seq.Append(upgradePanel[i].transform.DOLocalMoveY(830, 0.1f));
         }
 
-        seq.Append(skillPanel[0].transform.DOLocalMoveX(-1240, 0.2f));
-        seq.Append(skillPanel[1].transform.DOLocalMoveX(-1240, 0.2f));
+        seq.Append(skillPanel[0].transform.DOLocalMoveX(-1240, 0.1f));
+        seq.Append(skillPanel[1].transform.DOLocalMoveX(-1240, 0.1f));
 
-        seq.Append(skillPanel[3].transform.DOLocalMoveX(716, 0.14f));
-        seq.Append(skillPanel[2].transform.DOLocalMoveX(716, 0.14f));
+        seq.Append(skillPanel[3].transform.DOLocalMoveX(716, 0.09f));
+        seq.Append(skillPanel[2].transform.DOLocalMoveX(716, 0.08f));
 
-        seq.Append(transform.DOMoveY(1600, 0.4f));
+        seq.Append(transform.DOLocalMoveY(960, 0.3f));
         seq.AppendCallback(() => Moving._playerState = Moving.PlayerState.IDLE);
     }
 
@@ -246,7 +248,6 @@ public class StoreUI : MonoBehaviour
             skillPanel[i].enabled = _is;
         }
     }
-
 
     IEnumerator ShowStoreBehave(string text)
     {

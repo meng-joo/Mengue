@@ -18,39 +18,51 @@ public class BattleEffect : MonoBehaviour
 
     void SetBattleAni()
     {
+        _battleEffectPanel[0].SetActive(true);
+        _battleEffectPanel[1].SetActive(true);
+        _profileImage[0].gameObject.SetActive(true);
+        _profileImage[1].gameObject.SetActive(true);
+
         Sequence seq = DOTween.Sequence();
-        seq.Append(_battleEffectPanel[0].transform.DOMoveX(960, 0.3f));
-        seq.Append(_battleEffectPanel[1].transform.DOMoveX(960, 0.3f));
+
+        seq.Append(_battleEffectPanel[0].transform.DOLocalMoveX(120, 0.4f));
+        seq.Append(_battleEffectPanel[1].transform.DOLocalMoveX(120, 0.4f));
         seq.Append(_profileImage[0].transform.DOLocalMoveX(-638, 0.4f));
         seq.Join(_profileImage[1].transform.DOLocalMoveX(638, 0.4f));
 
-        seq.Append(_profileImage[0].transform.DOShakePosition(0.25f, 60f, 95));
-        seq.Join(_profileImage[1].transform.DOShakePosition(0.25f, 60f, 95));
+        seq.Append(_profileImage[0].transform.DOShakePosition(0.2f, 50f, 100));
+        seq.Join(_profileImage[1].transform.DOShakePosition(0.2f, 50f, 100));
+        seq.InsertCallback(1f, () => SoundClips.instance.EffectSound(5));
 
 
-        seq.Append(_vs[0].transform.DOLocalMoveX(-50, 0.5f));//.SetEase(Ease.InCubic);
-        seq.Append(_vs[0].transform.DOShakePosition(0.3f, 100f, 60));
-        seq.Join(_vs[1].transform.DOLocalMoveX(73, 0.5f));//.SetEase(Ease.InCubic);
-        seq.Append(_vs[1].transform.DOShakePosition(0.3f, 100f, 60));
+        seq.Append(_vs[0].transform.DOLocalMoveX(-50, 0.4f));
+        seq.Append(_vs[0].transform.DOShakePosition(0.3f, 80f, 70));
+        seq.Join(_vs[1].transform.DOLocalMoveX(73, 0.4f));
+        seq.Append(_vs[1].transform.DOShakePosition(0.3f, 80f, 70));
+        seq.InsertCallback(1f, () => { SoundClips.instance.EffectSound(5); });
 
-        seq.AppendInterval(1.2f);
+        seq.AppendInterval(1.1f);
 
-        seq.Append(_profileImage[0].transform.DOLocalMoveX(1300, 0.3f));
-        seq.Join(_profileImage[1].transform.DOLocalMoveX(-1300, 0.33f));
+        seq.Append(_profileImage[0].transform.DOLocalMoveX(1300, 0.2f));
+        seq.Join(_profileImage[1].transform.DOLocalMoveX(-1300, 0.2f));
 
 
-        seq.Append(_battleEffectPanel[0].transform.DOLocalMoveX(2643.6f, 0.3f).SetEase(Ease.InQuart));
-        seq.Append(_battleEffectPanel[1].transform.DOLocalMoveX(-2643.6f, 0.3f).SetEase(Ease.InQuart));
-        seq.Append(_vs[0].transform.DOLocalMoveX(-1300, 0.3f));
-        seq.Join(_vs[1].transform.DOLocalMoveX(1300, 0.33f));
+        seq.Append(_battleEffectPanel[0].transform.DOLocalMoveX(2643.6f, 0.2f).SetEase(Ease.InQuart));
+        seq.Append(_battleEffectPanel[1].transform.DOLocalMoveX(-2643.6f, 0.2f).SetEase(Ease.InQuart));
+        seq.Append(_vs[0].transform.DOLocalMoveX(-1300, 0.2f));
+        seq.Join(_vs[1].transform.DOLocalMoveX(1300, 0.2f));
 
         seq.AppendCallback(() =>
         {
-            _battleEffectPanel[0].transform.position = new Vector3(-2000.6f, _battleEffectPanel[0].transform.position.y, _battleEffectPanel[0].transform.position.z);
-            _battleEffectPanel[1].transform.position = new Vector3(3700, _battleEffectPanel[1].transform.position.y, _battleEffectPanel[1].transform.position.z);
-            _profileImage[0].transform.position = new Vector3(-2551, _profileImage[0].transform.position.y, _profileImage[0].transform.position.z);
-            _profileImage[1].transform.position = new Vector3(2551, _profileImage[1].transform.position.y, _profileImage[1].transform.position.z);
-            //_battleEffectPanel[1].transform.position = new Vector3(2643.6f, _battleEffectPanel[1].transform.position.y, _battleEffectPanel[1].transform.position.z);
+            _battleEffectPanel[0].transform.position = new Vector3(-40f, _battleEffectPanel[0].transform.position.y, _battleEffectPanel[0].transform.position.z);
+            _battleEffectPanel[1].transform.position = new Vector3(50f, _battleEffectPanel[1].transform.position.y, _battleEffectPanel[1].transform.position.z);
+            _profileImage[0].transform.position = new Vector3(-18f, _profileImage[0].transform.position.y, _profileImage[0].transform.position.z);
+            _profileImage[1].transform.position = new Vector3(30f, _profileImage[1].transform.position.y, _profileImage[1].transform.position.z);
+
+            _battleEffectPanel[0].SetActive(false);
+            _battleEffectPanel[1].SetActive(false);
+            _profileImage[0].gameObject.SetActive(false);
+            _profileImage[1].gameObject.SetActive(false);
         });
     }
 }
