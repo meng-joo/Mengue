@@ -204,9 +204,9 @@ public class StoreUI : MonoBehaviour
         else if (num == 3) { PlayerBehave.playerDefence += 1; SetText("방어력이 1올라갔습니다."); }
         else if (num == 4)
         {
-            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.16f);
-            Moving.enemyDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.12f);
-            Moving.enemyAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.12f);
+            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.18f);
+            Moving.enemyDefence += Mathf.RoundToInt(Mathf.Max(1,Moving.enemyDefence * 0.12f));
+            Moving.enemyAttack += Mathf.RoundToInt(Mathf.Max(1, Moving.enemyAttack * 0.12f));
             Moving.enemyMoney += 1;
 
             Moving.bossHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.38f);

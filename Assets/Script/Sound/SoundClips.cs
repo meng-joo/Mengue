@@ -63,9 +63,9 @@ public class SoundClips : MonoBehaviour
         _isStore = false;
         while (_isBattle)
         {
+            _audioSource.clip = _fightingSound;
             _audioSource.Play();
-            yield return new WaitForSeconds(_fightingSound.length);
-            
+            yield return new WaitForSeconds(_fightingSound.length + 1);
         }
     }
 
@@ -79,6 +79,7 @@ public class SoundClips : MonoBehaviour
         _isStore = false;
         while (_isBattle)
         {
+            _audioSource.clip = _fightingBossSound;
             _audioSource.Play();
             yield return new WaitForSeconds(_fightingBossSound.length + 1f);
 

@@ -36,7 +36,7 @@ public class SettingUI : MonoBehaviour
     {
         if (Moving._playerState == Moving.PlayerState.INSETTING)
         {
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Tab))
             {
                 OnClickExitButton();
             }

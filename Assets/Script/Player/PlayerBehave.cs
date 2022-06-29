@@ -64,7 +64,7 @@ public class PlayerBehave : Moving
         base.Move();
         if(_playerState == PlayerState.INSTORE && !_isGacha && !_isStoresetting)
         {
-            if(Input.GetKeyDown(KeyCode.Escape))
+            if(Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Tab))
             {
                 ExitStoreButton();
             }
@@ -224,22 +224,22 @@ public class PlayerBehave : Moving
         characterController.Move(inputTransform);
     }
     
-    private void OnGUI()
-    {
-        var labelStyle1 = new GUIStyle();
-        var labelStyle2 = new GUIStyle();
-        labelStyle1.fontSize = 20;
-        labelStyle2.fontSize = 15;
-        labelStyle1.normal.textColor = Color.red;
-        labelStyle2.normal.textColor = Color.yellow;
-        GUILayout.Label("\n\n현재 플레이어의 공격력 : " + playerCurrentAttack, labelStyle1);
-        GUILayout.Label("현재 플레이어의 방어력 : " + playerCurrentDefence, labelStyle1);
-        GUILayout.Label("현재 플레이어의 체력 : " + playerCurrentHealth, labelStyle1);
-        //캐릭터 현재 돈
-        GUILayout.Label("현재 가진 돈 : " + currentMoney, labelStyle2);
-        //현재 돈의 가치
-        GUILayout.Label("현재 돈의 가치 : " + moneyValue, labelStyle2);
-    }
+    //private void OnGUI()
+    //{
+    //    var labelStyle1 = new GUIStyle();
+    //    var labelStyle2 = new GUIStyle();
+    //    labelStyle1.fontSize = 20;
+    //    labelStyle2.fontSize = 15;
+    //    labelStyle1.normal.textColor = Color.red;
+    //    labelStyle2.normal.textColor = Color.yellow;
+    //    GUILayout.Label("\n\n현재 플레이어의 공격력 : " + playerCurrentAttack, labelStyle1);
+    //    GUILayout.Label("현재 플레이어의 방어력 : " + playerCurrentDefence, labelStyle1);
+    //    GUILayout.Label("현재 플레이어의 체력 : " + playerCurrentHealth, labelStyle1);
+    //    //캐릭터 현재 돈
+    //    GUILayout.Label("현재 가진 돈 : " + currentMoney, labelStyle2);
+    //    //현재 돈의 가치
+    //    GUILayout.Label("현재 돈의 가치 : " + moneyValue, labelStyle2);
+    //}
 
     private void OnTriggerEnter(Collider collison)
     {

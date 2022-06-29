@@ -6,7 +6,7 @@ using Cinemachine;
 
 public abstract class Moving : MonoBehaviour
 {
-    public static int currentMoney = 100;
+    public static int currentMoney = 200000;
     public static int moneyValue = 1;
 
     #region 플레이어의 공격력, 피, 방어력
