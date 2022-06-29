@@ -35,41 +35,52 @@ public class Boss : Moving
     {
         //for (int c = 0; c < _backGround.enemycount; c++)
         //{
-            Sequence seq = DOTween.Sequence();
+        Sequence seq = DOTween.Sequence();
 
-            int x = Random.Range(-1, 2);
-            int z = Random.Range(-1, 2);
-            bool isOverlap = false;
-            bool isOverlapToPlayer = false;
+        int x = Random.Range(-1, 2);
+        int z = Random.Range(-1, 2);
+        bool isOverlap = false;
+        bool isOverlapToPlayer = false;
 
-            if (x == 1 || x == -1)
+        if (x == 1 || x == -1)
+        {
+            z = 0;
+        }
+
+        Vector3 randomTransform = new Vector3(x, 0, z);
+
+        float enemyX = transform.position.x + randomTransform.x;
+        float enemyZ = transform.position.z + randomTransform.z;
+
+        int Px = Mathf.CeilToInt(pPos.transform.position.x);
+        int Pz = Mathf.CeilToInt(pPos.transform.position.z);
+
+        if (enemyX == Px && enemyZ == Pz)
+        {
+            isOverlapToPlayer = true;
+        }
+
+        for (int i = 0; i < _backGround._bossList.Count; i++)
+        {
+            int Ex = Mathf.CeilToInt(_backGround._bossList[i].transform.position.x);
+            int Ez = Mathf.CeilToInt(_backGround._bossList[i].transform.position.z);
+
+            if (Mathf.Abs(enemyX - Ex) <= 3 && Mathf.Abs(enemyZ - Ez) <= 3)
             {
-                z = 0;
+                isOverlap = true;
             }
+        }
 
-            Vector3 randomTransform = new Vector3(x, 0, z);
+        for (int i = 0; i < _backGround._enemyList.Count; i++)
+        {
+            int Ex = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.x);
+            int Ez = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.z);
 
-            float enemyX = transform.position.x + randomTransform.x;
-            float enemyZ = transform.position.z + randomTransform.z;
-
-            int Px = Mathf.CeilToInt(pPos.transform.position.x);
-            int Pz = Mathf.CeilToInt(pPos.transform.position.z);
-
-            if (enemyX == Px && enemyZ == Pz)
+            if (Mathf.Abs(enemyX - Ex) <= 3 && Mathf.Abs(enemyZ - Ez) <= 3)
             {
-                isOverlapToPlayer = true;
+                isOverlap = true;
             }
-
-            for (int i = 0; i < _backGround._bossList.Count; i++)
-            {
-                int Ex = Mathf.CeilToInt(_backGround._bossList[i].transform.position.x);
-                int Ez = Mathf.CeilToInt(_backGround._bossList[i].transform.position.z);
-
-                if (enemyX == Ex && enemyZ == Ez)
-                {
-                    isOverlap = true;
-                }
-            }
+        }
 
         if ((enemyX >= BackGround.MaxX - 2) || (enemyX <= BackGround.MinX + 2) || (enemyZ <= BackGround.MinZ + 2) || (enemyZ >= BackGround.MaxZ - 3) || isOverlap || isOverlapToPlayer)
         {
@@ -90,7 +101,7 @@ public class Boss : Moving
         }
     }
 
-    private void StartBattle(GameObject player)
+    public void StartBattle(GameObject player)
     {
         StartCoroutine(BattleBoss(player));
     }
@@ -231,7 +242,6 @@ public class Boss : Moving
         _skillUI.SendMessage("OtherWriteText", $"무엇을 하시겠습니까? ");
     }
 
-
     void EnemyAttack(int a)
     {
         StartCoroutine(Attacking(a));
@@ -272,12 +282,12 @@ public class Boss : Moving
                 yield return new WaitForSeconds(2.2f);
 
                 SoundClips.instance.EffectSound(4);
-                int enemyPower = Random.Range(bossAttack - 3, Mathf.RoundToInt(bossAttack * 1.5f));
-                int damage = Mathf.Max(1, enemyPower - playerDefence);
+                int enemyPower = Random.Range(bossAttack - 3, Mathf.RoundToInt(bossAttack * 1.7f));
+                int damage = Mathf.Max(3, enemyPower - playerCurrentDefence);
 
                 posisonReducedDamage = Random.Range(1, 11);
                 if (posisonReducedDamage < 4) ispoison = true;
-                damage = ispoison ? Mathf.RoundToInt(damage * 0.7f) : damage;
+                damage = ispoison ? Mathf.RoundToInt(damage * 0.54f) : damage;
 
                 //damage = passive_Poison?posisonReducedDamage : 
                 playerCurrentHealth -= damage;
@@ -289,8 +299,8 @@ public class Boss : Moving
                 if (!passive_Poison) _skillUI.SendMessage("OtherWriteText", $"뽀스(이)가 당신의 피를 {damage}만큼 깎았습니다.");
                 else _skillUI.SendMessage("OtherWriteText", $"[중독된] 뽀스(이)가 당신의 피를 {damage}만큼 깎았습니다.");
 
-                if (passive_Reflect) _skillUI.SendMessage("OtherWriteText", $"뽀스은 당신은 때리다가 가시에 찔려 {damage / 5}의 데미지를 받았습니다.");
-                bosscurrnetHealth -= damage / 5;
+                if (passive_Reflect) _skillUI.SendMessage("OtherWriteText", $"뽀스은 당신은 때리다가 가시에 찔려 {Mathf.Max(damage / 4, 2)}의 데미지를 받았습니다.");
+                bosscurrnetHealth -= Mathf.Max(damage / 4, 2);
                 if (bosscurrnetHealth <= 0) { StartCoroutine(EnemyDead()); yield return null; }
 
 
@@ -301,9 +311,9 @@ public class Boss : Moving
                 {
                     if (!passive_DemiGod)
                     {
-                        _skillUI.SendMessage("OtherWriteText", $"크아아아악...!! 당신은 뽀스의 전기에 맞고 타버렸습니다!!");
-                        yield return new WaitForSeconds(2f);
-                        _skillUI.SendMessage("OtherWriteText", $"안타깝지만 당신은 모든 것을 잃었습니다.");
+                        _skillUI.SendMessage("OtherWriteText", $"크아아아악...!! 당신은 뽀스의 전기에 맞고 타죽어버렸습니다!!");
+                        yield return new WaitForSeconds(3.4f);
+                        _skillUI.SendMessage("OtherWriteText", $"안타깝지만 당신은 모든 것을 잃고 처음으로 돌아갑니다.");
                         yield return new WaitForSeconds(2.2f);
                         PlayerBehave.instance.PlayerDead();
                         yield return null;
@@ -326,7 +336,7 @@ public class Boss : Moving
             {
                 _isPlayerTurn = false;
                 yield return new WaitForSeconds(3f);
-                _skillUI.SendMessage("OtherWriteText", $"뽀스는 당신에게 손이 닿지 않습니다");
+                _skillUI.SendMessage("OtherWriteText", $"뽀스는 당신에게 손이 닿지 않습니다! ");
                 yield return new WaitForSeconds(2f);
 
                 _skillUI.StartCoroutine("ShowButtons");

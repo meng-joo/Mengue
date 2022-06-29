@@ -83,7 +83,7 @@ public class StoreUI : MonoBehaviour
             _playerCoin.text = string.Format("{0}＄", Moving.currentMoney);
             if (num == 3)
             {
-                SetText($"체력을 {Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth)}만큼 회복하였습니다.");
+                SetText($"체력을 {Mathf.Min(Moving.playerAddHealth - Moving.playerCurrentHealth, 15)}만큼 회복하였습니다.");
                 Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 15, Moving.playerAddHealth);
             }
 
@@ -178,7 +178,7 @@ public class StoreUI : MonoBehaviour
         if(!Moving.passive_TheKing)
         {
             Moving.currentMoney -= price[num] / passive_Sale;
-            price[num] += Mathf.RoundToInt(price[num] / passive_Sale * 0.45f);
+            price[num] += Mathf.RoundToInt(price[num] / passive_Sale * 0.24f);
             skillLevel[num]++;
             lvText[num].text = string.Format($"Lv.{skillLevel[num]}");
             priceText[num].text = string.Format($"$ {price[num]/ passive_Sale}");
@@ -201,12 +201,12 @@ public class StoreUI : MonoBehaviour
         if (num == 0) { PlayerBehave.playerAttack += 2; SetText("공격력이 2올라갔습니다."); }
         else if (num == 1) { PlayerBehave.playerHealth += 10; PlayerBehave.playerCurrentHealth += 10; SetText("체력이 10올라갔습니다."); }
         else if (num == 2) { PlayerBehave.moneyValue += 1; SetText("돈가치가 1올라갔습니다."); }
-        else if (num == 3) { PlayerBehave.playerDefence += 2; SetText("방어력이 2올라갔습니다."); }
+        else if (num == 3) { PlayerBehave.playerDefence += 1; SetText("방어력이 1올라갔습니다."); }
         else if (num == 4)
         {
-            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.2f);
-            Moving.enemyDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.17f);
-            Moving.enemyAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.17f);
+            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.16f);
+            Moving.enemyDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.12f);
+            Moving.enemyAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.12f);
             Moving.enemyMoney += 1;
 
             Moving.bossHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.38f);
@@ -226,6 +226,7 @@ public class StoreUI : MonoBehaviour
         }
 
         StartCoroutine(SetIdle(2.5f));
+        PlayerBehave.instance.PassiveApply();
         UpdatePriceText();
     }
 

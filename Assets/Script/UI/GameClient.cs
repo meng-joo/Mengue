@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class GameClient : MonoBehaviour
 {
+    public AudioSource _audio;
     public TextMeshProUGUI _mengue;
     public Image consoleImage;
     public Button _startbutton;
@@ -21,6 +22,14 @@ public class GameClient : MonoBehaviour
         StartCoroutine(ActiveUI());
     }
 
+    public void ExitGame()
+    {
+        _mengue.text = string.Format("");
+        transform.DOScale(Vector3.zero, 0.2f).SetEase(Ease.OutQuart);
+        consoleImage.gameObject.SetActive(false);
+        gameObject.SetActive(false);
+    }
+
     IEnumerator ActiveUI()
     {
         consoleImage.gameObject.SetActive(true);
@@ -30,6 +39,7 @@ public class GameClient : MonoBehaviour
         for (int i = 0; i < _mengueText.Length; i++)
         {
             _mengue.text = string.Format("{0}", _mengueText.Substring(0, i));
+            _audio.Play();
             yield return new WaitForSeconds(0.4f);
         }
 

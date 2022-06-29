@@ -258,10 +258,12 @@ public class PlayerBehave : Moving
         if (collison.tag == "Enemy")
         {
             SetBattle(collison.gameObject, 0);
+            collison.gameObject.transform.parent.GetComponent<Enemy>().StartBattle(gameObject);
         }
-        if(collison.tag == "Boss")
+        else if(collison.tag == "Boss")
         {
             SetBattle(collison.gameObject, 1);
+            collison.gameObject.transform.parent.GetComponent<Boss>().StartBattle(gameObject);
         }
         if(collison.tag == "Store")
         {
@@ -277,9 +279,9 @@ public class PlayerBehave : Moving
 
     void SetBattle(GameObject g, int i)
     {
+        _boxCollider.enabled = false;
         _playerState = PlayerState.BATTLE;
         _skillUI.SetEnemy(g.transform.parent.gameObject);
-        _boxCollider.enabled = false;
         _enemy = g.gameObject;
         if (passive_Bouble) demageBlock = true;
         //_currentEnemy = _enemy.transform.parent.GetComponent<Enemy>();

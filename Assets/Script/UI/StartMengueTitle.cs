@@ -9,6 +9,8 @@ public class StartMengueTitle : MonoBehaviour
     public TextMeshProUGUI[] titleText;
     public GameClient _gameClient;
 
+    public AudioSource _audio;
+
     public GameObject windowPanel;
     float _isWindowOpen = 3f;
 
@@ -20,9 +22,9 @@ public class StartMengueTitle : MonoBehaviour
         }
     }
 
-    public void InputFileButton()
+    public void InputEndButton()
     {
-
+        Application.Quit();
     }
 
     public void InputWindowButton()
@@ -45,11 +47,13 @@ public class StartMengueTitle : MonoBehaviour
 
         for (int i = 0; i < titleText.Length; i++)
         {
+            titleText[i].gameObject.SetActive(true);
             seq.Append(titleText[i].transform.DOMoveY(0, 0.7f)).SetEase(Ease.InCirc);
             seq.Append(titleText[i].transform.DOShakeScale(1f, 0.26f));
             
             //seq.Append(titleText[i].transform.DOShakeScale(1f, 0.26f));
             yield return new WaitForSeconds(0.3f);
+            _audio.Play();
         }
 
         yield return new WaitForSeconds(1f);
@@ -63,5 +67,11 @@ public class StartMengueTitle : MonoBehaviour
         yield return new WaitForSeconds(0.7f);
 
         _gameClient.StartGame();
+
+        for (int i = 0; i < titleText.Length; i++)
+        {
+            titleText[i].transform.position += new Vector3(0, 7, 0);
+            yield return new WaitForSeconds(0.05f);
+        }
     }
 }

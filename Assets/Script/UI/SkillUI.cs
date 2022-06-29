@@ -108,8 +108,8 @@ public class SkillUI : MonoBehaviour
     public void EnemyStateButton()
     {
         if (_fightingEnemy != null) { StopCoroutine("WriteText"); StartCoroutine(WriteText($"이름: 흥행행\n체력: {Moving.enemycurrnetHealth}/{Moving.enemyHealth}\n공격력: {Moving.enemyAttack}\n방어력: {Moving.enemyDefence}\n특징: 어쩔티비 ")); }
-        else { StopCoroutine("WriteText"); StartCoroutine("WriteText", $"이름: 뽀스\n체력: {Moving.bosscurrnetHealth}/{Moving.bossHealth}\n공격력: {Moving.bossAttack}\n방어력: {Moving.enemyDefence}\n특징: 꽤 쎄다 "); }
-        }
+        else { StopCoroutine("WriteText"); StartCoroutine("WriteText", $"이름: 뽀스\n체력: {Moving.bosscurrnetHealth}/{Moving.bossHealth}\n공격력: {Moving.bossAttack}\n방어력: {Moving.bossDefence}\n특징: 꽤 쎄다 "); }
+    }
 
     public void InputSkillButton()
     {

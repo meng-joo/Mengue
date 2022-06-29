@@ -39,39 +39,50 @@ public class Enemy : Moving
         //Debug.Log("serhejwkyetkexulrle5lele5l5ek7l5");
         //for (int c = 0; c < _backGround.enemycount; c++)
         //{
-            int x = Random.Range(-1, 2);
-            int z = Random.Range(-1, 2);
-            bool isOverlap = false;
-            bool isOverlapToPlayer = false;
+        int x = Random.Range(-1, 2);
+        int z = Random.Range(-1, 2);
+        bool isOverlap = false;
+        bool isOverlapToPlayer = false;
 
-            if (x == 1 || x == -1)
+        if (x == 1 || x == -1)
+        {
+            z = 0;
+        }
+
+        Vector3 randomTransform = new Vector3(x, 0, z);
+
+        float enemyX = transform.position.x + randomTransform.x;
+        float enemyZ = transform.position.z + randomTransform.z;
+
+        int Px = Mathf.CeilToInt(pPos.transform.position.x);
+        int Pz = Mathf.CeilToInt(pPos.transform.position.z);
+
+        if (enemyX == Px && enemyZ == Pz)
+        {
+            isOverlapToPlayer = true;
+        }
+
+        for (int i = 0; i < _backGround._enemyList.Count; i++)
+        {
+            int Ex = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.x);
+            int Ez = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.z);
+
+            if (Mathf.Abs(enemyX - Ex) <= 3 && Mathf.Abs(enemyZ - Ez) <= 3)
             {
-                z = 0;
+                isOverlap = true;
             }
+        }
 
-            Vector3 randomTransform = new Vector3(x, 0, z);
+        for (int i = 0; i < _backGround._bossList.Count; i++)
+        {
+            int Ex = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.x);
+            int Ez = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.z);
 
-            float enemyX = transform.position.x + randomTransform.x;
-            float enemyZ = transform.position.z + randomTransform.z;
-
-            int Px = Mathf.CeilToInt(pPos.transform.position.x);
-            int Pz = Mathf.CeilToInt(pPos.transform.position.z);
-
-            if (enemyX == Px && enemyZ == Pz)
+            if (Mathf.Abs(enemyX - Ex) <= 3 && Mathf.Abs(enemyZ - Ez) <= 3)
             {
-                isOverlapToPlayer = true;
+                isOverlap = true;
             }
-
-            for (int i = 0; i < _backGround._enemyList.Count; i++)
-            {
-                int Ex = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.x);
-                int Ez = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.z);
-
-                if (enemyX == Ex && enemyZ == Ez)
-                {
-                    isOverlap = true;
-                }
-            }
+        }
 
         if ((enemyX >= BackGround.MaxX - 1) || (enemyX <= BackGround.MinX + 1) || (enemyZ <= BackGround.MinZ + 1) || (enemyZ >= BackGround.MaxZ - 2) || isOverlap || isOverlapToPlayer)
         {
@@ -92,7 +103,7 @@ public class Enemy : Moving
         }
     }
 
-    private void StartBattle(GameObject player)
+    public void StartBattle(GameObject player)
     {
         StartCoroutine(BattleEnemy(player));
     }
@@ -228,13 +239,13 @@ public class Enemy : Moving
 
                 SoundClips.instance.EffectSound(3);
                 int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
-                int damage = Mathf.Max(1, enemyPower - playerDefence);
+                int damage = Mathf.Max(1, enemyPower - playerCurrentDefence);
 
                 if (passive_Poison)
                 {
                     posisonReducedDamage = Random.Range(1, 11);
                     if (posisonReducedDamage <= 4) ispoison = true;
-                    damage = ispoison ? Mathf.RoundToInt(damage * 0.7f) : damage;
+                    damage = ispoison ? Mathf.RoundToInt(damage * 0.54f) : damage;
                 }
                 //damage = passive_Poison?posisonReducedDamage : 
                 playerCurrentHealth -= damage;
@@ -247,22 +258,19 @@ public class Enemy : Moving
                 else _skillUI.SendMessage("OtherWriteText", $"[중독된] 흐헹헹(이)가 당신의 피를 {damage}만큼 깎았습니다.");
 
 
-                if (passive_Reflect) { yield return new WaitForSeconds(1.3f); Instantiate(_particleSystem[0], transform); _skillUI.SendMessage("OtherWriteText", $"흐헹헹은 당신을 때리다가 가시에 찔려 {damage / 5}의 데미지를 받았습니다."); }
-                enemycurrnetHealth -= damage / 5;
+                if (passive_Reflect) { yield return new WaitForSeconds(2f); Instantiate(_particleSystem[0], transform); _skillUI.SendMessage("OtherWriteText", $"흐헹헹은 당신을 때리다가 가시에 찔려 {Mathf.Max(damage / 4, 1)}의 데미지를 받았습니다."); }
+                enemycurrnetHealth -= Mathf.Max(damage / 4, 1);
                 if (enemycurrnetHealth <= 0) { StartCoroutine(EnemyDead()); yield return null; }
-
-                _skillUI.StartCoroutine("ShowButtons");
-
-                yield return new WaitForSeconds(0.7f);
 
                 if (playerCurrentHealth <= 0)
                 {
                     if (!passive_DemiGod)
                     {
-                        _skillUI.SendMessage("OtherWriteText", $"크아아아악...!! 당신은 흐헹헹에게 죽고 말았습니다!!");
-                        yield return new WaitForSeconds(2.1f);
-                        _skillUI.SendMessage("OtherWriteText", $"창피하지도 않으신가요? 당신은 모든 것을 잃었습니다.");
-                        yield return new WaitForSeconds(2.2f);
+                        yield return new WaitForSeconds(0.6f);
+                        _skillUI.SendMessage("OtherWriteText", $"헐... 당신은 흐헹헹에게 죽고 말았습니다!! ");
+                        yield return new WaitForSeconds(3.3f);
+                        _skillUI.SendMessage("OtherWriteText", $"풉.. 창피하지도 않으신가요? 당신은 모든 것을 잃었습니다. 처음으로 돌아갑니다");
+                        yield return new WaitForSeconds(4f);
 
                         PlayerBehave.instance.PlayerDead();
                         yield return null;
@@ -271,6 +279,10 @@ public class Enemy : Moving
                     {
                         _skillUI.SendMessage("OtherWriteText", $"'신은 죽지 않는다'");
                         playerCurrentHealth = 1;
+
+                        _skillUI.StartCoroutine("ShowButtons");
+
+                        yield return new WaitForSeconds(0.7f);
                     }
                 }
 
@@ -278,6 +290,10 @@ public class Enemy : Moving
                 {
                     _stateUI.UpdateStateText();
                     _isPlayerTurn = true;
+
+                    _skillUI.StartCoroutine("ShowButtons");
+
+                    yield return new WaitForSeconds(0.7f);
                 }
             }
 
@@ -285,7 +301,7 @@ public class Enemy : Moving
             {
                 _isPlayerTurn = false;
                 yield return new WaitForSeconds(3f);
-                _skillUI.SendMessage("OtherWriteText", $"적은 당신에게 손이 닿지 않습니다");
+                _skillUI.SendMessage("OtherWriteText", $"적은 당신에게 손이 닿지 않습니다! ");
                 yield return new WaitForSeconds(2f);
 
                 _skillUI.StartCoroutine("ShowButtons");
