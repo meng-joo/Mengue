@@ -8,6 +8,7 @@ public class SoundClips : MonoBehaviour
 
     [SerializeField] public AudioClip[] _backgroundSound;
     [SerializeField] public AudioClip _fightingSound;
+    [SerializeField] public AudioClip _fightingBossSound;
     [SerializeField] public AudioClip _StoreSound;
 
     [SerializeField] public AudioClip[] _effectSound;
@@ -16,6 +17,7 @@ public class SoundClips : MonoBehaviour
     private bool _isBattle = true, _isStore = true;
 
     [SerializeField] public AudioSource _effectAudio;
+    [SerializeField] public AudioSource _moveAudio;
 
     private void Awake()
     {
@@ -45,7 +47,7 @@ public class SoundClips : MonoBehaviour
 
     IEnumerator SetBattleSound()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
 
         _audioSource.Pause();
         _isBattle = true;
@@ -56,6 +58,22 @@ public class SoundClips : MonoBehaviour
             _audioSource.Play();
             yield return new WaitForSeconds(_fightingSound.length);
             
+        }
+    }
+
+    IEnumerator SetBossBattleSound()
+    {
+        yield return new WaitForSeconds(1f);
+
+        _audioSource.Pause();
+        _isBattle = true;
+        _audioSource.clip = _fightingBossSound;
+        _isStore = false;
+        while (_isBattle)
+        {
+            _audioSource.Play();
+            yield return new WaitForSeconds(_fightingBossSound.length + 1f);
+
         }
     }
 
@@ -77,5 +95,10 @@ public class SoundClips : MonoBehaviour
         _effectAudio.clip = _effectSound[i];
 
         _effectAudio.Play();
+    }
+
+    public void MoveSound()
+    {
+        _moveAudio.Play();
     }
 }

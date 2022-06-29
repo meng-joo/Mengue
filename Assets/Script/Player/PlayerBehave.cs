@@ -62,12 +62,6 @@ public class PlayerBehave : Moving
     protected override void Move()
     {
         base.Move();
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Debug.Log("aa");
-        }
-
         if(_playerState == PlayerState.INSTORE && !_isGacha && !_isStoresetting)
         {
             if(Input.GetKeyDown(KeyCode.Escape))
@@ -84,7 +78,7 @@ public class PlayerBehave : Moving
         _backGround.StartCoroutine("SpawnCoin");
     }
 
-    void PassiveApply()
+    public void PassiveApply()
     {
         playerAddHealth = playerHealth;
         playerCurrentDefence = playerDefence;
@@ -200,6 +194,7 @@ public class PlayerBehave : Moving
                     passive_TheKing = true;
                 }
             }
+
         }
         _stateUI.UpdateStateText();
     }
@@ -283,7 +278,6 @@ public class PlayerBehave : Moving
     void SetBattle(GameObject g, int i)
     {
         _playerState = PlayerState.BATTLE;
-        _stateUI.settingButton.enabled = false;
         _skillUI.SetEnemy(g.transform.parent.gameObject);
         _boxCollider.enabled = false;
         _enemy = g.gameObject;
@@ -300,7 +294,8 @@ public class PlayerBehave : Moving
         yield return new WaitForSeconds(1f);
 
         _battleEffect.SetProfile(i);
-        SoundClips.instance.StartCoroutine("SetBattleSound");
+        if (i == 0) SoundClips.instance.StartCoroutine("SetBattleSound");
+        else SoundClips.instance.StartCoroutine("SetBossBattleSound");
 
         yield return new WaitForSeconds(5f);
 
@@ -363,7 +358,6 @@ public class PlayerBehave : Moving
         ani.SetTrigger("NoBattle");
         _boxCollider.enabled = true;
         SoundClips.instance.StartCoroutine("StartSound");
-        _stateUI.settingButton.enabled = true;
 
         if (passive_Bouble) demageBlock = true;
 

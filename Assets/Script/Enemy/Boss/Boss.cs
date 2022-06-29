@@ -112,9 +112,11 @@ public class Boss : Moving
     {
         bool _isCri = false;
         int realDamage = playerCurrentAttack - bossDefence;
-        int midasExtraDamage = passive_Midas ? Mathf.RoundToInt(Mathf.Min(realDamage, realDamage * (currentMoney * 0.000005f))) : 0;
+        int midasExtraDamage;
 
-        realDamage += midasExtraDamage;
+        midasExtraDamage = passive_Midas ? Mathf.RoundToInt(Mathf.Min(Mathf.Max(2, realDamage), Mathf.Max(2, realDamage) * (currentMoney * 0.000025f))) : 0;
+
+        //realDamage += midasExtraDamage;
 
         if (passive_David) realDamage *= playerAddHealth < bossHealth ? 2 : 1;
 
@@ -122,18 +124,12 @@ public class Boss : Moving
 
         SoundClips.instance.EffectSound(2);
 
-        if (passive_Critical)
-        {
-            if (posisonReducedDamage <= 10)
-            {
-                bosscurrnetHealth -= Mathf.RoundToInt(Mathf.Max(2, realDamage * 1.7f));
-                _isCri = true;
-            }
-        }
+        if (passive_Critical) { if (posisonReducedDamage <= 1) { bosscurrnetHealth -= Mathf.RoundToInt(Mathf.Max(2, (realDamage + midasExtraDamage) * 1.7f)); _isCri = true; } }
 
-        else bosscurrnetHealth -= Mathf.Max(2, realDamage);
+        else bosscurrnetHealth -= Mathf.Max(2, (realDamage + midasExtraDamage));
 
-        playerCurrentHealth += passive_Boold ? realDamage / 2 : 0;
+        playerCurrentHealth += passive_Boold ? Mathf.RoundToInt(Mathf.Max(2, (realDamage + midasExtraDamage) * 1.7f)) / 2 : 0;
+        playerCurrentHealth = playerCurrentHealth > playerAddHealth ? playerAddHealth : playerCurrentHealth;
         _stateUI.UpdateStateText();
 
         realDamage = Mathf.Max(2, realDamage);
@@ -146,7 +142,7 @@ public class Boss : Moving
         else
         {
             if(!_isCri) _skillUI.SendMessage("OtherWriteText", $"당신은 뽀스의 피를 {realDamage}(+{midasExtraDamage}) 만큼 깎았습니다. ");
-            else _skillUI.SendMessage("OtherWriteText", $"크리티컬! 당신은 뽀스의 피를 {Mathf.RoundToInt(realDamage * 1.7f)}(+{midasExtraDamage}) 만큼 깎았습니다. ");
+            else _skillUI.SendMessage("OtherWriteText", $"크리티컬! 당신은 뽀스의 피를 {Mathf.RoundToInt(realDamage * 1.7f)}(+{Mathf.RoundToInt(Mathf.Max(2, (realDamage + midasExtraDamage) * 1.7f)) - Mathf.RoundToInt(realDamage * 1.7f)}) 만큼 깎았습니다. ");
             EnemyTurn(realDamage / 2);
         }
     }
@@ -186,7 +182,9 @@ public class Boss : Moving
     IEnumerator EnemyHitParticle()
     {
         yield return new WaitForSeconds(0.8f);
+
         Debug.Log("이재엽이재엽이재엽");
+        SoundClips.instance.EffectSound(2);
         Instantiate(_particleSystem[0], transform.position + Vector3.forward, Quaternion.identity);
     }
 
@@ -273,6 +271,7 @@ public class Boss : Moving
                 _skillUI.SendMessage("OtherWriteText", $"뽀스(의)에 전기찌릿!! ");
                 yield return new WaitForSeconds(2.2f);
 
+                SoundClips.instance.EffectSound(4);
                 int enemyPower = Random.Range(bossAttack - 3, Mathf.RoundToInt(bossAttack * 1.5f));
                 int damage = Mathf.Max(1, enemyPower - playerDefence);
 
@@ -283,7 +282,7 @@ public class Boss : Moving
                 //damage = passive_Poison?posisonReducedDamage : 
                 playerCurrentHealth -= damage;
                 Instantiate(PlayerBehave.instance._hitEffect[1], transform);
-                SoundClips.instance.EffectSound(4);
+                
                 PlayerBehave.instance.ani.SetTrigger("GetHit");
                 yield return new WaitForSeconds(1.2f);
 

@@ -50,6 +50,7 @@ public class SkillUI : MonoBehaviour
     {
         _fightingEnemy = _enemy.GetComponent<Enemy>();
         if (_fightingEnemy == null) _fightingBoss = _enemy.GetComponent<Boss>();
+        StartCoroutine("ShowButtons");
     }
 
     public void ViewSkillUI()
@@ -57,7 +58,8 @@ public class SkillUI : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
         _runAwayCost.text = string.Format($"-{Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 1))}$");
         sequence.Append(skillUI.transform.DOLocalMoveY(-354f, 1.3f));
-        StartCoroutine(WriteText("당신은 적(을)를 만났습니다!"));
+        StopCoroutine("WriteText");
+        StartCoroutine("WriteText", "당신은 적(을)를 만났습니다!");
         //다른 스킬을 더 띄어주기 위해 시퀀스 구현해야함
     }
 
@@ -87,11 +89,13 @@ public class SkillUI : MonoBehaviour
         {
             if (_skillCount[0] <= 0)
             {
-                StartCoroutine(WriteText("스킬을 다 소모하였습니다."));
+                StartCoroutine("WriteText");
+                StartCoroutine("WriteText", "스킬을 다 소모하였습니다.");
             }
             else if(!Moving._isPlayerTurn)
             {
-                StartCoroutine(WriteText("아직 상대 턴입니다."));
+                StopCoroutine("WriteText");
+                StartCoroutine("WriteText", "아직 상대 턴입니다.");
             }
         }
     }
@@ -103,19 +107,22 @@ public class SkillUI : MonoBehaviour
 
     public void EnemyStateButton()
     {
-        if (_fightingEnemy != null) StartCoroutine(WriteText($"이름: 흥행행\n체력: {Moving.enemycurrnetHealth}/{Moving.enemyHealth}\n공격력: {Moving.enemyAttack}\n방어력: {Moving.enemyDefence}\n특징: 어쩔티비 "));
-        else StartCoroutine(WriteText($"이름: 뽀스\n체력: {Moving.bosscurrnetHealth}/{Moving.bossHealth}\n공격력: {Moving.bossAttack}\n방어력: {Moving.enemyDefence}\n특징: 꽤 쎄다 "));
-    }
+        if (_fightingEnemy != null) { StopCoroutine("WriteText"); StartCoroutine(WriteText($"이름: 흥행행\n체력: {Moving.enemycurrnetHealth}/{Moving.enemyHealth}\n공격력: {Moving.enemyAttack}\n방어력: {Moving.enemyDefence}\n특징: 어쩔티비 ")); }
+        else { StopCoroutine("WriteText"); StartCoroutine("WriteText", $"이름: 뽀스\n체력: {Moving.bosscurrnetHealth}/{Moving.bossHealth}\n공격력: {Moving.bossAttack}\n방어력: {Moving.enemyDefence}\n특징: 꽤 쎄다 "); }
+        }
 
     public void InputSkillButton()
     {
         if(!Moving._isPlayerTurn)
         {
-            StartCoroutine(WriteText("아직 상대 턴입니다."));
+            StopCoroutine("WriteText");
+            StartCoroutine("WriteText", "아직 상대 턴입니다.");
         }
         else
         {
             SetCountText();
+            StopCoroutine("WriteText");
+            StartCoroutine("WriteText", "무엇을 하시겠습니까? ");
             skillPanel.transform.DOLocalMoveX(670, 0.4f);
         }
     }
@@ -127,7 +134,8 @@ public class SkillUI : MonoBehaviour
 
     public void OtherWriteText(string text)
     {
-        StartCoroutine(WriteText(text));
+        StopCoroutine("WriteText");
+        StartCoroutine("WriteText", text);
     }
 
     public IEnumerator WriteText(string text)
@@ -147,7 +155,8 @@ public class SkillUI : MonoBehaviour
             playerBehave.SetTrigger("Heal");
             GameObject effect = Instantiate(PlayerBehave.instance._healEffect);
             effect.transform.position = PlayerBehave.instance.transform.position;
-            StartCoroutine(WriteText($"체력을 {Mathf.Min(7, Moving.playerAddHealth - Moving.playerCurrentHealth)}회복 하였습니다."));
+            StopCoroutine("WriteText");
+            StartCoroutine("WriteText", $"체력을 {Mathf.Min(7, Moving.playerAddHealth - Moving.playerCurrentHealth)}회복 하였습니다.");
             Moving.playerCurrentHealth = Mathf.Min(Moving.playerCurrentHealth + 7, Moving.playerAddHealth);
             _stateUI.UpdateStateText();
             if (_fightingEnemy != null) _fightingEnemy.StartCoroutine("EnemyAttack", 0);
@@ -160,11 +169,13 @@ public class SkillUI : MonoBehaviour
         {
             if (_skillCount[1] <= 0)
             {
-                StartCoroutine(WriteText("스킬을 다 소모하였습니다."));
+                StopCoroutine("WriteText");
+                StartCoroutine("WriteText", "스킬을 다 소모하였습니다.");
             }
             else if (!Moving._isPlayerTurn)
             {
-                StartCoroutine(WriteText("아직 상대 턴입니다."));
+                StopCoroutine("WriteText");
+                StartCoroutine("WriteText", "아직 상대 턴입니다.");
             }
         }
     }
@@ -175,7 +186,8 @@ public class SkillUI : MonoBehaviour
         {
             if (_fightingEnemy != null)
             {
-                StartCoroutine(WriteText("도망가~~! "));
+                StopCoroutine("WriteText");
+                StartCoroutine("WriteText", "도망가~~! ");
                 Moving.currentMoney -= Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 0));
                 _backGround.CreateEnemy();
                 Moving.enemycurrnetHealth = Moving.enemyHealth;
@@ -186,7 +198,8 @@ public class SkillUI : MonoBehaviour
             }
             else
             {
-                StartCoroutine(WriteText("도망가~~! "));
+                StopCoroutine("WriteText");
+                StartCoroutine("WriteText", "도망가~~! ");
                 Moving.currentMoney -= Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 0));
                 _backGround.CreateBoss();
                 Moving.bosscurrnetHealth = Moving.bossHealth;
@@ -245,6 +258,7 @@ public class SkillUI : MonoBehaviour
     public IEnumerator ShowButtons()
     {
         yield return new WaitForSeconds(0.2f);
+        
         for (int i = 0; i < buttons.Length; i++)
         {
             buttons[i].transform.DOLocalMoveX(680, 0.12f);

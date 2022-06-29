@@ -112,34 +112,35 @@ public class Enemy : Moving
     {
         bool _isCri = false;
         int realDamage = playerCurrentAttack - enemyDefence;
-        int midasExtraDamage = passive_Midas ? Mathf.RoundToInt(Mathf.Min(realDamage, realDamage * (currentMoney * 0.000005f))) : 0;
+        int midasExtraDamage;
 
-        realDamage += midasExtraDamage;
+        midasExtraDamage = passive_Midas ? Mathf.RoundToInt(Mathf.Min(Mathf.Max(2, realDamage), Mathf.Max(2, realDamage) * (currentMoney * 0.000025f))) : 0;
+
+        //realDamage += midasExtraDamage;
 
         if (passive_David) realDamage *= playerAddHealth < enemyHealth ? 2 : 1;
 
         posisonReducedDamage = Random.Range(1, 11);
-        if (passive_Critical) { if (posisonReducedDamage <= 10) enemycurrnetHealth -= Mathf.RoundToInt(Mathf.Max(2, realDamage * 1.7f)); _isCri = true; }
+        
+        if (passive_Critical) { if (posisonReducedDamage <= 1) enemycurrnetHealth -= Mathf.RoundToInt(Mathf.Max(2, (realDamage + midasExtraDamage) * 1.7f)); _isCri = true; }
 
+        else enemycurrnetHealth -= Mathf.Max(2, realDamage + midasExtraDamage);
         
-        else enemycurrnetHealth -= Mathf.Max(2, realDamage);
-        
-        playerCurrentHealth += passive_Boold ? realDamage / 2 : 0;
+        playerCurrentHealth += passive_Boold ? Mathf.RoundToInt(Mathf.Max(2, (realDamage + midasExtraDamage) * 1.7f)) / 2 : 0;
+        playerCurrentHealth = playerCurrentHealth > playerAddHealth ? playerAddHealth : playerCurrentHealth;
+        _stateUI.UpdateStateText();
 
         realDamage = Mathf.Max(2, realDamage);
 
-        SoundClips.instance.EffectSound(2);
-
         if (enemycurrnetHealth <= 0)
-        {
-            
+        {           
             StartCoroutine(EnemyDead(realDamage / 2, _isCri));
         }
 
         else
         {
             if (!_isCri) _skillUI.SendMessage("OtherWriteText", $"당신은 상대방의 피를 {realDamage}(+{midasExtraDamage}) 만큼 깎았습니다. ");
-            else _skillUI.SendMessage("OtherWriteText", $"당신은 상대방의 피를 {Mathf.RoundToInt(Mathf.Max(2, realDamage * 1.7f))}(+{midasExtraDamage}) 만큼 깎았습니다. ");
+            else _skillUI.SendMessage("OtherWriteText", $"당신은 상대방의 피를 {Mathf.RoundToInt(Mathf.Max(2, (realDamage) * 1.7f))}(+{midasExtraDamage}) 만큼 깎았습니다. ");
             EnemyTurn(realDamage / 2);
         }
     }
@@ -170,7 +171,7 @@ public class Enemy : Moving
         enemycurrnetHealth = enemyHealth;
 
         _backGround.CreateEnemy();
-
+        yield return new WaitForSeconds(1.3f);
         _skillUI.StartCoroutine("ShowButtons");
     }
 
@@ -178,6 +179,7 @@ public class Enemy : Moving
     {
         yield return new WaitForSeconds(0.8f);
         Debug.Log("이재엽이재엽이재엽");
+        SoundClips.instance.EffectSound(2);
         Instantiate(_particleSystem[0], transform.position + Vector3.forward, Quaternion.identity);
     }
 
@@ -199,7 +201,7 @@ public class Enemy : Moving
 
         yield return new WaitForSeconds(2f);
 
-        if (passive_Boold) _skillUI.SendMessage("OtherWriteText", $"당신은 +{a}만큼 피를 빨았습니다. ");
+        if (passive_Boold) { _skillUI.SendMessage("OtherWriteText", $"당신은 +{a}만큼 피를 빨았습니다. "); _stateUI.UpdateStateText(); }
 
         if (demageBlock)
         {
@@ -224,24 +226,28 @@ public class Enemy : Moving
                 _skillUI.SendMessage("OtherWriteText", $"흐헹헹(의)에 폭발펀치!! ");
                 yield return new WaitForSeconds(2.2f);
 
+                SoundClips.instance.EffectSound(3);
                 int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
                 int damage = Mathf.Max(1, enemyPower - playerDefence);
 
-                posisonReducedDamage = Random.Range(1, 11);
-                if (posisonReducedDamage < 4) ispoison = true;
-                damage = ispoison ? Mathf.RoundToInt(damage * 0.7f) : damage;
-
+                if (passive_Poison)
+                {
+                    posisonReducedDamage = Random.Range(1, 11);
+                    if (posisonReducedDamage <= 4) ispoison = true;
+                    damage = ispoison ? Mathf.RoundToInt(damage * 0.7f) : damage;
+                }
                 //damage = passive_Poison?posisonReducedDamage : 
                 playerCurrentHealth -= damage;
                 Instantiate(PlayerBehave.instance._hitEffect[0], transform);
                 PlayerBehave.instance.ani.SetTrigger("GetHit");
-                SoundClips.instance.EffectSound(3);
+                
                 yield return new WaitForSeconds(1.2f);
 
-                if (!passive_Poison) _skillUI.SendMessage("OtherWriteText", $"흐헹헹(이)가 당신의 피를 {damage}만큼 깎았습니다.");
+                if (!ispoison) _skillUI.SendMessage("OtherWriteText", $"흐헹헹(이)가 당신의 피를 {damage}만큼 깎았습니다.");
                 else _skillUI.SendMessage("OtherWriteText", $"[중독된] 흐헹헹(이)가 당신의 피를 {damage}만큼 깎았습니다.");
 
-                if(passive_Reflect) _skillUI.SendMessage("OtherWriteText", $"흐헹헹은 당신은 때리다가 가시에 찔려 {damage / 5}의 데미지를 받았습니다.");
+
+                if (passive_Reflect) { yield return new WaitForSeconds(1.3f); Instantiate(_particleSystem[0], transform); _skillUI.SendMessage("OtherWriteText", $"흐헹헹은 당신을 때리다가 가시에 찔려 {damage / 5}의 데미지를 받았습니다."); }
                 enemycurrnetHealth -= damage / 5;
                 if (enemycurrnetHealth <= 0) { StartCoroutine(EnemyDead()); yield return null; }
 

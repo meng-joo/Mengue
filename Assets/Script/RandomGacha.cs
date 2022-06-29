@@ -18,6 +18,7 @@ public class RandomGacha : MonoBehaviour
     public Image fadeImage;
     public Image[] passiveItem;
     public int count = 0;
+    public Image screenWhite;
 
     public Button _showGachaItem;
 
@@ -63,8 +64,8 @@ public class RandomGacha : MonoBehaviour
 
         RandomItemValue temp = StartGacha();
 
-
         passiveButtons[count].itemData = temp;
+        
         passiveItem[count].sprite = temp.passiveImage;
         _name = temp.skillName;
         _grade = temp._ItemRating.ToString().Trim();
@@ -84,15 +85,16 @@ public class RandomGacha : MonoBehaviour
 
         for (int i = 0; i < items.Count; i++)
         {
-            weight += items[i].weight;
+            weight += Mathf.Max(items[i].weight, 0);
 
             if (selectNum <= weight)
             {
                 RandomItemValue temp = new RandomItemValue(items[i]);
-                items[i].isactive = true;
+                //items[i].isactive = true;
                 _playerPassiveData.activeItem[i].isactive = true;
                 total -= items[i].weight;
-                items.Remove(items[i]);
+                items[i].weight = -1;
+                //items.Remove(items[i]);
                 return temp;
             }
         }
@@ -102,14 +104,44 @@ public class RandomGacha : MonoBehaviour
     public void GachaEffect()
     {
         Color pal = whiteImage.color;
+        Color whitecolor = Color.white;
         pal.a = 0;
 
         Sequence seq = DOTween.Sequence();
         _showGachaItem.enabled = false;
-        seq.Append(_showGachaItem.transform.DOShakePosition(2.3f, 30, 30));
-        seq.Join(_showGachaItem.transform.DOScale(1.4f, 2));
+        
         StartCoroutine(WhiteImage());
-        seq.AppendCallback(() => 
+
+        if (_grade == "Gold" || _grade == "Platinum" || _grade == "Meng") 
+        {
+            seq.Append(whiteImage.DOColor(whitecolor, 1.5f));
+            seq.Join(_showGachaItem.transform.DOShakePosition(3.4f, 35, 50)); 
+            seq.Join(_showGachaItem.transform.DOScale(1.8f, 2.7f));
+            screenWhite.gameObject.SetActive(true);
+            if (_grade == "Gold")
+            {
+                whitecolor.b -= 1;
+                whitecolor.a = 1;
+                seq.Insert(1.5f, whiteImage.DOColor(whitecolor, 2));
+            }
+            else if (_grade == "Platinum")
+            {
+                whitecolor.r -= 1;
+                whitecolor.a = 1;
+                seq.Insert(1.5f, whiteImage.DOColor(whitecolor, 2));
+            }
+            else if (_grade == "Meng")
+            {
+                whitecolor.b -= 1;
+                whitecolor.g -= 0.7f;
+                whitecolor.a = 1;
+                seq.Insert(1.5f, whiteImage.DOColor(whitecolor, 2));
+            }
+            seq.Append(screenWhite.DOFade(1, 0.08f));
+        }
+        else { seq.Append(_showGachaItem.transform.DOShakePosition(2.3f, 30, 30)); seq.Join(_showGachaItem.transform.DOScale(1.4f, 2)); }
+
+        seq.AppendCallback(() =>
         {
             _showGachaItem.image.sprite = passiveItem[count - 1].sprite;
             whiteImage.color = pal;
@@ -118,9 +150,11 @@ public class RandomGacha : MonoBehaviour
         });
         
         seq.Append(_showGachaItem.transform.DOScale(1, 0.1f));
+        seq.Join(screenWhite.DOFade(0, 0.8f));//.SetEase(Ease.OutQuint);
+        seq.AppendCallback(() => screenWhite.gameObject.SetActive(false));
 
         seq.AppendInterval(1f);
-        seq.Append(_showGachaItem.transform.DOLocalMoveY(200, 0.3f));
+        seq.Append(_showGachaItem.transform.DOLocalMoveY(170, 0.3f));
         seq.AppendCallback(() => 
         {
             _itemName.gameObject.SetActive(true);
@@ -175,7 +209,7 @@ public class RandomGacha : MonoBehaviour
 
             _itemGrade.text = string.Format(_grade + " ");
         });
-
+        
         seq.Append(_exitButton.transform.DOLocalMoveY(-403, 0.1f));
     }
 
@@ -187,7 +221,7 @@ public class RandomGacha : MonoBehaviour
         {
             alphaa.a += 0.01f;
             whiteImage.color = alphaa;
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(0.005f);
         }
     }
 
@@ -202,6 +236,8 @@ public class RandomGacha : MonoBehaviour
         _exitButton.transform.DOLocalMoveY(-760, 0.1f);
 
         yield return new WaitForSeconds(1f);
+
+        PlayerBehave.instance._storeUI.UpdatePriceText();
 
         Color alphha = fadeImage.color;
         while (alphha.a >= 0)

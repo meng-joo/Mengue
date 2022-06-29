@@ -90,10 +90,9 @@ public abstract class Moving : MonoBehaviour
                 {
                     _canEnemyMove = false;
                     InputEnemyMovingKey();
-
                 }
                 InputPlayerMovingKey();
-                
+                SoundClips.instance.MoveSound();
             }
         }
     }

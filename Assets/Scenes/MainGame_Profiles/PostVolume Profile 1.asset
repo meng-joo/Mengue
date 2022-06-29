@@ -21,19 +21,19 @@ MonoBehaviour:
     value: 0
   color:
     overrideState: 1
-    value: {r: 0, g: 0, b: 0, a: 0.49019608}
+    value: {r: 0, g: 0, b: 0, a: 1}
   center:
     overrideState: 1
     value: {x: 0.5, y: 0.5}
   intensity:
     overrideState: 1
-    value: 0.308
+    value: 0.31
   smoothness:
     overrideState: 1
     value: 1
   roundness:
     overrideState: 1
-    value: 0.705
+    value: 0.77
   rounded:
     overrideState: 1
     value: 1
@@ -42,7 +42,7 @@ MonoBehaviour:
     value: {fileID: 0}
     defaultState: 1
   opacity:
-    overrideState: 0
+    overrideState: 1
     value: 1
 --- !u!114 &-5703145757773955129
 MonoBehaviour:
@@ -83,6 +83,8 @@ MonoBehaviour:
   - {fileID: 4271934372107811518}
   - {fileID: -5703145757773955129}
   - {fileID: -8626591343268771041}
+  - {fileID: 4127651668706143843}
+  - {fileID: 8522743755233558393}
 --- !u!114 &2078500975084020142
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -101,28 +103,28 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 3
+    value: 3.3
   threshold:
     overrideState: 1
-    value: 0.87
+    value: 0.88
   softKnee:
     overrideState: 1
-    value: 0.257
+    value: 0.1
   clamp:
     overrideState: 0
     value: 65472
   diffusion:
-    overrideState: 0
-    value: 7
+    overrideState: 1
+    value: 4.1
   anamorphicRatio:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 0.03
   color:
     overrideState: 1
-    value: {r: 1, g: 0.7396226, b: 0.81415045, a: 1}
+    value: {r: 1.3525561, g: 1.2289494, b: 0.89830136, a: 1}
   fastMode:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 1
   dirtTexture:
     overrideState: 0
     value: {fileID: 0}
@@ -130,6 +132,40 @@ MonoBehaviour:
   dirtIntensity:
     overrideState: 0
     value: 0
+--- !u!114 &4127651668706143843
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b77c5407dc277943b591ade9e6b18c5, type: 3}
+  m_Name: LensDistortion
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  intensity:
+    overrideState: 1
+    value: 23
+  intensityX:
+    overrideState: 0
+    value: 1
+  intensityY:
+    overrideState: 0
+    value: 1
+  centerX:
+    overrideState: 0
+    value: 0
+  centerY:
+    overrideState: 0
+    value: 0
+  scale:
+    overrideState: 0
+    value: 1
 --- !u!114 &4271934372107811518
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -152,7 +188,35 @@ MonoBehaviour:
     defaultState: 1
   intensity:
     overrideState: 1
-    value: 0.137
+    value: 0.11
   fastMode:
     overrideState: 0
     value: 0
+--- !u!114 &8522743755233558393
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 556797029e73b2347956b6579e77e05b, type: 3}
+  m_Name: DepthOfField
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  focusDistance:
+    overrideState: 0
+    value: 10
+  aperture:
+    overrideState: 1
+    value: 0.2
+  focalLength:
+    overrideState: 1
+    value: 2.4
+  kernelSize:
+    overrideState: 0
+    value: 1

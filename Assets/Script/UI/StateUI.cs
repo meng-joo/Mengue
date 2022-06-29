@@ -10,15 +10,15 @@ public class StateUI : MonoBehaviour
     private TextMeshProUGUI _stateText;
     int range = 232;
 
-    private Button _settingButton;
+    //public Button _settingButton;
     public Button[] passiveSkillButton;
     public Image settingBackGround;
 
-    public Button settingButton;
+    //public Button settingButton;
     private void Start()
     {
         _stateText = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        _settingButton = transform.Find("SettingButton").GetComponent<Button>();
+        //_settingButton = transform.Find("SettingButton").GetComponent<Button>();
         SetPassiveButton();
     }
 
