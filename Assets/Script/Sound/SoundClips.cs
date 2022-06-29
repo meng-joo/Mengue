@@ -36,13 +36,21 @@ public class SoundClips : MonoBehaviour
 
         while (true)
         {
-            int _random = Random.Range(0, _backgroundSound.Length - 1);
+            int _random = Random.Range(0, _backgroundSound.Length - 2);
             _audioSource.clip = _backgroundSound[_random];
             _audioSource.Play();
             yield return new WaitForSeconds(_backgroundSound[_random].length + 20);
             _isBattle = false;
             _isStore = false;
         }
+    }
+
+    public void GahcaSound(int i)
+    {
+        _audioSource.Pause();
+        if (i == 0) _audioSource.clip = _backgroundSound[4];
+        else _audioSource.clip = _backgroundSound[5];
+        _audioSource.Play();
     }
 
     IEnumerator SetBattleSound()
@@ -77,7 +85,7 @@ public class SoundClips : MonoBehaviour
         }
     }
 
-    IEnumerator SetStoreSound()
+    public IEnumerator SetStoreSound()
     {
         _audioSource.Pause();
         _isStore = true;
@@ -95,6 +103,11 @@ public class SoundClips : MonoBehaviour
         _effectAudio.clip = _effectSound[i];
 
         _effectAudio.Play();
+    }
+
+    public void StopSound()
+    {
+        _audioSource.Pause();
     }
 
     public void MoveSound()

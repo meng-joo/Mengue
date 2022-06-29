@@ -1174,6 +1174,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5b684ceeb309b0c42a4b8462a17091e5, type: 3}
   - {fileID: 8300000, guid: 73b39119a9d34134eb5bfb3a14db179a, type: 3}
   - {fileID: 8300000, guid: 21865d81a0adbdd4bb06409f0a5404ad, type: 3}
+  - {fileID: 8300000, guid: d1fb3a3c0f8e1ea44bab3905a09ac236, type: 3}
+  - {fileID: 8300000, guid: 30d2426a149075f45ba2b7647e7d2cfe, type: 3}
   _fightingSound: {fileID: 8300000, guid: b13d026d3589c1147a8368c47b136d05, type: 3}
   _fightingBossSound: {fileID: 8300000, guid: 229e7e75f5e1470419b0b27be101ccde, type: 3}
   _StoreSound: {fileID: 8300000, guid: b68d55573d4bfad478851c8850c411c4, type: 3}

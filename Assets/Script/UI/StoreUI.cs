@@ -91,6 +91,7 @@ public class StoreUI : MonoBehaviour
             {
                 Moving._isGacha = true;
                 _randomGacha.SetPassiveItem();
+                SoundClips.instance.StopSound();
 
                 SetText($"·£´ý »Ì±â!");
             }

@@ -109,11 +109,12 @@ public class RandomGacha : MonoBehaviour
 
         Sequence seq = DOTween.Sequence();
         _showGachaItem.enabled = false;
-        
+
         StartCoroutine(WhiteImage());
 
-        if (_grade == "Gold" || _grade == "Platinum" || _grade == "Meng") 
+        if (_grade == "Gold" || _grade == "Platinum" || _grade == "Meng")
         {
+            SoundClips.instance.GahcaSound(0);
             seq.Append(whiteImage.DOColor(whitecolor, 1.5f));
             seq.Join(_showGachaItem.transform.DOShakePosition(3.4f, 35, 50)); 
             seq.Join(_showGachaItem.transform.DOScale(1.8f, 2.7f));
@@ -139,7 +140,7 @@ public class RandomGacha : MonoBehaviour
             }
             seq.Append(screenWhite.DOFade(1, 0.08f));
         }
-        else { seq.Append(_showGachaItem.transform.DOShakePosition(2.3f, 30, 30)); seq.Join(_showGachaItem.transform.DOScale(1.4f, 2)); }
+        else { SoundClips.instance.GahcaSound(1); seq.Append(_showGachaItem.transform.DOShakePosition(2.3f, 30, 30)); seq.Join(_showGachaItem.transform.DOScale(1.4f, 2)); }
 
         seq.AppendCallback(() =>
         {
@@ -236,6 +237,7 @@ public class RandomGacha : MonoBehaviour
         _exitButton.transform.DOLocalMoveY(-760, 0.1f);
 
         yield return new WaitForSeconds(1f);
+        SoundClips.instance.StartCoroutine("SetStoreSound");
 
         PlayerBehave.instance._storeUI.UpdatePriceText();
 
