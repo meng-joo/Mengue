@@ -12,7 +12,7 @@ public class BackGround : MonoBehaviour
     public float coinSpawnDeley = 7.5f;
     public int coinCount = 0;
 
-    public List<Enemy> _enemyList = new List<Enemy>();
+    public List<CommonEnemy> _enemyList = new List<CommonEnemy>();
     public List<Boss> _bossList = new List<Boss>();
 
     public GameObject backGroundPrefab = null;
@@ -20,7 +20,7 @@ public class BackGround : MonoBehaviour
     public GameObject Player = null;
     public GameObject storeBlock = null;
     public GameObject coin = null;
-    public Enemy _enemy = null;
+    public CommonEnemy _enemy = null;
     public Boss _boss = null;
 
     public int maxCoinCount = 100;
@@ -124,7 +124,7 @@ public class BackGround : MonoBehaviour
     public void CreateEnemy(int Px = 0, int Pz = 0)
     {
         Debug.Log("利捞 积己   利捞 积己   利捞 积己   利捞 积己   利捞 积己");
-        Enemy enemy = _enemy;
+        CommonEnemy enemy = _enemy;
         int z1 = Random.Range(MinZ + 2, -3);
         int z2 = Random.Range(3, MaxZ - 2);
         int x1 = Random.Range(MinX + 2, -3);

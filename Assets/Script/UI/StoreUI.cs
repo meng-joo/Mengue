@@ -30,6 +30,9 @@ public class StoreUI : MonoBehaviour
     public int passive_Sale = 1;
     public TextMeshProUGUI[] _skillCountText = new TextMeshProUGUI[2];
 
+    public EnemyDataSO commonEnemyData;
+    public EnemyDataSO bossEnemyData;
+
     void Start()
     {
         SetPrice();
@@ -204,15 +207,17 @@ public class StoreUI : MonoBehaviour
         else if (num == 3) { PlayerBehave.playerDefence += 1; SetText("방어력이 1올라갔습니다."); }
         else if (num == 4)
         {
-            Moving.enemyHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.18f);
-            Moving.enemyDefence += Mathf.RoundToInt(Mathf.Max(1,Moving.enemyDefence * 0.12f));
-            Moving.enemyAttack += Mathf.RoundToInt(Mathf.Max(1, Moving.enemyAttack * 0.12f));
-            Moving.enemyMoney += 1;
+            commonEnemyData.enemyHealth += Mathf.RoundToInt(commonEnemyData.enemyHealth * 0.18f);
+            commonEnemyData.enemyDefence += Mathf.RoundToInt(Mathf.Max(1,commonEnemyData.enemyDefence * 0.12f));
+            commonEnemyData.enemyAttack += Mathf.RoundToInt(Mathf.Max(1, commonEnemyData.enemyAttack * 0.12f));
+            commonEnemyData.enemyMoney += 3;
+            commonEnemyData.enemyMoveDeley -= 0.05f;
 
-            Moving.bossHealth += Mathf.RoundToInt(Moving.enemyHealth * 0.38f);
-            Moving.bossDefence += Mathf.RoundToInt(Moving.enemyDefence * 0.3f);
-            Moving.bossAttack += Mathf.RoundToInt(Moving.enemyAttack * 0.4f);
-            Moving.bossMoney += 3;
+            bossEnemyData.enemyHealth += Mathf.RoundToInt(bossEnemyData.enemyHealth * 0.38f);
+            bossEnemyData.enemyDefence += Mathf.RoundToInt(bossEnemyData.enemyDefence * 0.3f);
+            bossEnemyData.enemyAttack += Mathf.RoundToInt(bossEnemyData.enemyAttack * 0.4f);
+            bossEnemyData.enemyMoney += 5;
+            bossEnemyData.enemyMoveDeley -= 0.05f;
 
             SetText("적이 강화되었습니다.");
             if (skillLevel[num] % 11 == 10)

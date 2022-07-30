@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class Enemy : Moving
+public class CommonEnemy : Enemy
 {
+    public EnemyDataSO commonEnemyData;
     public GameObject enemyView;
     private SkillUI _skillUI;
     private StateUI _stateUI;
@@ -20,6 +21,7 @@ public class Enemy : Moving
 
     protected BackGround _backGround;
 
+    public int enemycurrnetHealth;
 
     private void Start()
     {
@@ -32,76 +34,10 @@ public class Enemy : Moving
         Debug.Log("전에 백그라운드" + _backGround);
         if (_backGround == null) _backGround = FindObjectOfType<BackGround>();
         Debug.Log("후에 백그라운드" + _backGround);
+
+        enemycurrnetHealth = commonEnemyData.enemyHealth;
     }
 
-    protected override void InputEnemyMovingKey()
-    {
-        //Debug.Log("serhejwkyetkexulrle5lele5l5ek7l5");
-        //for (int c = 0; c < _backGround.enemycount; c++)
-        //{
-        int x = Random.Range(-1, 2);
-        int z = Random.Range(-1, 2);
-        bool isOverlap = false;
-        bool isOverlapToPlayer = false;
-
-        if (x == 1 || x == -1)
-        {
-            z = 0;
-        }
-
-        Vector3 randomTransform = new Vector3(x, 0, z);
-
-        float enemyX = transform.position.x + randomTransform.x;
-        float enemyZ = transform.position.z + randomTransform.z;
-
-        int Px = Mathf.CeilToInt(pPos.transform.position.x);
-        int Pz = Mathf.CeilToInt(pPos.transform.position.z);
-
-        if (enemyX == Px && enemyZ == Pz)
-        {
-            isOverlapToPlayer = true;
-        }
-
-        for (int i = 0; i < _backGround._enemyList.Count; i++)
-        {
-            int Ex = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.x);
-            int Ez = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.z);
-
-            if (Mathf.Abs(enemyX - Ex) <= 3 && Mathf.Abs(enemyZ - Ez) <= 3)
-            {
-                isOverlap = true;
-            }
-        }
-
-        for (int i = 0; i < _backGround._bossList.Count; i++)
-        {
-            int Ex = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.x);
-            int Ez = Mathf.CeilToInt(_backGround._enemyList[i].transform.position.z);
-
-            if (Mathf.Abs(enemyX - Ex) <= 3 && Mathf.Abs(enemyZ - Ez) <= 3)
-            {
-                isOverlap = true;
-            }
-        }
-
-        if ((enemyX >= BackGround.MaxX - 1) || (enemyX <= BackGround.MinX + 1) || (enemyZ <= BackGround.MinZ + 1) || (enemyZ >= BackGround.MaxZ - 2) || isOverlap || isOverlapToPlayer)
-        {
-            Debug.Log("안돼 돌아가");
-            _canEnemyMove = true;
-            return;
-        }
-        else
-        {
-            Debug.Log("이게 왜....");
-            transform.DOKill();
-            int goX = Mathf.CeilToInt(transform.position.x);
-            int goZ = Mathf.CeilToInt(transform.position.z);
-
-            transform.position = new Vector3(goX, transform.position.y, goZ);
-
-            transform.DOLocalMove(transform.position + randomTransform, 0.13f).OnComplete(() => _canEnemyMove = true);
-        }
-    }
 
     public void StartBattle(GameObject player)
     {
@@ -114,7 +50,7 @@ public class Enemy : Moving
         yield return new WaitForSeconds(0.2f);
         Quaternion quaternion = Quaternion.Euler(75, 0, 0);
         transform.position = player.transform.position + new Vector3(1, 0.5f, 1);
-        enemycurrnetHealth = enemyHealth;
+        enemycurrnetHealth = commonEnemyData.enemyHealth;
         transform.LookAt(player.transform);
         transform.rotation *= quaternion;
     }
@@ -122,14 +58,14 @@ public class Enemy : Moving
     public void GetAttack()
     {
         bool _isCri = false;
-        int realDamage = playerCurrentAttack - enemyDefence;
+        int realDamage = playerCurrentAttack - commonEnemyData.enemyDefence;
         int midasExtraDamage;
 
         midasExtraDamage = passive_Midas ? Mathf.RoundToInt(Mathf.Min(Mathf.Max(2, realDamage), Mathf.Max(2, realDamage) * (currentMoney * 0.000025f))) : 0;
 
         //realDamage += midasExtraDamage;
 
-        if (passive_David) realDamage *= playerAddHealth < enemyHealth ? 2 : 1;
+        if (passive_David) realDamage *= playerAddHealth < commonEnemyData.enemyHealth ? 2 : 1;
 
         posisonReducedDamage = Random.Range(1, 11);
         
@@ -166,8 +102,8 @@ public class Enemy : Moving
 
         yield return new WaitForSeconds(2f);
 
-        _skillUI.SendMessage("OtherWriteText", $"당신은 흥헹헹을 죽이고 {moneyValue * enemyMoney}원을 얻었습니다! ");
-        currentMoney += moneyValue * enemyMoney;
+        _skillUI.SendMessage("OtherWriteText", $"당신은 흥헹헹을 죽이고 {moneyValue * commonEnemyData.enemyMoney}원을 얻었습니다! ");
+        currentMoney += moneyValue * commonEnemyData.enemyMoney;
         if (currentMoney >= 1000000)
             PlayerBehave.instance.PlayerWin();
         _stateUI.UpdateStateText();
@@ -179,7 +115,7 @@ public class Enemy : Moving
         Destroy(gameObject);
         Moving._playerState = PlayerState.IDLE;
         pPos.EndBattle();
-        enemycurrnetHealth = enemyHealth;
+        enemycurrnetHealth = commonEnemyData.enemyHealth;
 
         _backGround.CreateEnemy();
         yield return new WaitForSeconds(1.3f);
@@ -238,7 +174,7 @@ public class Enemy : Moving
                 yield return new WaitForSeconds(2.2f);
 
                 SoundClips.instance.EffectSound(3);
-                int enemyPower = Random.Range(enemyAttack - 3, Mathf.RoundToInt(enemyAttack * 1.4f));
+                int enemyPower = Random.Range(commonEnemyData.enemyAttack - 3, Mathf.RoundToInt(commonEnemyData.enemyAttack * 1.4f));
                 int damage = Mathf.Max(1, enemyPower - playerCurrentDefence);
 
                 if (passive_Poison)

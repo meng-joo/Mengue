@@ -54,15 +54,11 @@ public class BattleEffect : MonoBehaviour
 
         seq.AppendCallback(() =>
         {
-            _battleEffectPanel[0].transform.position = new Vector3(-40f, _battleEffectPanel[0].transform.position.y, _battleEffectPanel[0].transform.position.z);
-            _battleEffectPanel[1].transform.position = new Vector3(50f, _battleEffectPanel[1].transform.position.y, _battleEffectPanel[1].transform.position.z);
-            _profileImage[0].transform.position = new Vector3(-18f, _profileImage[0].transform.position.y, _profileImage[0].transform.position.z);
-            _profileImage[1].transform.position = new Vector3(30f, _profileImage[1].transform.position.y, _profileImage[1].transform.position.z);
-
-            _battleEffectPanel[0].SetActive(false);
-            _battleEffectPanel[1].SetActive(false);
-            _profileImage[0].gameObject.SetActive(false);
-            _profileImage[1].gameObject.SetActive(false);
+            seq.Rewind();
+            //_battleEffectPanel[0].SetActive(false);
+            //_battleEffectPanel[1].SetActive(false);
+            //_profileImage[0].gameObject.SetActive(false);
+            //_profileImage[1].gameObject.SetActive(false);
         });
     }
 }

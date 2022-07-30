@@ -10,6 +10,7 @@ public class RandomGacha : MonoBehaviour
     public TextMeshProUGUI skillExplanText;
     public PassiveButton[] passiveButtons;
 
+
     public PassiveData _playerPassiveData;
 
     public List<RandomItemValue> items = new List<RandomItemValue>();

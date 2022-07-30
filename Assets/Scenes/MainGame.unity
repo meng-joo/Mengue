@@ -318,6 +318,8 @@ MonoBehaviour:
   _skillCountText:
   - {fileID: 0}
   - {fileID: 0}
+  commonEnemyData: {fileID: 0}
+  bossEnemyData: {fileID: 0}
 --- !u!1 &39189674
 GameObject:
   m_ObjectHideFlags: 0
@@ -6674,7 +6676,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &757401802
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10744,7 +10746,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1231412551
 RectTransform:
   m_ObjectHideFlags: 0

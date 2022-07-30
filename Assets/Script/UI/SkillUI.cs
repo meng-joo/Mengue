@@ -13,11 +13,13 @@ public class SkillUI : MonoBehaviour
     private TextMeshProUGUI _stateText;
     private TextMeshProUGUI _runAwayCost;
     private TextMeshProUGUI[] _skillCountText = new TextMeshProUGUI[2];
-    public Enemy _fightingEnemy = null;
+    public CommonEnemy _fightingEnemy = null;
     public Boss _fightingBoss = null;
     public BackGround _backGround;
     public StoreUI _storeUI;
     public StateUI _stateUI;
+
+    
 
     public AudioSource _audioSource;
     public SoundClips _soundClips;
@@ -48,7 +50,7 @@ public class SkillUI : MonoBehaviour
 
     public void SetEnemy(GameObject _enemy)
     {
-        _fightingEnemy = _enemy.GetComponent<Enemy>();
+        _fightingEnemy = _enemy.GetComponent<CommonEnemy>();
         if (_fightingEnemy == null) _fightingBoss = _enemy.GetComponent<Boss>();
         StartCoroutine("ShowButtons");
     }
@@ -107,8 +109,8 @@ public class SkillUI : MonoBehaviour
 
     public void EnemyStateButton()
     {
-        if (_fightingEnemy != null) { StopCoroutine("WriteText"); StartCoroutine(WriteText($"이름: 흥행행\n체력: {Moving.enemycurrnetHealth}/{Moving.enemyHealth}\n공격력: {Moving.enemyAttack}\n방어력: {Moving.enemyDefence}\n특징: 어쩔티비 ")); }
-        else { StopCoroutine("WriteText"); StartCoroutine("WriteText", $"이름: 뽀스\n체력: {Moving.bosscurrnetHealth}/{Moving.bossHealth}\n공격력: {Moving.bossAttack}\n방어력: {Moving.bossDefence}\n특징: 꽤 쎄다 "); }
+        if (_fightingEnemy != null) { StopCoroutine("WriteText"); StartCoroutine(WriteText($"이름: 흥행행\n체력: {_fightingEnemy.enemycurrnetHealth}/{_fightingEnemy.commonEnemyData.enemyHealth}\n공격력: {_fightingEnemy.commonEnemyData.enemyAttack}\n방어력: {_fightingEnemy.commonEnemyData.enemyDefence}\n특징: 평범하게 생겼다. ")); }
+        else { StopCoroutine("WriteText"); StartCoroutine("WriteText", $"이름: 뽀스\n체력: {_fightingBoss.bosscurrnetHealth}/{_fightingBoss.bossData.enemyHealth}\n공격력: {_fightingBoss.bossData.enemyAttack}\n방어력: {_fightingBoss.bossData.enemyDefence}\n특징: 꽤 쎄다 "); }
     }
 
     public void InputSkillButton()
@@ -190,7 +192,6 @@ public class SkillUI : MonoBehaviour
                 StartCoroutine("WriteText", "도망가~~! ");
                 Moving.currentMoney -= Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 0));
                 _backGround.CreateEnemy();
-                Moving.enemycurrnetHealth = Moving.enemyHealth;
                 Moving._playerState = Moving.PlayerState.IDLE;
                 PlayerBehave.instance.EndBattle();
                 Destroy(_fightingEnemy.gameObject);
@@ -202,7 +203,6 @@ public class SkillUI : MonoBehaviour
                 StartCoroutine("WriteText", "도망가~~! ");
                 Moving.currentMoney -= Mathf.RoundToInt(Mathf.Max(Moving.currentMoney / runvalue, 0));
                 _backGround.CreateBoss();
-                Moving.bosscurrnetHealth = Moving.bossHealth;
                 Moving._playerState = Moving.PlayerState.IDLE;
                 PlayerBehave.instance.EndBattle();
                 Destroy(_fightingBoss.gameObject);

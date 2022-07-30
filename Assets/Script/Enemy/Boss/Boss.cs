@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class Boss : Moving
+public class Boss : Enemy
 {
+    public EnemyDataSO bossData;
     public GameObject enemyView;
     private SkillUI _skillUI;
     private StateUI _stateUI;
@@ -21,6 +22,8 @@ public class Boss : Moving
     protected BackGround _backGround;
     int healCount = 0;
 
+    public int bosscurrnetHealth;
+
     private void Start()
     {
         _animator = GetComponent<Animator>();
@@ -28,7 +31,7 @@ public class Boss : Moving
         pPos = GameObject.Find("Player").GetComponent<PlayerBehave>();
         _skillUI = FindObjectOfType<SkillUI>();
         tempVec = transform.position;
-
+        bosscurrnetHealth = bossData.enemyHealth;
         if (_backGround == null) _backGround = FindObjectOfType<BackGround>();
     }
     protected override void InputEnemyMovingKey()
@@ -114,7 +117,7 @@ public class Boss : Moving
         Quaternion quaternion = Quaternion.Euler(60, 0, 0);
         transform.position = player.transform.position + new Vector3(1, 1.5f, 1);
         //transform.rotation = Quaternion.Lerp(transform.rotation, quaternion, 1);
-        bosscurrnetHealth = bossHealth;
+        bosscurrnetHealth = bossData.enemyHealth;
         transform.LookAt(player.transform);
         transform.rotation *= quaternion;
     }
@@ -122,14 +125,14 @@ public class Boss : Moving
     public void GetAttack()
     {
         bool _isCri = false;
-        int realDamage = playerCurrentAttack - bossDefence;
+        int realDamage = playerCurrentAttack - bossData.enemyDefence;
         int midasExtraDamage;
 
         midasExtraDamage = passive_Midas ? Mathf.RoundToInt(Mathf.Min(Mathf.Max(2, realDamage), Mathf.Max(2, realDamage) * (currentMoney * 0.000025f))) : 0;
 
         //realDamage += midasExtraDamage;
 
-        if (passive_David) realDamage *= playerAddHealth < bossHealth ? 2 : 1;
+        if (passive_David) realDamage *= playerAddHealth < bossData.enemyHealth ? 2 : 1;
 
         posisonReducedDamage = Random.Range(1, 11);
 
@@ -167,8 +170,8 @@ public class Boss : Moving
 
         yield return new WaitForSeconds(2f);
 
-        _skillUI.SendMessage("OtherWriteText", $"당신은 뽀스을 죽이고 {moneyValue * bossMoney}원을 얻었습니다! ");
-        currentMoney += moneyValue * bossMoney;
+        _skillUI.SendMessage("OtherWriteText", $"당신은 뽀스을 죽이고 {moneyValue * bossData.enemyMoney}원을 얻었습니다! ");
+        currentMoney += moneyValue * bossData.enemyMoney;
 
         if (currentMoney >= 1000000)
             PlayerBehave.instance.PlayerWin();
@@ -183,7 +186,7 @@ public class Boss : Moving
         Moving._playerState = PlayerState.IDLE;
         pPos.EndBattle();
 
-        bosscurrnetHealth = bossHealth;
+        bosscurrnetHealth = bossData.enemyHealth;
 
         _backGround.CreateBoss();
 
@@ -201,7 +204,7 @@ public class Boss : Moving
 
     public void EnemyTurn(int a)
     {
-        if (bosscurrnetHealth < bossHealth / 3 && healCount < 2)
+        if (bosscurrnetHealth < bossData.enemyHealth / 3 && healCount < 2)
         {
             StartCoroutine(BossHeal(a));
         }
@@ -222,13 +225,13 @@ public class Boss : Moving
 
         yield return new WaitForSeconds(1.8f);
 
-        _skillUI.SendMessage("OtherWriteText", $"뽀스는 위기를 느껴 피를 {Mathf.RoundToInt(bossAttack * 2 - bossAttack / 3)}회복하였습니다!");
-        bosscurrnetHealth += bossAttack * 2 - bossAttack / 3;
+        _skillUI.SendMessage("OtherWriteText", $"뽀스는 위기를 느껴 피를 {Mathf.RoundToInt(bossData.enemyAttack * 2 - bossData.enemyAttack / 3)}회복하였습니다!");
+        bosscurrnetHealth += bossData.enemyAttack * 2 - bossData.enemyAttack / 3;
 
         //pPos._battleCamera.EnemyAttack();
         pPos._battleCamera.BossHeal();
 
-        if (bosscurrnetHealth > bossHealth) bosscurrnetHealth = bossHealth;
+        if (bosscurrnetHealth > bossData.enemyHealth) bosscurrnetHealth = bossData.enemyHealth;
 
         yield return new WaitForSeconds(1f);
         Instantiate(_particleSystem[2], transform.position + Vector3.forward, Quaternion.identity);
@@ -282,7 +285,7 @@ public class Boss : Moving
                 yield return new WaitForSeconds(2.2f);
 
                 SoundClips.instance.EffectSound(4);
-                int enemyPower = Random.Range(bossAttack - 3, Mathf.RoundToInt(bossAttack * 1.7f));
+                int enemyPower = Random.Range(bossData.enemyAttack - 3, Mathf.RoundToInt(bossData.enemyAttack * 1.7f));
                 int damage = Mathf.Max(3, enemyPower - playerCurrentDefence);
 
                 posisonReducedDamage = Random.Range(1, 11);

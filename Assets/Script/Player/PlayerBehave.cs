@@ -10,7 +10,7 @@ public class PlayerBehave : Moving
 {
     public Camera maincam;
     private GameObject _enemy = null;
-    public Enemy _currentEnemy = null;
+    public CommonEnemy _currentEnemy = null;
     public PassiveData _passiveData;
 
     public BattleCamera _battleCamera = null;
@@ -258,7 +258,7 @@ public class PlayerBehave : Moving
         if (collison.tag == "Enemy")
         {
             SetBattle(collison.gameObject, 0);
-            collison.gameObject.transform.parent.GetComponent<Enemy>().StartBattle(gameObject);
+            collison.gameObject.transform.parent.GetComponent<CommonEnemy>().StartBattle(gameObject);
         }
         else if(collison.tag == "Boss")
         {
