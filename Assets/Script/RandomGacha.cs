@@ -240,7 +240,7 @@ public class RandomGacha : MonoBehaviour
         yield return new WaitForSeconds(1f);
         SoundClips.instance.StartCoroutine("SetStoreSound");
 
-        PlayerBehave.instance._storeUI.UpdatePriceText();
+        //PlayerBehave.instance._storeUI.UpdatePriceText();
 
         Color alphha = fadeImage.color;
         while (alphha.a >= 0)
@@ -249,7 +249,7 @@ public class RandomGacha : MonoBehaviour
             fadeImage.color = alphha;
             yield return new WaitForSeconds(0.01f);
         }
-        Moving._isGacha = false;
+        GameManager._isGacha = false;
 
         _itemName.text = string.Format(" ");
         _itemGrade.text = string.Format(" ");

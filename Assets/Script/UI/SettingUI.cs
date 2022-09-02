@@ -34,7 +34,7 @@ public class SettingUI : MonoBehaviour
 
     private void Update()
     {
-        if (Moving._playerState == Moving.PlayerState.INSETTING)
+        if (PlayerBehave._playerState == PlayerBehave.PlayerState.INSETTING)
         {
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Tab))
             {
@@ -45,7 +45,7 @@ public class SettingUI : MonoBehaviour
 
     public void OnClickExitButton()
     {
-        Moving._playerState = Moving.PlayerState.IDLE;
+        PlayerBehave._playerState = PlayerBehave.PlayerState.IDLE;
         transform.DOLocalMoveX(1920, 0.2f);
         if(PlayerBehave.instance != null) PlayerBehave.instance._backGround.StartCoroutine("SpawnCoin");
     }
