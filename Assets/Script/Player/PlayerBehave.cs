@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
@@ -24,6 +25,9 @@ public class PlayerBehave : MonoBehaviour
 
     public PlayerDataSO _playerDataSo;
 
+    public UnityEvent _PlayerMove;
+    public UnityEvent _PlayerBattle;
+
     public GameObject[] _hitEffect;
     public GameObject _healEffect;
 
@@ -32,7 +36,7 @@ public class PlayerBehave : MonoBehaviour
     public BattleEffect _battleEffect;
     private bool[] isPassiveOn = new bool[20];
 
-    public Setting _backGround;
+    public Setting _setting;
 
     public Canvas[] _canvas;
     public Camera _battleCam;
@@ -40,8 +44,11 @@ public class PlayerBehave : MonoBehaviour
     public float moveDelay = 0.01f;
     public float currentDelay = 0.01f;
 
+    public bool _isCave = false;
+
     public enum PlayerState
     {
+        NONE,
         IDLE,
         MOVING,
         BATTLE,
@@ -49,13 +56,13 @@ public class PlayerBehave : MonoBehaviour
         INSETTING
     }
 
-    public static PlayerState _playerState = PlayerState.INSETTING;
+    public static PlayerState _playerState = PlayerState.IDLE;
 
     private void Awake()
     {
         instance = this;
 
-        if (_backGround == null) _backGround = FindObjectOfType<Setting>();
+        if (_setting == null) _setting = FindObjectOfType<Setting>();
     }
 
     private void Start()
@@ -94,7 +101,7 @@ public class PlayerBehave : MonoBehaviour
     public void ExitStoreButton()
     {
         //_storeUI.GetBackStoreUI();
-        _backGround.StartCoroutine("SpawnCoin");
+        _setting.StartCoroutine("SpawnCoin");
         //_stateUI.UpdateStateText();
     }
 
@@ -120,10 +127,20 @@ public class PlayerBehave : MonoBehaviour
         if (inputTransform != Vector3.zero) transform.rotation = Quaternion.LookRotation(inputTransform);
 
         inputTransform.y = 0;
-        
-        if(transform.position.x + inputTransform.x >= Setting.MaxX || transform.position.x + inputTransform.x <= Setting.MinX || transform.position.z + inputTransform.z >= Setting.MaxZ || transform.position.z + inputTransform.z <= Setting.MinZ)
+
+        if (!_isCave)
         {
-            return;
+            if (transform.position.x + inputTransform.x >= Setting.MaxX || transform.position.x + inputTransform.x <= Setting.MinX || transform.position.z + inputTransform.z >= Setting.MaxZ || transform.position.z + inputTransform.z <= Setting.MinZ)
+            {
+                return;
+            }
+        }
+        else
+        {
+            if (transform.position.x + inputTransform.x >= Setting.CaveMaxX || transform.position.x + inputTransform.x <= Setting.CaveMinX || transform.position.z + inputTransform.z >= Setting.CaveMaxZ || transform.position.z + inputTransform.z <= Setting.CaveMinZ)
+            {
+                return;
+            }
         }
 
         transform.position += inputTransform;
@@ -192,16 +209,19 @@ public class PlayerBehave : MonoBehaviour
             {
                 if(GameManager.instance.blockInfo[i].isStore)
                 {
-                    _playerState = PlayerState.INSTORE;
                     SoundClips.instance.StartCoroutine("SetStoreSound");
                     //_storeUI._skillCountText[0].text = string.Format("{0}/{1}", _skillUI._skillCount[0], _skillUI.skillLimite);
                     //_storeUI._skillCountText[1].text = string.Format("{0}/{1}", _skillUI._skillCount[1], _skillUI.skillLimite);
                     PlayerInStore();
                     //_stateUI.UpdateStateText();
                 }
+                else if (GameManager.instance.blockInfo[i].is_Setting)
+                {
+                    
+                }
                 else if (GameManager.instance.blockInfo[i].is_Stair)
                 {
-
+                    _PlayerMove.Invoke();
                 }
                 else if (GameManager.instance.blockInfo[i].isCommon_Enemy)
                 {
@@ -250,6 +270,7 @@ public class PlayerBehave : MonoBehaviour
 
     void PlayerInStore()
     {
+        _playerState = PlayerState.INSTORE;
         _storeUI.SetStoreUI();
     }
 

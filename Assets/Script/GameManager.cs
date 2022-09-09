@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
         else if (name == "Common_Enemy") _blockInfo.isCommon_Enemy = true;
         else if (name == "Boss") _blockInfo.is_Boss = true;
         else if (name == "Stair") _blockInfo.is_Stair = true;
+        else if (name == "Setting") _blockInfo.is_Setting = true;
 
         _blockInfo._x = Mathf.RoundToInt(pos.x);
         _blockInfo._z = Mathf.RoundToInt(pos.z);

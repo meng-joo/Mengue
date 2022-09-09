@@ -23,6 +23,10 @@ public class Setting : MonoBehaviour
     public GameObject storeBlock = null;
     public GameObject coin = null;
     public GameObject stairBlock = null;
+    public GameObject settingBlock = null;
+
+    public GameObject[] cave_Block = new GameObject[1000];
+    public GameObject[] home_Block = new GameObject[200];
 
     public int maxCoinCount = 100;
 
@@ -37,20 +41,26 @@ public class Setting : MonoBehaviour
         coinCount = 0;
         if (backGroundPrefab != null)
         {
-            StartCoroutine(CreateStartBlock());
+            CreateCaveBlock();
+            CreateStartBlock();
             //StartCoroutine("SpawnCoin");   // <--------------------이거 꼭 넣어야함
             //StartCoroutine(CreateEnemyForCount());
         }
         maxCoinCount = 100;
         coinSpawnDeley = 6f;
+
+        StartCoroutine(ActiveStartBlock());
     }
 
-    IEnumerator CreateStartBlock()
+    void CreateStartBlock()
     {
         GameObject _groundprefab = backGroundPrefab;
         GameObject _wall = Wall;
         GameObject _storeBlock = storeBlock;
         GameObject _stairBlock = stairBlock;
+        GameObject _settingBlock = settingBlock;
+
+        int total = 0;
 
         for (int i = MaxZ; i >= MinZ; i--)
         {
@@ -60,33 +70,40 @@ public class Setting : MonoBehaviour
 
                 if (j == MaxX || j == MinX || i == MinZ || i == MaxZ)
                 {
-                    Instantiate(_wall, pos, Quaternion.identity);
+                    home_Block[total] = Instantiate(_wall, pos, Quaternion.identity);
+                }
+                else if (i == MaxZ - 1 && j == MinX + 1)
+                {
+                    home_Block[total] = Instantiate(_settingBlock, pos, Quaternion.identity);
                 }
                 else if (i >= MaxZ - 1 && (j == 0))
                 {
-                    Instantiate(_storeBlock, pos, Quaternion.identity);
-                    GameManager.instance.SetSpecialBlock(pos, "Store");
+                    home_Block[total] = Instantiate(_storeBlock, pos, Quaternion.identity);
                 }
                 else if (i <= MinZ + 1 && (j == 0))
                 {
-                    Instantiate(_stairBlock, pos, Quaternion.identity);
-                    GameManager.instance.SetSpecialBlock(pos, "Stair");
+                    home_Block[total] = Instantiate(_stairBlock, pos, Quaternion.identity);
                 }
                 else
                 {
-                    Instantiate(_groundprefab, pos, Quaternion.identity);
+                    home_Block[total] = Instantiate(_groundprefab, pos, Quaternion.identity);
                 }
+
+                home_Block[total].SetActive(false);
+                total++;
             }
-            yield return new WaitForSeconds(0.1f);
         }
 
-        CreatePlayer();
+        //CreatePlayer();
     }
 
-    IEnumerator CreateCaveBlock()
+    void CreateCaveBlock()
     {
         GameObject _groundprefab = backGroundPrefab;
         GameObject _wall = Wall;
+        GameObject _stairBlock = stairBlock;
+
+        int total = 0;
 
         for (int i = CaveMaxZ; i >= CaveMinZ; i--)
         {
@@ -96,22 +113,26 @@ public class Setting : MonoBehaviour
 
                 if (j == CaveMaxX || j == CaveMinX || i == CaveMinZ || i == CaveMaxZ)
                 {
-                    Instantiate(_wall, pos, Quaternion.identity);
+                    cave_Block[total] = Instantiate(_wall, pos, Quaternion.identity);
+                }
+                else if (i == -2 && j == 0)
+                {
+                    cave_Block[total] = Instantiate(_stairBlock, pos, Quaternion.identity);
                 }
                 else
                 {
-                    Instantiate(_groundprefab, pos, Quaternion.identity);
+                    cave_Block[total] = Instantiate(_groundprefab, pos, Quaternion.identity);
                 }
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
 
-        SetEnemy();
+                cave_Block[total].SetActive(false);
+                total++;
+            }
+        }
+        //SetEnemy();
     }
 
     public void CreatePlayer()
     {
-        Player.transform.position = Vector3.zero;
         Player.SetActive(true);
     }
 
@@ -234,5 +255,142 @@ public class Setting : MonoBehaviour
 
             GameManager.instance.SetSpecialBlock(new Vector3(x, 0, z), "Boss");
         }
+    }
+
+    public void IsPlayerInCave()
+    {
+        if(PlayerBehave.instance._isCave)
+        {
+            ActivitingStartBlock();
+        }
+
+        else
+        {
+            ActivitingCaveBlock();
+        }
+    }
+
+    public void ActivitingCaveBlock()
+    {
+        StartCoroutine(ActiveCaveBlock());
+        PlayerBehave.instance._isCave = true;
+    }
+
+    public void ActivitingStartBlock()
+    {
+        StartCoroutine(ActiveStartBlock());
+        PlayerBehave.instance._isCave = false;
+    }
+
+    public IEnumerator ActiveCaveBlock()
+    {
+        GameManager.instance.blockInfo.Clear();
+        PlayerBehave._playerState = PlayerBehave.PlayerState.NONE;
+        Vector3 pos;
+
+        yield return new WaitForSecondsRealtime(0.2f);
+
+        Player.SetActive(false);
+
+        yield return new WaitForSecondsRealtime(0.2f);
+
+        int total = 0;
+
+        for (int i = MinZ; i <= MaxZ; i++)
+        {
+            for (int j = MaxX; j >= MinX; j--)
+            {
+                home_Block[total].SetActive(false);
+                total++;
+            }
+            yield return new WaitForSecondsRealtime(0.01f);
+        }
+
+        yield return new WaitForSecondsRealtime(2f);
+
+        total = 0;
+
+        for (int i = CaveMaxZ; i >= CaveMinZ; i--)
+        {
+            for (int j = CaveMinX; j <= CaveMaxX; j++)
+            {
+                pos = new Vector3(j, 0, i);
+
+                if (i == -2 && j == 0)
+                {
+                    GameManager.instance.SetSpecialBlock(pos, "Stair");
+                }
+
+                cave_Block[total].SetActive(true);
+                total++;
+            }
+            yield return new WaitForSecondsRealtime(0.01f);
+        }
+
+        SetEnemy();
+
+        yield return new WaitForSecondsRealtime(0.6f);
+
+        Player.SetActive(true);
+        PlayerBehave._playerState = PlayerBehave.PlayerState.IDLE;
+    }
+
+    public IEnumerator ActiveStartBlock()
+    {
+        GameManager.instance.blockInfo.Clear();
+        PlayerBehave._playerState = PlayerBehave.PlayerState.NONE;
+
+        yield return new WaitForSecondsRealtime(0.2f);
+
+        Player.SetActive(false);
+
+        yield return new WaitForSecondsRealtime(0.2f);
+
+        int total = 0;
+        Vector3 pos;
+
+        for (int i = CaveMinZ; i <= CaveMaxZ; i++)
+        {
+            for (int j = CaveMaxX; j >= CaveMinX; j--)
+            {
+                cave_Block[total].SetActive(false);
+                total++;
+            }
+            
+            yield return new WaitForSecondsRealtime(0.01f);
+        }
+
+        yield return new WaitForSecondsRealtime(2f);
+
+        total = 0;
+
+        for (int i = MaxZ; i >= MinZ; i--)
+        {
+            for (int j = MinX; j <= MaxX; j++)
+            {
+                pos = new Vector3(j, 0, i);
+
+                if (i == 1 && j == 1)
+                {
+                    GameManager.instance.SetSpecialBlock(pos, "Setting");
+                }
+                else if (i >= MaxZ - 1 && (j == 0))
+                {
+                    GameManager.instance.SetSpecialBlock(pos, "Store");
+                }
+                else if (i <= MinZ + 1 && (j == 0))
+                {
+                    GameManager.instance.SetSpecialBlock(pos, "Stair");
+                }
+                home_Block[total].SetActive(true);
+                total++;
+                yield return new WaitForSecondsRealtime(0.01f);
+            }
+        }
+
+        yield return new WaitForSecondsRealtime(0.6f);
+
+        Player.SetActive(true);
+        PlayerBehave._playerState = PlayerBehave.PlayerState.IDLE;
     }
 }

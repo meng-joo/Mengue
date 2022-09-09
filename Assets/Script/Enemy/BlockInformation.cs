@@ -11,6 +11,7 @@ public class BlockInformation
     public bool isCommon_Enemy = false;
     public bool is_Boss = false;
     public bool is_Stair = false;
+    public bool is_Setting = false;
 
     public BlockInformation(BlockInformation _b)
     {
@@ -21,6 +22,7 @@ public class BlockInformation
         bool isCommon_Enemy = _b.isCommon_Enemy;
         bool is_Boss = _b.is_Boss;
         bool is_Stair = _b.is_Stair;
+        bool is_Setting = _b.is_Setting;
     }
     public BlockInformation()
     {
@@ -31,5 +33,6 @@ public class BlockInformation
         bool isCommon_Enemy = false;
         bool is_Boss = false;
         bool is_Stair = false;
+        bool is_Setting = false;
     }
 }

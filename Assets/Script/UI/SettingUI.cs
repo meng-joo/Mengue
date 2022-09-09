@@ -47,7 +47,7 @@ public class SettingUI : MonoBehaviour
     {
         PlayerBehave._playerState = PlayerBehave.PlayerState.IDLE;
         transform.DOLocalMoveX(1920, 0.2f);
-        if(PlayerBehave.instance != null) PlayerBehave.instance._backGround.StartCoroutine("SpawnCoin");
+        if(PlayerBehave.instance != null) PlayerBehave.instance._setting.StartCoroutine("SpawnCoin");
     }
 
     public void OnClickSettingButton()
