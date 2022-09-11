@@ -129,44 +129,47 @@ public class StoreUI : MonoBehaviour
         skillPrice[2] = Mathf.RoundToInt(Mathf.Max(1200, _playerBehave._playerDataSo.moneyValue * _playerBehave._playerDataSo.moneyValue * 3.6f));
         skillPricetext[2].text = string.Format($"$ {skillPrice[2] / passive_Sale}");
 
-        seq.Append(transform.DOLocalMoveY(14, 0.4f));
+        seq.Append(transform.DOLocalMoveY(-50, 0.7f).SetEase(Ease.OutElastic));
+
         for (int i = 0; i < upgradePanel.Length; i++)
         {
-            seq.Append(upgradePanel[i].transform.DOLocalMoveY(180, 0.1f));
+            seq.Append(upgradePanel[i].transform.DOLocalMoveY(-280, 0.4f).SetEase(Ease.OutElastic));
         }
 
-        seq.Append(skillPanel[0].transform.DOLocalMoveX(-540, 0.14f));
-        seq.Append(skillPanel[1].transform.DOLocalMoveX(-540, 0.14f));
+        seq.Append(skillPanel[0].transform.DOLocalMoveX(-770, 0.2f));
+        seq.Append(skillPanel[1].transform.DOLocalMoveX(-770, 0.2f));
 
-        seq.Append(skillPanel[3].transform.DOLocalMoveX(90, 0.14f));
-        seq.Append(skillPanel[2].transform.DOLocalMoveX(90, 0.14f));
+        seq.Append(skillPanel[3].transform.DOLocalMoveX(90, 0.2f));
+        seq.Append(skillPanel[2].transform.DOLocalMoveX(90, 0.2f));
 
         seq.AppendCallback(() => GameManager._isStoresetting = false);
         UpdatePriceText();
 
-        SetText($"어서오세요~~~!");
+        SetText($"어서와...");
     }
 
-    //public void GetBackStoreUI()
-    //{
-    //    Sequence seq = DOTween.Sequence();
+    public void GetBackStoreUI()
+    {
+        Sequence seq = DOTween.Sequence();
 
-    //    SoundClips.instance.StartCoroutine("StartSound");
+        SoundClips.instance.StartCoroutine("StartSound");
 
-    //    for (int i = 0; i < upgradePanel.Length; i++)
-    //    {
-    //        seq.Append(upgradePanel[i].transform.DOLocalMoveY(830, 0.1f));
-    //    }
+        SetText($"잘가...");
 
-    //    seq.Append(skillPanel[0].transform.DOLocalMoveX(-1240, 0.1f));
-    //    seq.Append(skillPanel[1].transform.DOLocalMoveX(-1240, 0.1f));
+        for (int i = 0; i < upgradePanel.Length; i++)
+        {
+            seq.Append(upgradePanel[i].transform.DOLocalMoveY(-700, 0.2f));
+        }
 
-    //    seq.Append(skillPanel[3].transform.DOLocalMoveX(716, 0.09f));
-    //    seq.Append(skillPanel[2].transform.DOLocalMoveX(716, 0.08f));
+        seq.Append(skillPanel[0].transform.DOLocalMoveX(-1150, 0.2f));
+        seq.Append(skillPanel[1].transform.DOLocalMoveX(-1150, 0.2f));
 
-    //    seq.Append(transform.DOLocalMoveY(960, 0.3f));
-    //    seq.AppendCallback(() => GameManager._playerState = GameManager.PlayerState.IDLE);
-    //}
+        seq.Append(skillPanel[3].transform.DOLocalMoveX(716, 0.15f));
+        seq.Append(skillPanel[2].transform.DOLocalMoveX(716, 0.15f));
+
+        seq.Append(transform.DOLocalMoveY(-1250, 0.4f).SetEase(Ease.OutQuad));
+        seq.AppendCallback(() => PlayerBehave._playerState = PlayerBehave.PlayerState.IDLE);
+    }
 
     //public void SelectUpgradePanel(int num)
     //{
@@ -268,10 +271,10 @@ public class StoreUI : MonoBehaviour
     IEnumerator ShowStoreBehave(string text)
     {
         _ischatting = true;
-        for (int i = 0; i < text.Length; i++)
+        for (int i = 0; i <= text.Length; i++)
         {
             _storeBuyPanelText.text = string.Format(text.Substring(0, i));
-            yield return new WaitForSeconds(0.05f);
+            yield return null;
         }
         _ischatting = false;
 
