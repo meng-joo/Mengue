@@ -7,8 +7,11 @@ using TMPro;
 
 public class StoreUI : MonoBehaviour
 {
+    public Button[] allStoreButton;
+
     public Button[] upgradePanel;
     public Button[] skillPanel;
+    public Button inventory;
     private TextMeshProUGUI[] lvText = new TextMeshProUGUI[5];
     private List<Text> priceText = new List<Text>();
     //private int[] skillLv;
@@ -124,6 +127,8 @@ public class StoreUI : MonoBehaviour
         Sequence seq = DOTween.Sequence();
 
         GameManager._isStoresetting = true;
+        UpdatePriceText();
+
         _playerCoin.text = string.Format("{0}＄", _playerBehave._playerDataSo.currentMoney);
 
         skillPrice[2] = Mathf.RoundToInt(Mathf.Max(1200, _playerBehave._playerDataSo.moneyValue * _playerBehave._playerDataSo.moneyValue * 3.6f));
@@ -142,8 +147,14 @@ public class StoreUI : MonoBehaviour
         seq.Append(skillPanel[3].transform.DOLocalMoveX(90, 0.2f));
         seq.Append(skillPanel[2].transform.DOLocalMoveX(90, 0.2f));
 
+        seq.Append(inventory.transform.DOLocalMoveX(760, 0.2f));
+
         seq.AppendCallback(() => GameManager._isStoresetting = false);
-        UpdatePriceText();
+        
+        for (int i = 0; i < allStoreButton.Length; i++)
+        {
+            allStoreButton[i].enabled = true;
+        }
 
         SetText($"어서와...");
     }
@@ -154,12 +165,19 @@ public class StoreUI : MonoBehaviour
 
         SoundClips.instance.StartCoroutine("StartSound");
 
+        for (int i = 0; i < allStoreButton.Length; i++)
+        {
+            allStoreButton[i].enabled = false;
+        }
+
         SetText($"잘가...");
 
         for (int i = 0; i < upgradePanel.Length; i++)
         {
             seq.Append(upgradePanel[i].transform.DOLocalMoveY(-700, 0.2f));
         }
+
+        seq.Append(inventory.transform.DOLocalMoveX(1100, 0.2f));
 
         seq.Append(skillPanel[0].transform.DOLocalMoveX(-1150, 0.2f));
         seq.Append(skillPanel[1].transform.DOLocalMoveX(-1150, 0.2f));
@@ -274,7 +292,7 @@ public class StoreUI : MonoBehaviour
         for (int i = 0; i <= text.Length; i++)
         {
             _storeBuyPanelText.text = string.Format(text.Substring(0, i));
-            yield return null;
+            yield return new WaitForSecondsRealtime(0.04f);
         }
         _ischatting = false;
 

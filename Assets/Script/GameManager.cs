@@ -20,7 +20,9 @@ public class GameManager : MonoBehaviour
     public static bool passive_TheKing = false;
     #endregion
 
+    [SerializeField]
     public List<BlockInformation> blockInfo = new List<BlockInformation>();
+
 
     private void Awake()
     {

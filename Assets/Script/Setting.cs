@@ -25,6 +25,7 @@ public class Setting : MonoBehaviour
     public GameObject stairBlock = null;
     public GameObject settingBlock = null;
 
+    public GameObject[] allCoin = new GameObject[1000];
     public GameObject[] cave_Block = new GameObject[1000];
     public GameObject[] home_Block = new GameObject[200];
 
@@ -50,6 +51,26 @@ public class Setting : MonoBehaviour
         coinSpawnDeley = 6f;
 
         StartCoroutine(ActiveStartBlock());
+        SaveCoin();
+    }
+
+    public void SaveCoin()
+    {
+        GameObject _coin = coin;
+
+        int total = 0;
+
+        for (int i = CaveMaxZ - 1; i > CaveMinZ; i--)
+        {
+            for (int j = CaveMinX + 1; j < CaveMaxX; j++)
+            {
+                Vector3 pos = new Vector3(j, 0, i);
+                allCoin[total] = Instantiate(_coin, pos, Quaternion.Euler(0, 180, 0));
+
+                allCoin[total].SetActive(false);
+                total++;
+            }
+        }
     }
 
     void CreateStartBlock()
@@ -216,11 +237,10 @@ public class Setting : MonoBehaviour
             if (coinCount < maxCoinCount)
             {
                 yield return new WaitForSeconds(coinSpawnDeley);
-                int x = Random.Range(CaveMinX + 1, CaveMaxX);
-                int z = Random.Range(CaveMinZ + 1, CaveMaxZ - 2);
 
-                Instantiate(coin, new Vector3(x, 0, z), Quaternion.Euler(0, 180, 0));
-                coinCount++;
+                int ranN = Random.Range(0, 101);
+
+                allCoin[]
             }
 
             else yield return new WaitForSeconds(coinSpawnDeley * coinSpawnDeley - 7);
@@ -274,12 +294,14 @@ public class Setting : MonoBehaviour
     {
         StartCoroutine(ActiveCaveBlock());
         PlayerBehave.instance._isCave = true;
+        StartCoroutine("SpawnCoin");
     }
 
     public void ActivitingStartBlock()
     {
         StartCoroutine(ActiveStartBlock());
         PlayerBehave.instance._isCave = false;
+        StopCoroutine("SpawnCoin");
     }
 
     public IEnumerator ActiveCaveBlock()
@@ -360,7 +382,7 @@ public class Setting : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.01f);
         }
 
-        yield return new WaitForSecondsRealtime(2f);
+        yield return new WaitForSecondsRealtime(1f);
 
         total = 0;
 
@@ -374,11 +396,11 @@ public class Setting : MonoBehaviour
                 {
                     GameManager.instance.SetSpecialBlock(pos, "Setting");
                 }
-                else if (i >= MaxZ - 1 && (j == 0))
+                else if (i == MaxZ - 1 && j == 0)
                 {
                     GameManager.instance.SetSpecialBlock(pos, "Store");
                 }
-                else if (i <= MinZ + 1 && (j == 0))
+                else if (i == MinZ + 1 && j == 0)
                 {
                     GameManager.instance.SetSpecialBlock(pos, "Stair");
                 }

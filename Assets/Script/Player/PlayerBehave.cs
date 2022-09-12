@@ -101,7 +101,7 @@ public class PlayerBehave : MonoBehaviour
     public void ExitStoreButton()
     {
         _storeUI.GetBackStoreUI();
-        _setting.StartCoroutine("SpawnCoin");
+        //_setting.StartCoroutine("SpawnCoin");
         //_stateUI.UpdateStateText();
     }
 

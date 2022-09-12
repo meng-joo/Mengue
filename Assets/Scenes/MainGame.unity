@@ -299,6 +299,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a274f0628fccef4eb3dfd7af2a0f988, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allStoreButton:
+  - {fileID: 113483937}
+  - {fileID: 976556191}
+  - {fileID: 1443304038}
+  - {fileID: 554759262}
+  - {fileID: 1638804091}
+  - {fileID: 469507051}
+  - {fileID: 1430772989}
+  - {fileID: 1075933167}
+  - {fileID: 494709705}
+  - {fileID: 2054936982}
+  - {fileID: 138071874}
   upgradePanel:
   - {fileID: 113483937}
   - {fileID: 976556191}
@@ -310,6 +322,7 @@ MonoBehaviour:
   - {fileID: 1430772989}
   - {fileID: 1075933167}
   - {fileID: 494709705}
+  inventory: {fileID: 138071874}
   price: 0000000000000000000000000000000000000000
   _playerCoin: {fileID: 1006462656}
   _storeBuyPanelText: {fileID: 741534999}
@@ -1078,7 +1091,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 5309364807619520007, guid: 14c1b5e888a85d945aa5d16b7be6f8b4, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.18
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1673,7 +1686,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 761, y: 7}
+  m_AnchoredPosition: {x: 1100, y: 7}
   m_SizeDelta: {x: 170, y: 170}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &138071874
@@ -3395,7 +3408,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 7595735123846519365, guid: 14c1b5e888a85d945aa5d16b7be6f8b4, type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.16
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -9455,6 +9468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63ab42d12bd53b84ca3a0772d924b0c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockInfo: []
 --- !u!1 &1018375182
 GameObject:
   m_ObjectHideFlags: 0
@@ -11678,6 +11692,7 @@ MonoBehaviour:
   coin: {fileID: 2386522514904098880, guid: 7ae82f48e8e549e4daafb4e5aa815994, type: 3}
   stairBlock: {fileID: 3110386362190137543, guid: 5bb2b577197a23d498daa150d942a33b, type: 3}
   settingBlock: {fileID: 3110386362190137543, guid: 121e172d5b6b4f746841a8af3b40a428, type: 3}
+  allCoin: []
   cave_Block:
   - {fileID: 0}
   - {fileID: 0}
@@ -18995,7 +19010,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1975725902
 Transform:
   m_ObjectHideFlags: 0
